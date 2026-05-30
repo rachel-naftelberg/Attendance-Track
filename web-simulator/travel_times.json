@@ -1,0 +1,186 @@
+[
+  {
+    "cityName": "חיפה",
+    "siteId": "haifa_headquarters",
+    "arrivalTimeMinutes": 15,
+    "returnTimeMinutes": 15
+  },
+  {
+    "cityName": "חיפה",
+    "siteId": "orot_rabin",
+    "arrivalTimeMinutes": 40,
+    "returnTimeMinutes": 45
+  },
+  {
+    "cityName": "חיפה",
+    "siteId": "rotenberg",
+    "arrivalTimeMinutes": 120,
+    "returnTimeMinutes": 130
+  },
+  {
+    "cityName": "חיפה",
+    "siteId": "eshkol",
+    "arrivalTimeMinutes": 95,
+    "returnTimeMinutes": 105
+  },
+  {
+    "cityName": "חיפה",
+    "siteId": "gezer",
+    "arrivalTimeMinutes": 80,
+    "returnTimeMinutes": 90
+  },
+  {
+    "cityName": "חיפה",
+    "siteId": "dan_district",
+    "arrivalTimeMinutes": 70,
+    "returnTimeMinutes": 80
+  },
+  
+  {
+    "cityName": "תל אביב",
+    "siteId": "haifa_headquarters",
+    "arrivalTimeMinutes": 70,
+    "returnTimeMinutes": 80
+  },
+  {
+    "cityName": "תל אביב",
+    "siteId": "orot_rabin",
+    "arrivalTimeMinutes": 45,
+    "returnTimeMinutes": 50
+  },
+  {
+    "cityName": "תל אביב",
+    "siteId": "rotenberg",
+    "arrivalTimeMinutes": 65,
+    "returnTimeMinutes": 75
+  },
+  {
+    "cityName": "תל אביב",
+    "siteId": "eshkol",
+    "arrivalTimeMinutes": 40,
+    "returnTimeMinutes": 45
+  },
+  {
+    "cityName": "תל אביב",
+    "siteId": "gezer",
+    "arrivalTimeMinutes": 30,
+    "returnTimeMinutes": 35
+  },
+  {
+    "cityName": "תל אביב",
+    "siteId": "dan_district",
+    "arrivalTimeMinutes": 15,
+    "returnTimeMinutes": 15
+  },
+
+  {
+    "cityName": "חדרה",
+    "siteId": "haifa_headquarters",
+    "arrivalTimeMinutes": 40,
+    "returnTimeMinutes": 45
+  },
+  {
+    "cityName": "חדרה",
+    "siteId": "orot_rabin",
+    "arrivalTimeMinutes": 15,
+    "returnTimeMinutes": 15
+  },
+  {
+    "cityName": "חדרה",
+    "siteId": "rotenberg",
+    "arrivalTimeMinutes": 95,
+    "returnTimeMinutes": 105
+  },
+  {
+    "cityName": "חדרה",
+    "siteId": "eshkol",
+    "arrivalTimeMinutes": 75,
+    "returnTimeMinutes": 80
+  },
+  {
+    "cityName": "חדרה",
+    "siteId": "gezer",
+    "arrivalTimeMinutes": 60,
+    "returnTimeMinutes": 65
+  },
+  {
+    "cityName": "חדרה",
+    "siteId": "dan_district",
+    "arrivalTimeMinutes": 45,
+    "returnTimeMinutes": 50
+  },
+
+  {
+    "cityName": "אשדוד",
+    "siteId": "haifa_headquarters",
+    "arrivalTimeMinutes": 95,
+    "returnTimeMinutes": 105
+  },
+  {
+    "cityName": "אשדוד",
+    "siteId": "orot_rabin",
+    "arrivalTimeMinutes": 75,
+    "returnTimeMinutes": 80
+  },
+  {
+    "cityName": "אשדוד",
+    "siteId": "rotenberg",
+    "arrivalTimeMinutes": 30,
+    "returnTimeMinutes": 35
+  },
+  {
+    "cityName": "אשדוד",
+    "siteId": "eshkol",
+    "arrivalTimeMinutes": 15,
+    "returnTimeMinutes": 15
+  },
+  {
+    "cityName": "אשדוד",
+    "siteId": "gezer",
+    "arrivalTimeMinutes": 35,
+    "returnTimeMinutes": 40
+  },
+  {
+    "cityName": "אשדוד",
+    "siteId": "dan_district",
+    "arrivalTimeMinutes": 40,
+    "returnTimeMinutes": 45
+  },
+
+  {
+    "cityName": "אשקלון",
+    "siteId": "haifa_headquarters",
+    "arrivalTimeMinutes": 120,
+    "returnTimeMinutes": 130
+  },
+  {
+    "cityName": "אשקלון",
+    "siteId": "orot_rabin",
+    "arrivalTimeMinutes": 95,
+    "returnTimeMinutes": 105
+  },
+  {
+    "cityName": "אשקלון",
+    "siteId": "rotenberg",
+    "arrivalTimeMinutes": 15,
+    "returnTimeMinutes": 15
+  },
+  {
+    "cityName": "אשקלון",
+    "siteId": "eshkol",
+    "arrivalTimeMinutes": 30,
+    "returnTimeMinutes": 35
+  },
+  {
+    "cityName": "אשקלון",
+    "siteId": "gezer",
+    "arrivalTimeMinutes": 50,
+    "returnTimeMinutes": 55
+  },
+  {
+    "cityName": "אשקלון",
+    "siteId": "dan_district",
+    "arrivalTimeMinutes": 65,
+    "returnTimeMinutes": 75
+  }
+]

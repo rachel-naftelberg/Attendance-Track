@@ -1,0 +1,44 @@
+[
+  {
+    "id": "haifa_headquarters",
+    "name": "מטה חברת החשמל (חיפה)",
+    "latitude": 32.7937,
+    "longitude": 34.9608,
+    "radius": 300
+  },
+  {
+    "id": "orot_rabin",
+    "name": "תחנת הכוח אורות רבין (חדרה)",
+    "latitude": 32.4697,
+    "longitude": 34.8878,
+    "radius": 500
+  },
+  {
+    "id": "rotenberg",
+    "name": "תחנת הכוח רוטנברג (אשקלון)",
+    "latitude": 31.6293,
+    "longitude": 34.5098,
+    "radius": 500
+  },
+  {
+    "id": "eshkol",
+    "name": "תחנת הכוח אשכול (אשדוד)",
+    "latitude": 31.8317,
+    "longitude": 34.6547,
+    "radius": 400
+  },
+  {
+    "id": "gezer",
+    "name": "תחנת הכוח גזר (רמלה)",
+    "latitude": 31.8906,
+    "longitude": 34.8814,
+    "radius": 400
+  },
+  {
+    "id": "dan_district",
+    "name": "מחוז דן (תל אביב)",
+    "latitude": 32.0725,
+    "longitude": 34.7865,
+    "radius": 200
+  }
+]

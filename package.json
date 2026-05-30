@@ -1,0 +1,8 @@
+{
+  "name": "iec-attendance-app-simulator",
+  "version": "1.0.0",
+  "description": "Israel Electric Corporation Remote Attendance App & Web Simulator",
+  "scripts": {
+    "dev": "npx -y http-server ./web-simulator -p 3000 -o"
+  }
+}

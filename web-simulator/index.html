@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סימולטור אפליקציית נוכחות - חברת החשמל</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="simulator-container">
+        
+        <!-- Sidebar Controls -->
+        <aside class="control-panel">
+            <div class="panel-header">
+                <div class="panel-icon"><i class="fa-solid fa-sliders"></i></div>
+                <h2>בקרת סימולטור (בדיקות)</h2>
+            </div>
+            
+            <!-- GPS Proximity Simulator -->
+            <section class="control-section">
+                <h3><i class="fa-solid fa-map-location-dot"></i> סימולציית מיקום GPS</h3>
+                <p class="section-desc">דמה את מיקום ה-GPS הפיזי של המכשיר כדי לבדוק זיהוי אתרים אוטומטי.</p>
+                <div class="gps-presets">
+                    <button class="preset-btn active" data-lat="32.7937" data-lng="34.9608" data-name="מטה חברת החשמל (חיפה)">
+                        <span class="preset-title">מטה חיפה</span>
+                        <span class="preset-meta">30 דק' נסיעה</span>
+                    </button>
+                    <button class="preset-btn" data-lat="32.4697" data-lng="34.8878" data-name="תחנת הכוח אורות רבין (חדרה)">
+                        <span class="preset-title">אורות רבין</span>
+                        <span class="preset-meta">45 דק' נסיעה</span>
+                    </button>
+                    <button class="preset-btn" data-lat="31.6293" data-lng="34.5098" data-name="תחנת הכוח רוטנברג (אשקלון)">
+                        <span class="preset-title">רוטנברג</span>
+                        <span class="preset-meta">60 דק' נסיעה</span>
+                    </button>
+                    <button class="preset-btn" data-lat="32.0725" data-lng="34.7865" data-name="מחוז דן (תל אביב)">
+                        <span class="preset-title">מחוז דן</span>
+                        <span class="preset-meta">40 דק' נסיעה</span>
+                    </button>
+                    <button class="preset-btn" data-lat="32.0853" data-lng="34.7818" data-name="מחוץ לטווח (שטח/בית)">
+                        <span class="preset-title">מחוץ לטווח אתרים</span>
+                        <span class="preset-meta">ללא אתר מזוהה</span>
+                    </button>
+                </div>
+            </section>
+            
+            <!-- Time Accelerator -->
+            <section class="control-section">
+                <h3><i class="fa-solid fa-clock"></i> סימולציית זמן ומאיץ</h3>
+                <p class="section-desc">במקום להמתין 11:50 שעות, השתמש במאיץ הזמן כדי לבדוק את ההתראות והנודניק.</p>
+                
+                <div class="time-readout">
+                    <span class="time-label">זמן מדומה במכשיר:</span>
+                    <span id="sim-clock" class="time-val">18:43:32</span>
+                </div>
+                
+                <div class="time-controls">
+                    <button class="time-btn" id="btn-ff-1h"><i class="fa-solid fa-forward"></i> שעה +</button>
+                    <button class="time-btn" id="btn-ff-5h"><i class="fa-solid fa-forward-fast"></i> 5 שעות +</button>
+                    <button class="time-btn primary" id="btn-ff-warning"><i class="fa-solid fa-triangle-exclamation"></i> קפוץ ל-11:50</button>
+                </div>
+                
+                <div class="speed-toggle">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="chk-speed-time">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-label">הרץ זמן מהר (שנייה = דקה)</span>
+                </div>
+            </section>
+            
+            <!-- Travel Times & Sites Manager -->
+            <section class="control-section">
+                <h3><i class="fa-solid fa-table-list"></i> ניהול טבלת זמנים ואתרים</h3>
+                <p class="section-desc">ערוך, הוסף או מחק זמני נסיעה המוגדרים בין ערים שונות לאתרי חברת החשמל.</p>
+                
+                <div class="travel-times-table-container">
+                    <table class="travel-times-table">
+                        <thead>
+                            <tr>
+                                <th>עיר</th>
+                                <th>אתר</th>
+                                <th>הגעה</th>
+                                <th>חזרה</th>
+                                <th>פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody id="travel-times-table-body">
+                            <!-- Dynamically populated -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button class="time-btn primary" id="btn-add-travel-time" style="margin-top: 5px; width: 100%;">
+                    <i class="fa-solid fa-plus"></i> הוסף זמני נסיעה
+                </button>
+            </section>
+
+            <!-- Buildings / Sites Manager -->
+            <section class="control-section">
+                <h3><i class="fa-solid fa-building"></i> ניהול רשימת אתרים</h3>
+                <p class="section-desc">ערוך, הוסף או מחק בנייני חברה, קואורדינטות GPS ורדיוסי זיהוי.</p>
+                
+                <div class="travel-times-table-container" style="max-height: 200px;">
+                    <table class="travel-times-table">
+                        <thead>
+                            <tr>
+                                <th>שם האתר</th>
+                                <th>Lat/Lng</th>
+                                <th>רדיוס</th>
+                                <th>פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody id="buildings-table-body">
+                            <!-- Dynamically populated -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button class="time-btn primary" id="btn-add-building" style="margin-top: 5px; width: 100%;">
+                    <i class="fa-solid fa-plus"></i> הוסף אתר חברה
+                </button>
+            </section>
+
+            <!-- Zero Storage Monitor -->
+            <section class="control-section">
+                <h3><i class="fa-solid fa-shield-halved"></i> מנטר Zero Storage</h3>
+                <p class="section-desc">בדיקת אמינות: ודא שכל המידע נמחק מה-LocalStorage המקומי בסיום המשמרת.</p>
+                
+                <div class="storage-monitor">
+                    <div class="storage-status" id="storage-status-badge">
+                        <span class="status-indicator clean"></span>
+                        <span class="status-text">נקי (אפס שמירת נתונים)</span>
+                    </div>
+                    <pre id="storage-inspector">{}</pre>
+                </div>
+            </section>
+        </aside>
+
+        <!-- iPhone Mockup Shell Area -->
+        <main class="iphone-canvas">
+            
+            <!-- iPhone Shell Container -->
+            <div class="iphone-device">
+                <div class="iphone-speaker"></div>
+                <div class="iphone-dynamic-island">
+                    <div class="island-camera"></div>
+                    <div class="island-sensor"></div>
+                </div>
+                <div class="iphone-screen">
+                    
+                    <!-- Simulated iOS System Push Notification Banner -->
+                    <div class="ios-notification" id="ios-push-banner">
+                        <div class="notif-header">
+                            <div class="notif-app-icon">
+                                <i class="fa-solid fa-bolt"></i>
+                            </div>
+                            <span class="notif-app-name">חברת החשמל</span>
+                            <span class="notif-time">עכשיו</span>
+                        </div>
+                        <div class="notif-body">
+                            <h4 id="push-title">התראת יציאה</h4>
+                            <p id="push-body">הגעת ל-11:50 שעות נוכחות. עליך לסיים את היום!</p>
+                        </div>
+                        <div class="notif-handle"></div>
+                    </div>
+                    
+                    <!-- Inside Web App View (Corresponds to SwiftUI ContentView) -->
+                    <div class="app-viewport light-mode" id="app-viewport">
+                        
+                        <!-- App Status Bar -->
+                        <div class="app-status-bar">
+                            <span class="status-time" id="device-status-time">18:43</span>
+                            <div class="status-icons">
+                                <i class="fa-solid fa-signal"></i>
+                                <i class="fa-solid fa-wifi"></i>
+                                <i class="fa-solid fa-battery-three-quarters"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Main Content Container -->
+                        <div class="app-main-content">
+                            
+                            <!-- Application Header -->
+                            <header class="app-header">
+                                <div class="header-logo">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <div class="header-titles">
+                                    <h1>חברת החשמל</h1>
+                                    <p>מערך החדשנות • Zero Storage</p>
+                                </div>
+                                <button class="theme-toggle" id="btn-theme-toggle" aria-label="שינוי ערכת נושא">
+                                    <i class="fa-solid fa-moon"></i>
+                                </button>
+                                <button class="theme-toggle" id="btn-settings-toggle" aria-label="הגדרות" style="margin-right: 8px;">
+                                    <i class="fa-solid fa-gear"></i>
+                                </button>
+                            </header>
+                            
+                            <!-- View 1: Idle View -->
+                            <div class="view-state active" id="view-idle">
+                                <div class="idle-graphic-container">
+                                    <div class="graphic-pulse ring-1"></div>
+                                    <div class="graphic-pulse ring-2"></div>
+                                    <div class="graphic-icon">
+                                        <i class="fa-solid fa-location-crosshairs"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="idle-text">
+                                    <h2>דיווח נוכחות מרחוק</h2>
+                                    <p>האפליקציה תזהה אוטומטית את האתר שבו אתה נמצא ותחשב את זמני הנסיעה הלוך וחזור.</p>
+                                </div>
+                                
+                                <div class="gps-badge" id="gps-status-badge">
+                                    <span class="badge-dot orange"></span>
+                                    <span class="badge-text" id="gps-status-text">מזהה מיקום GPS...</span>
+                                </div>
+                                
+                                <button class="action-btn primary ripple" id="btn-start-setup">
+                                    <i class="fa-solid fa-play"></i>
+                                    התחלת עבודה מאתר מרוחק
+                                </button>
+                            </div>
+                            
+                            <!-- View 2: Active View -->
+                            <div class="view-state" id="view-active">
+                                <!-- Warning Status Banner -->
+                                <div class="warning-banner" id="active-warning-banner">
+                                    <div class="banner-icon"><i class="fa-solid fa-circle-check"></i></div>
+                                    <div class="banner-text">
+                                        <h4 id="banner-status-title">יום עבודה פעיל מנוהל</h4>
+                                        <p id="banner-status-desc">זמן התראה (11:50): --:--</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Progress Ring Chart -->
+                                <div class="progress-container">
+                                    <svg class="progress-ring" width="180" height="180">
+                                        <circle class="progress-ring-bg" stroke="#e6e6e6" stroke-width="12" fill="transparent" r="76" cx="90" cy="90"/>
+                                        <circle class="progress-ring-bar" id="progress-bar" stroke="var(--primary-color)" stroke-width="12" fill="transparent" r="76" cx="90" cy="90" stroke-linecap="round"/>
+                                    </svg>
+                                    <div class="progress-text-overlay">
+                                        <span class="progress-label">זמן נוכחות כולל</span>
+                                        <span class="progress-time-val" id="active-presence-time">00:00:00</span>
+                                        <div class="progress-divider"></div>
+                                        <span class="progress-sublabel" id="active-countdown-label">נותר להתראה</span>
+                                        <span class="progress-countdown-val" id="active-countdown-time">00:00:00</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Information List -->
+                                <div class="info-card">
+                                    <div class="info-row">
+                                        <span class="info-icon"><i class="fa-solid fa-house-chimney"></i></span>
+                                        <span class="info-label">יציאה מהבית (מחושב)</span>
+                                        <span class="info-value" id="active-val-leave-home">--:--</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="info-icon"><i class="fa-solid fa-map-pin"></i></span>
+                                        <span class="info-label" id="active-label-arrival-site">אתר עבודה</span>
+                                        <span class="info-value" id="active-val-arrival-site">--:--</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="info-icon"><i class="fa-solid fa-car-side"></i></span>
+                                        <span class="info-label">נסיעה הלוך + חזור</span>
+                                        <span class="info-value" id="active-val-travel-times">--:--</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="info-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+                                        <span class="info-label">אתר חזרה מתוכנן</span>
+                                        <span class="info-value" id="active-val-return-site">--:--</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Active Snooze Control -->
+                                <div class="snooze-toggle-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                        <div class="toggle-info">
+                                            <span class="toggle-icon"><i class="fa-solid fa-bell"></i></span>
+                                            <div class="toggle-text">
+                                                <h4 id="active-snooze-title-text">התראות נודניק</h4>
+                                                <p>התראה חוזרת במידה וחרגת מ-11:50</p>
+                                            </div>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="chk-active-snooze" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="form-row" id="row-active-snooze-interval" style="margin: 0; padding-top: 8px; border-top: 1px solid rgba(120, 120, 120, 0.15); display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                        <label for="active-snooze-interval" style="font-size: 13px; opacity: 0.8; color: inherit;">מרווח נודניק:</label>
+                                        <select id="active-snooze-interval" style="padding: 4px 8px; border-radius: 8px; border: 1px solid rgba(120,120,120,0.2); background: rgba(120,120,120,0.1); color: inherit; font-size: 13px;">
+                                            <option value="2">2 דק'</option>
+                                            <option value="5" selected>5 דק'</option>
+                                            <option value="10">10 דק'</option>
+                                            <option value="15">15 דק'</option>
+                                            <option value="30">30 דק'</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <button class="action-btn secondary ripple" id="btn-finish-workday">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    סיימתי לעבוד
+                                </button>
+                            </div>
+                            
+                            <!-- View 3: Reset Pending View -->
+                            <div class="view-state" id="view-reset">
+                                <div class="reset-graphic-container">
+                                    <div class="reset-icon-bg">
+                                        <i class="fa-solid fa-box-archive"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="reset-text">
+                                    <h2>אישור סיום יום עבודה</h2>
+                                    <p>עם אישור היציאה, כל נתוני המיקום והזמנים של המשמרת יימחקו לצמיתות מהמכשיר בהתאם לעיקרון Zero Storage.</p>
+                                </div>
+                                
+                                <button class="action-btn danger ripple" id="btn-confirm-exit">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                    אישרתי יציאה (מחיקת נתונים)
+                                </button>
+                            </div>
+                            
+                        </div>
+                        
+                        <!-- Simulated iOS Dynamic Bottom bar Indicator -->
+                        <div class="app-home-indicator"></div>
+                        
+                        <!-- Setup Sheet Overlay (Modal) -->
+                        <div class="setup-sheet" id="setup-sheet">
+                            <div class="sheet-header">
+                                <button class="sheet-btn cancel" id="btn-setup-cancel">ביטול</button>
+                                <h3>התחלת עבודה מרחוק</h3>
+                                <button class="sheet-btn confirm" id="btn-setup-confirm">אישור</button>
+                            </div>
+                            
+                            <div class="sheet-content">
+                                <!-- Arrival Settings Section -->
+                                <div class="sheet-section">
+                                    <h4>זמן הגעה ואתר נוכחי</h4>
+                                    
+                                    <div class="form-row">
+                                        <label for="setup-arrival-time">שעת הגעה בפועל</label>
+                                        <input type="time" id="setup-arrival-time">
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <label for="setup-arrival-site">אתר הגעה</label>
+                                        <select id="setup-arrival-site">
+                                            <!-- Dynamic options -->
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-row" id="row-custom-arrival-travel">
+                                        <label for="setup-arrival-travel">זמן נסיעה מהבית (דקות)</label>
+                                        <input type="number" id="setup-arrival-travel" min="0" max="240" value="30">
+                                    </div>
+                                </div>
+                                
+                                <!-- Return Settings Section -->
+                                <div class="sheet-section">
+                                    <h4>אתר חזרה מתוכנן</h4>
+                                    
+                                    <div class="form-row">
+                                        <label for="setup-return-site">אתר חזרה</label>
+                                        <select id="setup-return-site">
+                                            <!-- Dynamic options -->
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-row" id="row-custom-return-travel">
+                                        <label for="setup-return-travel">זמן נסיעה הביתה (דקות)</label>
+                                        <input type="number" id="setup-return-travel" min="0" max="240" value="30">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Settings Sheet Overlay (Modal) -->
+                        <div class="setup-sheet" id="settings-sheet">
+                            <div class="sheet-header">
+                                <button class="sheet-btn cancel" id="btn-settings-cancel">סגור</button>
+                                <h3>הגדרות אפליקציה</h3>
+                                <button class="sheet-btn confirm" id="btn-settings-save">שמור</button>
+                            </div>
+                            
+                            <div class="sheet-content">
+                                <div class="sheet-section">
+                                    <h4>הגדרות עיר מגורים</h4>
+                                    <div class="form-row">
+                                        <label for="settings-default-city">עיר מגורים קבועה</label>
+                                        <select id="settings-default-city">
+                                            <option value="חיפה">חיפה</option>
+                                            <option value="תל אביב">תל אביב</option>
+                                            <option value="חדרה">חדרה</option>
+                                            <option value="אשדוד">אשדוד</option>
+                                            <option value="אשקלון">אשקלון</option>
+                                            <option value="other">אחר (הזנה ידנית)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="sheet-section">
+                                    <h4>הגדרות התראה ברירת מחדל</h4>
+                                    <div class="form-row-toggle">
+                                        <div class="toggle-desc">
+                                            <h5>נודניק מופעל כברירת מחדל</h5>
+                                            <p>האם להפעיל התראות חוזרות אוטומטית בכל משמרת חדשה.</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="settings-default-snooze" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="form-row" id="row-settings-snooze-interval">
+                                        <label for="settings-default-snooze-interval">מרווח נודניק ברירת מחדל</label>
+                                        <select id="settings-default-snooze-interval" style="width: 120px;">
+                                            <option value="2">2 דקות</option>
+                                            <option value="5" selected>5 דקות</option>
+                                            <option value="10">10 דקות</option>
+                                            <option value="15">15 דקות</option>
+                                            <option value="30">30 דקות</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="sheet-section">
+                                    <h4>אישורי שימוש באפליקציה</h4>
+                                    <div class="form-row-toggle">
+                                        <div class="toggle-desc">
+                                            <h5>אישור שימוש ב-GPS</h5>
+                                            <p>אישור זיהוי אתרים אוטומטי ומרחקי נסיעה.</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="settings-gps-approved" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="form-row-toggle">
+                                        <div class="toggle-desc">
+                                            <h5>אישור שימוש בשעון של המכשיר</h5>
+                                            <p>אישור קריאת זמן המכשיר והתראות 11:50.</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="settings-clock-approved" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="sheet-section" style="margin-top: 15px;">
+                                    <h4>ניהול נתונים</h4>
+                                    <div class="form-row" id="btn-settings-open-travel-times" style="cursor: pointer; padding: 10px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <i class="fa-solid fa-map-location-dot" style="color: var(--secondary-color); font-size: 14px;"></i>
+                                            <span style="color: var(--text-main); font-size: 13px; font-weight: 600;">ניהול מרחקי נסיעה</span>
+                                        </div>
+                                        <i class="fa-solid fa-chevron-left" style="color: var(--text-muted); font-size: 11px;"></i>
+                                    </div>
+                                    <div class="form-row" id="btn-settings-open-buildings" style="cursor: pointer; padding: 10px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <i class="fa-solid fa-building" style="color: var(--success-green); font-size: 14px;"></i>
+                                            <span style="color: var(--text-main); font-size: 13px; font-weight: 600;">ניהול אתרי חברה</span>
+                                        </div>
+                                        <i class="fa-solid fa-chevron-left" style="color: var(--text-muted); font-size: 11px;"></i>
+                                    </div>
+                                    
+                                    <div class="settings-footer-note" style="margin-top: 20px; padding: 10px 0; border-top: 1px solid var(--border-color);">
+                                        <p style="font-size: 11px; color: var(--text-muted); line-height: 1.4; text-align: right; margin: 0;">
+                                            <strong>שים לב:</strong> כל הנתונים נמחקים בסימון סיום עבודה, או בסוף היום (Zero Storage).
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Travel Times List Sheet Overlay (Modal) -->
+                        <div class="setup-sheet" id="travel-times-list-sheet">
+                            <div class="sheet-header">
+                                <button class="sheet-btn cancel" id="btn-travel-times-list-close">סגור</button>
+                                <h3>ניהול מרחקי נסיעה</h3>
+                                <button class="sheet-btn confirm" id="btn-travel-times-list-add"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                            
+                            <div class="sheet-content" style="padding: 0;">
+                                <div style="padding: 10px 16px;">
+                                    <input type="text" id="sim-app-search-travel-times" placeholder="חפש לפי עיר או אתר..." style="width:100%; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.04); color: var(--text-main); font-size: 13px; text-align: right; outline: none;">
+                                </div>
+                                <div id="sim-app-travel-times-list" style="padding: 0 16px; display: flex; flex-direction: column; overflow-y: auto;">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Buildings List Sheet Overlay (Modal) -->
+                        <div class="setup-sheet" id="buildings-list-sheet">
+                            <div class="sheet-header">
+                                <button class="sheet-btn cancel" id="btn-buildings-list-close">סגור</button>
+                                <h3>ניהול אתרי חברה</h3>
+                                <button class="sheet-btn confirm" id="btn-buildings-list-add"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                            
+                            <div class="sheet-content" style="padding: 0;">
+                                <div style="padding: 10px 16px;">
+                                    <input type="text" id="sim-app-search-buildings" placeholder="חפש לפי שם אתר..." style="width:100%; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.04); color: var(--text-main); font-size: 13px; text-align: right; outline: none;">
+                                </div>
+                                <div id="sim-app-buildings-list" style="padding: 0 16px; display: flex; flex-direction: column; overflow-y: auto;">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Onboarding Screen Overlay -->
+                        <div class="onboarding-screen" id="onboarding-screen">
+                            <div class="onboarding-content">
+                                <div class="onboarding-logo">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <h2>ברוך הבא!</h2>
+                                <p>לפני שנתחיל, נא הגדר את עיר המגורים הקבועה שלך. הגדרה זו תסייע לנו לחשב אוטומטית את זמני הנסיעה שלך לאתרים מרוחקים.</p>
+                                
+                                <div class="form-row" style="margin: 20px 0; width: 100%;">
+                                    <label for="onboarding-city" style="font-weight: bold; color: #fff;">עיר מגורים:</label>
+                                    <select id="onboarding-city" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; padding: 10px; border-radius: 12px; width: 180px;">
+                                        <option value="חיפה">חיפה</option>
+                                        <option value="תל אביב">תל אביב</option>
+                                        <option value="חדרה">חדרה</option>
+                                        <option value="אשדוד">אשדוד</option>
+                                        <option value="אשקלון">אשקלון</option>
+                                        <option value="other">אחר (הזנה ידנית)</option>
+                                    </select>
+                                </div>
+                                
+                                <button class="action-btn primary ripple" id="btn-onboarding-submit" style="margin-top: 10px;">
+                                    המשך לאפליקציה
+                                </button>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+    </div>
+
+    <!-- Simulator Travel Times Add/Edit Modal -->
+    <div class="sim-modal-overlay" id="sim-travel-time-modal">
+        <div class="sim-modal-card">
+            <div class="sim-modal-header">
+                <h3 id="sim-modal-title">הוספת זמני נסיעה</h3>
+                <button class="sim-modal-close" id="btn-sim-modal-close">&times;</button>
+            </div>
+            <div class="sim-modal-body">
+                <input type="hidden" id="sim-edit-original-city">
+                <input type="hidden" id="sim-edit-original-site">
+                
+                <div class="sim-form-group" id="sim-group-city-select">
+                    <label for="sim-input-city">עיר מגורים</label>
+                    <select id="sim-input-city">
+                        <!-- Dynamic cities -->
+                    </select>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px;">
+                        <input type="checkbox" id="chk-sim-custom-city" style="width: auto;">
+                        <label for="chk-sim-custom-city" style="font-size: 11px; color: var(--text-muted);">עיר מותאמת אישית</label>
+                    </div>
+                </div>
+                
+                <div class="sim-form-group" id="sim-group-city-custom" style="display: none;">
+                    <label for="sim-input-custom-city">עיר מותאמת אישית</label>
+                    <input type="text" id="sim-input-custom-city" placeholder="הכנס שם עיר...">
+                </div>
+                
+                <div class="sim-form-group">
+                    <label for="sim-input-site">אתר חברת החשמל</label>
+                    <select id="sim-input-site">
+                        <!-- Dynamic sites -->
+                    </select>
+                </div>
+                
+                <div class="sim-form-group">
+                    <label for="sim-input-arrival">זמן הגעה (הלוך בדקות)</label>
+                    <input type="number" id="sim-input-arrival" min="0" max="240" value="30">
+                </div>
+                
+                <div class="sim-form-group">
+                    <label for="sim-input-return">זמן חזרה (חזור בדקות)</label>
+                    <input type="number" id="sim-input-return" min="0" max="240" value="30">
+                </div>
+            </div>
+            <div class="sim-modal-footer">
+                <button class="sim-modal-btn cancel" id="btn-sim-modal-cancel">ביטול</button>
+                <button class="sim-modal-btn confirm" id="btn-sim-modal-save">שמור</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simulator Buildings Add/Edit Modal -->
+    <div class="sim-modal-overlay" id="sim-building-modal">
+        <div class="sim-modal-card">
+            <div class="sim-modal-header">
+                <h3 id="sim-building-modal-title">הוספת אתר חברה</h3>
+                <button class="sim-modal-close" id="btn-sim-building-modal-close">&times;</button>
+            </div>
+            <div class="sim-modal-body">
+                <input type="hidden" id="sim-edit-original-building-id">
+                
+                <div class="sim-form-group">
+                    <label for="sim-input-building-name">שם האתר</label>
+                    <input type="text" id="sim-input-building-name" placeholder="לדוגמה: בניין המה״ר">
+                </div>
+                
+                <div class="sim-form-group">
+                    <label for="sim-input-building-lat">קו רוחב (Latitude)</label>
+                    <input type="number" id="sim-input-building-lat" step="any" placeholder="32.7937">
+                </div>
+                
+                <div class="sim-form-group">
+                    <label for="sim-input-building-lng">קו אורך (Longitude)</label>
+                    <input type="number" id="sim-input-building-lng" step="any" placeholder="34.9608">
+                </div>
+                
+                <div class="sim-form-group" style="flex-direction: row; justify-content: flex-start; align-items: center; gap: 8px; margin: 4px 0;">
+                    <button type="button" class="time-btn" id="btn-sim-building-prefill-gps" style="width: auto; background: rgba(23, 162, 184, 0.15); color: var(--secondary-color); font-size: 11px; padding: 6px 12px; border: 1px solid rgba(23, 162, 184, 0.3);">
+                        <i class="fa-solid fa-location-crosshairs"></i> עדכן לפי מיקום GPS נוכחי
+                    </button>
+                </div>
+                
+                <div class="sim-form-group">
+                    <label for="sim-input-building-radius">רדיוס זיהוי (מטרים)</label>
+                    <input type="number" id="sim-input-building-radius" min="10" max="2000" value="300">
+                </div>
+            </div>
+            <div class="sim-modal-footer">
+                <button class="sim-modal-btn cancel" id="btn-sim-building-modal-cancel">ביטול</button>
+                <button class="sim-modal-btn confirm" id="btn-sim-building-modal-save">שמור</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Element for Alert sounds -->
+    <audio id="alert-sound" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-84.wav" preload="auto"></audio>
+    
+    <script src="app.js"></script>
+</body>
+</html>
