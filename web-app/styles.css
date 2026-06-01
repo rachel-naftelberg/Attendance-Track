@@ -863,6 +863,61 @@ input:checked + .slider:before {
     padding-left: 15px;
 }
 
+/* ==========================================================================
+   EDITABLE vs READ-ONLY FIELD STYLES (Fix 3)
+   ========================================================================== */
+
+/* Read-only fields - dimmed, no interaction highlight */
+.form-row.readonly-field {
+    opacity: 0.65;
+}
+.form-row.readonly-field label {
+    color: var(--text-muted);
+}
+.readonly-input {
+    background: rgba(120, 120, 120, 0.06) !important;
+    border: 1px dashed rgba(120, 120, 120, 0.25) !important;
+    color: var(--text-muted) !important;
+    pointer-events: none;
+    cursor: default !important;
+}
+.dark-mode .readonly-input {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px dashed rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Editable fields - bright border, interactive highlight */
+.form-row.editable-field {
+    position: relative;
+    background: rgba(23, 162, 184, 0.04);
+    border-radius: 10px;
+    padding: 8px 10px;
+    border: 1.5px solid rgba(23, 162, 184, 0.3);
+    margin: 2px 0;
+}
+.form-row.editable-field label {
+    color: var(--secondary-color);
+    font-weight: 700;
+}
+.editable-input {
+    background: rgba(23, 162, 184, 0.08) !important;
+    border: 1.5px solid rgba(23, 162, 184, 0.5) !important;
+    border-radius: 8px !important;
+    color: var(--text-main) !important;
+    font-weight: 700 !important;
+    box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.1) !important;
+    transition: box-shadow 0.2s ease !important;
+}
+.editable-input:focus {
+    box-shadow: 0 0 0 4px rgba(23, 162, 184, 0.25) !important;
+    border-color: var(--secondary-color) !important;
+    outline: none !important;
+}
+.dark-mode .editable-input {
+    background: rgba(23, 162, 184, 0.12) !important;
+}
+
+
 /* Blur backdrop wrapper */
 .visual-blur {
     backdrop-filter: blur(20px);

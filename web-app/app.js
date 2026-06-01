@@ -116,7 +116,8 @@ const CITIES_COORDINATES = [
 ];
 
 let buildingsDatabase = [];
-let travelDatabaseCities = [];
+let travelDatabaseCities = [];   // Destination cities (IEC site locations)
+let travelDatabaseSources = [];  // Source settlements (where employees live)
 let travelDatabaseTimes = {};
 
 function initDatabases() {
@@ -203,12 +204,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // Load preferences (Persistent onboarding/snooze settings)
     loadAppPreferences();
     
-    // Load travel database
+    // Load travel database (new format with separate sources/cities)
     fetch("travel_db.json")
         .then(res => res.json())
         .then(data => {
-            travelDatabaseCities = data.cities;
-            travelDatabaseTimes = data.times;
+            travelDatabaseCities = data.cities || [];    // Destination cities
+            travelDatabaseSources = data.sources || data.cities || []; // Source settlements
+            travelDatabaseTimes = data.times || {};
             populateCityDropdowns();
             populateSiteSelectors();
         })
@@ -240,22 +242,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Populate dropdown selectors in the shift setup sheet
 function populateCityDropdowns() {
-    const onboardingSelect = document.getElementById("onboarding-city");
-    const settingsSelect = document.getElementById("settings-default-city");
+    // Fix 2: No longer populate city dropdowns (city comes from GPS)
+    // Only populate the onboarding if needed (should no longer use dropdown)
+    // The sources list is used internally for travel time lookup
+    if (!travelDatabaseSources.length) return;
     
-    if (!onboardingSelect || !settingsSelect || !travelDatabaseCities.length) return;
-    
-    let htmlContent = "";
-    travelDatabaseCities.forEach(city => {
-        htmlContent += `<option value="${city}">${city}</option>`;
-    });
-    htmlContent += `<option value="other">אחר (הזנה ידנית)</option>`;
-    
-    onboardingSelect.innerHTML = htmlContent;
-    settingsSelect.innerHTML = htmlContent;
-    
-    if (appPreferences.defaultCity) {
-        settingsSelect.value = appPreferences.defaultCity;
+    // Update app preference if GPS city is already known
+    if (currentCityName && travelDatabaseSources.includes(currentCityName)) {
+        appPreferences.defaultCity = currentCityName;
+        saveAppPreferences();
     }
 }
 
@@ -358,14 +353,18 @@ function bindUIEvents() {
         }
     });
     
-    // Onboarding Submit
+    // Onboarding Submit - Fix 5: just mark first launch done, GPS city is auto-detected
     document.getElementById("btn-onboarding-submit").addEventListener("click", () => {
-        const city = document.getElementById("onboarding-city").value;
-        appPreferences.defaultCity = city;
+        // Mark onboarding as completed (don't ask again)
+        localStorage.setItem("iec_pref_onboarding_done", "true");
+        appPreferences.gpsUsageApproved = true;
+        appPreferences.clockUsageApproved = true;
         saveAppPreferences();
         document.getElementById("onboarding-screen").classList.remove("active");
         
-        // Request notifications permission on onboarding complete
+        // Start GPS now that user approved
+        startRealGPS();
+        // Request notifications permission
         requestNotificationPermission();
     });
     
@@ -375,7 +374,13 @@ function bindUIEvents() {
             alert("לא ניתן לשנות הגדרות כלליות במהלך משמרת פעילה!");
             return;
         }
-        document.getElementById("settings-default-city").value = appPreferences.defaultCity;
+        // Fix 2: Show GPS city in settings instead of dropdown
+        const cityDisplay = document.getElementById("settings-city-display");
+        const hiddenCityInput = document.getElementById("settings-default-city");
+        const cityToShow = currentCityName || appPreferences.defaultCity || "מזהה...";
+        if (cityDisplay) cityDisplay.textContent = cityToShow;
+        if (hiddenCityInput) hiddenCityInput.value = cityToShow;
+        
         document.getElementById("settings-default-snooze").checked = appPreferences.defaultSnooze;
         document.getElementById("settings-default-snooze-interval").value = appPreferences.defaultSnoozeInterval || 5;
         document.getElementById("row-settings-snooze-interval").style.display = appPreferences.defaultSnooze ? "flex" : "none";
@@ -398,7 +403,11 @@ function bindUIEvents() {
     
     // Settings Save
     document.getElementById("btn-settings-save").addEventListener("click", () => {
-        appPreferences.defaultCity = document.getElementById("settings-default-city").value;
+        // Fix 2: city comes from GPS (hidden input updated when settings opened)
+        const hiddenCity = document.getElementById("settings-default-city").value;
+        if (hiddenCity && hiddenCity !== "מזהה...") {
+            appPreferences.defaultCity = hiddenCity;
+        }
         appPreferences.defaultSnooze = document.getElementById("settings-default-snooze").checked;
         appPreferences.defaultSnoozeInterval = parseInt(document.getElementById("settings-default-snooze-interval").value) || 5;
         
@@ -763,7 +772,22 @@ function openSetupSheet() {
     const arrivalSelect = document.getElementById("setup-arrival-site");
     const returnSelect = document.getElementById("setup-return-site");
     
-    const defCity = appPreferences.defaultCity || "חיפה";
+    // Fix 4: Update label to show GPS city
+    const cityLabel = currentCityName || appPreferences.defaultCity || "";
+    const arrivalLabelSpan = document.getElementById("setup-arrival-site-label");
+    if (arrivalLabelSpan) {
+        arrivalLabelSpan.textContent = cityLabel
+            ? `אתר הגעה (לפי GPS: ${cityLabel})`
+            : "אתר הגעה (לפי GPS)";
+    }
+    
+    // Fix 4: Use GPS city as the default city for travel time lookup
+    const defCity = currentCityName || appPreferences.defaultCity || "חיפה";
+    // Update defaultCity from GPS if detected
+    if (currentCityName && currentCityName !== appPreferences.defaultCity) {
+        appPreferences.defaultCity = currentCityName;
+        saveAppPreferences();
+    }
     
     if (detectedBuilding) {
         arrivalSelect.value = detectedBuilding.id;
@@ -845,6 +869,13 @@ function confirmStartShift() {
     // Zero Storage tracking - save to localStorage for duration of shift
     saveShiftStateToDisk();
     
+    // Fix 6: Schedule background notification via Service Worker
+    scheduleBackgroundNotification(
+        warningDateObj,
+        "עליך לסיים את היום!",
+        "הגעת ל-11:50 שעות נוכחות כולל נסיעות. נא סמן סיום."
+    );
+    
     // Close sheet and render view
     closeSetupSheet();
     renderViewState();
@@ -856,19 +887,22 @@ function getBuildingName(id) {
     return b ? b.name : "עבודה מהבית / שטח";
 }
 
-function getTravelTimeFromDB(city, destCity) {
-    if (!city || !destCity || !travelDatabaseCities.length) return null;
+function getTravelTimeFromDB(sourceCity, destCity) {
+    if (!sourceCity || !destCity) return null;
+    if (!travelDatabaseSources.length || !travelDatabaseCities.length) return null;
     
-    const cityIdx = travelDatabaseCities.indexOf(city);
+    // Source city is where the employee lives (use sources array)
+    const srcIdx = travelDatabaseSources.indexOf(sourceCity);
+    // Destination city is the IEC site city (use cities array)
     const destIdx = travelDatabaseCities.indexOf(destCity);
     
-    if (cityIdx === -1 || destIdx === -1) return null;
+    if (srcIdx === -1 || destIdx === -1) return null;
     
-    const cityKey = cityIdx.toString();
+    const srcKey = srcIdx.toString();
     const destKey = destIdx.toString();
     
-    if (travelDatabaseTimes[cityKey] && travelDatabaseTimes[cityKey][destKey]) {
-        return travelDatabaseTimes[cityKey][destKey]; // returns [arrival, return]
+    if (travelDatabaseTimes[srcKey] && travelDatabaseTimes[srcKey][destKey]) {
+        return travelDatabaseTimes[srcKey][destKey]; // returns [arrival, return]
     }
     return null;
 }
@@ -1000,6 +1034,29 @@ function requestNotificationPermission() {
     }
 }
 
+// Fix 6: Schedule a notification to fire at targetDate even when app is in background
+// The Service Worker receives the schedule via postMessage and uses setTimeout to fire it.
+function scheduleBackgroundNotification(targetDate, title, body) {
+    if (!appPreferences.clockUsageApproved) return;
+    if (!('serviceWorker' in navigator)) return;
+    
+    const delayMs = targetDate.getTime() - Date.now();
+    if (delayMs <= 0) return; // Already past the time
+    
+    navigator.serviceWorker.ready.then(registration => {
+        // Send message to SW to schedule the notification
+        registration.active.postMessage({
+            type: 'SCHEDULE_NOTIFICATION',
+            title: title,
+            body: body,
+            delayMs: delayMs
+        });
+        console.log(`Scheduled background notification in ${Math.round(delayMs/60000)} minutes`);
+    }).catch(err => {
+        console.error("Could not schedule background notification:", err);
+    });
+}
+
 function triggerPushNotification(title, text) {
     // 1. Show internal app banner
     const banner = document.getElementById("ios-push-banner");
@@ -1057,9 +1114,19 @@ function confirmExitAndWipeData() {
         snoozeIntervalMinutes: 5
     };
     
+    // Cancel any scheduled background notification
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then(registration => {
+            if (registration.active) {
+                registration.active.postMessage({ type: 'CANCEL_NOTIFICATION' });
+            }
+        }).catch(() => {});
+    }
+    
     clearShiftStateFromDisk();
     renderViewState();
 }
+
 
 // ==========================================================================
 // VIEW SWITCHER STATE MANAGER
@@ -1150,8 +1217,15 @@ function loadAppPreferences() {
         appPreferences.clockUsageApproved = clockApproved === null ? true : (clockApproved === "true");
         document.getElementById("onboarding-screen").classList.remove("active");
     } else {
-        // Show onboarding
-        document.getElementById("onboarding-screen").classList.add("active");
+        // Fix 5: Check if onboarding was already completed (even if city not set)
+        const onboardingDone = localStorage.getItem("iec_pref_onboarding_done");
+        if (onboardingDone === "true") {
+            // Already did onboarding, just hide the screen
+            document.getElementById("onboarding-screen").classList.remove("active");
+        } else {
+            // First launch - show onboarding
+            document.getElementById("onboarding-screen").classList.add("active");
+        }
     }
 }
 

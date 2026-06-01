@@ -206,21 +206,33 @@
                 <div class="sheet-section">
                     <h4>זמן הגעה ואתר נוכחי</h4>
                     
-                    <div class="form-row">
-                        <label for="setup-arrival-time">שעת הגעה בפועל</label>
-                        <input type="time" id="setup-arrival-time">
+                    <!-- READ-ONLY: Arrival time -->
+                    <div class="form-row readonly-field">
+                        <label for="setup-arrival-time">
+                            <i class="fa-solid fa-lock" style="font-size:10px; opacity:0.5; margin-left:4px;"></i>
+                            שעת הגעה בפועל
+                        </label>
+                        <input type="time" id="setup-arrival-time" class="readonly-input">
                     </div>
                     
-                    <div class="form-row">
-                        <label for="setup-arrival-site">אתר הגעה</label>
-                        <select id="setup-arrival-site">
+                    <!-- READ-ONLY: Arrival site (auto from GPS) -->
+                    <div class="form-row readonly-field">
+                        <label for="setup-arrival-site">
+                            <i class="fa-solid fa-lock" style="font-size:10px; opacity:0.5; margin-left:4px;"></i>
+                            <span id="setup-arrival-site-label">אתר הגעה (לפי GPS)</span>
+                        </label>
+                        <select id="setup-arrival-site" class="readonly-input">
                             <!-- Dynamic options -->
                         </select>
                     </div>
                     
-                    <div class="form-row" id="row-custom-arrival-travel">
-                        <label for="setup-arrival-travel">זמן נסיעה מהבית (דקות)</label>
-                        <input type="number" id="setup-arrival-travel" min="0" max="240" value="30">
+                    <!-- EDITABLE: Arrival travel time -->
+                    <div class="form-row editable-field">
+                        <label for="setup-arrival-travel">
+                            <i class="fa-solid fa-pen-to-square" style="font-size:11px; color:var(--secondary-color); margin-left:4px;"></i>
+                            זמן נסיעה מהבית (דקות)
+                        </label>
+                        <input type="number" id="setup-arrival-travel" min="0" max="240" value="30" class="editable-input">
                     </div>
                 </div>
                 
@@ -228,16 +240,24 @@
                 <div class="sheet-section">
                     <h4>אתר חזרה מתוכנן</h4>
                     
-                    <div class="form-row">
-                        <label for="setup-return-site">אתר חזרה</label>
-                        <select id="setup-return-site">
+                    <!-- READ-ONLY: Return site -->
+                    <div class="form-row readonly-field">
+                        <label for="setup-return-site">
+                            <i class="fa-solid fa-lock" style="font-size:10px; opacity:0.5; margin-left:4px;"></i>
+                            אתר חזרה
+                        </label>
+                        <select id="setup-return-site" class="readonly-input">
                             <!-- Dynamic options -->
                         </select>
                     </div>
                     
-                    <div class="form-row" id="row-custom-return-travel">
-                        <label for="setup-return-travel">זמן נסיעה הביתה (דקות)</label>
-                        <input type="number" id="setup-return-travel" min="0" max="240" value="30">
+                    <!-- EDITABLE: Return travel time -->
+                    <div class="form-row editable-field">
+                        <label for="setup-return-travel">
+                            <i class="fa-solid fa-pen-to-square" style="font-size:11px; color:var(--secondary-color); margin-left:4px;"></i>
+                            זמן נסיעה הביתה (דקות)
+                        </label>
+                        <input type="number" id="setup-return-travel" min="0" max="240" value="30" class="editable-input">
                     </div>
                 </div>
             </div>
@@ -253,17 +273,16 @@
             
             <div class="sheet-content">
                 <div class="sheet-section">
-                    <h4>הגדרות עיר מגורים</h4>
-                    <div class="form-row">
-                        <label for="settings-default-city">עיר מגורים קבועה</label>
-                        <select id="settings-default-city">
-                            <option value="חיפה">חיפה</option>
-                            <option value="תל אביב">תל אביב</option>
-                            <option value="חדרה">חדרה</option>
-                            <option value="אשדוד">אשדוד</option>
-                            <option value="אשקלון">אשקלון</option>
-                            <option value="other">אחר (הזנה ידנית)</option>
-                        </select>
+                    <h4>עיר מגורים</h4>
+                    <!-- Fix 2: No dropdown, just show the GPS-detected city as read-only text -->
+                    <div class="form-row readonly-field" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                        <label style="font-size: 12px; opacity: 0.7;">עיר מגורים נוכחית (מזוהה ע"י GPS)</label>
+                        <div style="display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:10px; background:rgba(120,120,120,0.08); width:100%; box-sizing:border-box;">
+                            <i class="fa-solid fa-location-dot" style="color:var(--secondary-color);"></i>
+                            <span id="settings-city-display" style="font-weight:600; font-size:14px;">מזהה...</span>
+                        </div>
+                        <!-- Hidden input to hold the city value for the save action -->
+                        <input type="hidden" id="settings-default-city">
                     </div>
                 </div>
                 
@@ -355,29 +374,35 @@
             </div>
         </div>
 
-        <!-- Onboarding Screen Overlay -->
+        <!-- Onboarding Screen Overlay (Fix 5: shown only once, GPS city auto-used) -->
         <div class="onboarding-screen" id="onboarding-screen">
             <div class="onboarding-content">
                 <div class="onboarding-logo">
                     <i class="fa-solid fa-bolt"></i>
                 </div>
                 <h2>ברוך הבא!</h2>
-                <p>לפני שנתחיל, נא הגדר את עיר המגורים הקבועה שלך. הגדרה זו תסייע לנו לחשב אוטומטית את זמני הנסיעה שלך לאתרים מרוחקים.</p>
+                <p>האפליקציה תזהה אוטומטית את מיקומך ותחשב זמני נסיעה. אנא אשר את הרשאות המיקום וההתראות כדי להמשיך.</p>
                 
-                <div class="form-row" style="margin: 20px 0; width: 100%;">
-                    <label for="onboarding-city" style="font-weight: bold; color: #fff;">עיר מגורים:</label>
-                    <select id="onboarding-city" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; padding: 10px; border-radius: 12px; width: 180px;">
-                        <option value="חיפה">חיפה</option>
-                        <option value="תל אביב">תל אביב</option>
-                        <option value="חדרה">חדרה</option>
-                        <option value="אשדוד">אשדוד</option>
-                        <option value="אשקלון">אשקלון</option>
-                        <option value="other">אחר (הזנה ידנית)</option>
-                    </select>
+                <div style="background: rgba(255,255,255,0.1); border-radius: 14px; padding: 16px; margin: 20px 0; width: 100%; box-sizing: border-box; text-align: right;">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom: 10px;">
+                        <i class="fa-solid fa-location-dot" style="color:#7ee8fa; font-size:18px;"></i>
+                        <div>
+                            <div style="font-weight:700; font-size:14px;">זיהוי מיקום GPS</div>
+                            <div style="font-size:12px; opacity:0.8;">לזיהוי אוטומטי של האתר ומרחקי נסיעה</div>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <i class="fa-solid fa-bell" style="color:#ffd700; font-size:18px;"></i>
+                        <div>
+                            <div style="font-weight:700; font-size:14px;">התראות</div>
+                            <div style="font-size:12px; opacity:0.8;">לקבלת תזכורות בשעת ה-11:50</div>
+                        </div>
+                    </div>
                 </div>
                 
                 <button class="action-btn primary ripple" id="btn-onboarding-submit" style="margin-top: 10px;">
-                    המשך לאפליקציה
+                    <i class="fa-solid fa-check"></i>
+                    אישור והמשך
                 </button>
             </div>
         </div>

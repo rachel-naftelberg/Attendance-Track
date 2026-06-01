@@ -1,4 +1,4 @@
-const CACHE_NAME = 'iec-attendance-v3';
+const CACHE_NAME = 'iec-attendance-v4';
 const ASSETS = [
   './',
   'index.html',
@@ -45,4 +45,54 @@ self.addEventListener('fetch', (e) => {
       });
     })
   );
+});
+
+// Fix 6: Handle scheduled notification requests from the app
+// When the app sends SCHEDULE_NOTIFICATION, the SW sets a setTimeout to fire
+// a push notification at the specified delay. This works even when the app tab
+// is in background (as long as the Service Worker stays alive).
+// NOTE: On iOS, the SW may be suspended after ~30 seconds in background,
+// so for very long delays on iOS, the notification may not fire if the device
+// is completely closed. On Android PWAs and desktop, this works reliably.
+let scheduledNotificationTimer = null;
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SCHEDULE_NOTIFICATION') {
+    const { title, body, delayMs } = event.data;
+    
+    // Cancel any previously scheduled notification
+    if (scheduledNotificationTimer !== null) {
+      clearTimeout(scheduledNotificationTimer);
+      scheduledNotificationTimer = null;
+    }
+    
+    console.log(`[SW] Scheduling notification in ${Math.round(delayMs / 60000)} minutes`);
+    
+    scheduledNotificationTimer = setTimeout(() => {
+      self.registration.showNotification(title, {
+        body: body,
+        icon: 'icon-192.png',
+        badge: 'icon-192.png',
+        vibrate: [200, 100, 200, 100, 200],
+        requireInteraction: true,
+        tag: 'iec-shift-warning',
+        renotify: true
+      });
+      scheduledNotificationTimer = null;
+    }, delayMs);
+    
+    // Confirm back to the page that we received it
+    if (event.source) {
+      event.source.postMessage({ type: 'NOTIFICATION_SCHEDULED', delayMs });
+    }
+  }
+  
+  // Handle cancel message (when shift is reset)
+  if (event.data && event.data.type === 'CANCEL_NOTIFICATION') {
+    if (scheduledNotificationTimer !== null) {
+      clearTimeout(scheduledNotificationTimer);
+      scheduledNotificationTimer = null;
+      console.log('[SW] Cancelled scheduled notification');
+    }
+  }
 });
