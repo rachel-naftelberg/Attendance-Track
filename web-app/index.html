@@ -158,10 +158,10 @@
                         <label for="active-snooze-interval" style="font-size: 13px; opacity: 0.8; color: inherit;">מרווח נודניק:</label>
                         <select id="active-snooze-interval" style="padding: 4px 8px; border-radius: 8px; border: 1px solid rgba(120,120,120,0.2); background: rgba(120,120,120,0.1); color: inherit; font-size: 13px;">
                             <option value="2">2 דק'</option>
-                            <option value="5" selected>5 דק'</option>
+                            <option value="5">5 דק'</option>
                             <option value="10">10 דק'</option>
                             <option value="15">15 דק'</option>
-                            <option value="30">30 דק'</option>
+                            <option value="30" selected>30 דק'</option>
                         </select>
                     </div>
                 </div>
@@ -193,7 +193,9 @@
             
         </div>
         
-        <!-- Setup Sheet Overlay (Modal) -->
+        <!-- ================================================================ -->
+        <!-- Setup Sheet - התחלת עבודה מרחוק                                  -->
+        <!-- ================================================================ -->
         <div class="setup-sheet" id="setup-sheet">
             <div class="sheet-header">
                 <button class="sheet-btn cancel" id="btn-setup-cancel">ביטול</button>
@@ -206,30 +208,33 @@
                 <div class="sheet-section">
                     <h4>זמן הגעה ואתר נוכחי</h4>
                     
-                    <!-- READ-ONLY: Arrival time -->
-                    <div class="form-row readonly-field">
+                    <!-- EDITABLE: Arrival time (2.1) -->
+                    <div class="form-row editable-field">
                         <label for="setup-arrival-time">
-                            <i class="fa-solid fa-lock" style="font-size:10px; opacity:0.5; margin-left:4px;"></i>
+                            <i class="fa-solid fa-clock" style="font-size:11px; color:var(--secondary-color); margin-left:4px;"></i>
                             שעת הגעה בפועל
                         </label>
-                        <input type="time" id="setup-arrival-time" class="readonly-input">
+                        <input type="time" id="setup-arrival-time" class="editable-input">
                     </div>
                     
-                    <!-- READ-ONLY: Arrival site (auto from GPS) -->
-                    <div class="form-row readonly-field">
-                        <label for="setup-arrival-site">
-                            <i class="fa-solid fa-lock" style="font-size:10px; opacity:0.5; margin-left:4px;"></i>
+                    <!-- EDITABLE: Arrival site – GPS default + searchable list (2.2) -->
+                    <div class="form-row editable-field" style="flex-direction: column; align-items: stretch; gap: 6px;">
+                        <label style="color:var(--secondary-color); font-weight:700;">
+                            <i class="fa-solid fa-pen-to-square" style="font-size:11px; margin-left:4px;"></i>
                             <span id="setup-arrival-site-label">אתר הגעה (לפי GPS)</span>
                         </label>
-                        <select id="setup-arrival-site" class="readonly-input">
+                        <select id="setup-arrival-site" class="editable-input" style="width:100%;">
                             <!-- Dynamic options -->
                         </select>
+                        <!-- Custom text input shown when "other" selected -->
+                        <input type="text" id="setup-arrival-custom" placeholder="הקלד שם יישוב / אתר..."
+                            style="display:none; width:100%; padding:6px 10px; border-radius:8px; border:1.5px solid rgba(23,162,184,0.5); background:rgba(23,162,184,0.08); color:var(--text-main); font-size:13px; outline:none;">
                     </div>
                     
                     <!-- EDITABLE: Arrival travel time -->
                     <div class="form-row editable-field">
                         <label for="setup-arrival-travel">
-                            <i class="fa-solid fa-pen-to-square" style="font-size:11px; color:var(--secondary-color); margin-left:4px;"></i>
+                            <i class="fa-solid fa-car-side" style="font-size:11px; color:var(--secondary-color); margin-left:4px;"></i>
                             זמן נסיעה מהבית (דקות)
                         </label>
                         <input type="number" id="setup-arrival-travel" min="0" max="240" value="30" class="editable-input">
@@ -240,21 +245,24 @@
                 <div class="sheet-section">
                     <h4>אתר חזרה מתוכנן</h4>
                     
-                    <!-- READ-ONLY: Return site -->
-                    <div class="form-row readonly-field">
-                        <label for="setup-return-site">
-                            <i class="fa-solid fa-lock" style="font-size:10px; opacity:0.5; margin-left:4px;"></i>
+                    <!-- EDITABLE: Return site – default same as arrival (2.3) -->
+                    <div class="form-row editable-field" style="flex-direction: column; align-items: stretch; gap: 6px;">
+                        <label style="color:var(--secondary-color); font-weight:700;">
+                            <i class="fa-solid fa-pen-to-square" style="font-size:11px; margin-left:4px;"></i>
                             אתר חזרה
                         </label>
-                        <select id="setup-return-site" class="readonly-input">
+                        <select id="setup-return-site" class="editable-input" style="width:100%;">
                             <!-- Dynamic options -->
                         </select>
+                        <!-- Custom text input shown when "other" selected -->
+                        <input type="text" id="setup-return-custom" placeholder="הקלד שם יישוב / אתר..."
+                            style="display:none; width:100%; padding:6px 10px; border-radius:8px; border:1.5px solid rgba(23,162,184,0.5); background:rgba(23,162,184,0.08); color:var(--text-main); font-size:13px; outline:none;">
                     </div>
                     
                     <!-- EDITABLE: Return travel time -->
                     <div class="form-row editable-field">
                         <label for="setup-return-travel">
-                            <i class="fa-solid fa-pen-to-square" style="font-size:11px; color:var(--secondary-color); margin-left:4px;"></i>
+                            <i class="fa-solid fa-car-side" style="font-size:11px; color:var(--secondary-color); margin-left:4px;"></i>
                             זמן נסיעה הביתה (דקות)
                         </label>
                         <input type="number" id="setup-return-travel" min="0" max="240" value="30" class="editable-input">
@@ -263,7 +271,9 @@
             </div>
         </div>
         
-        <!-- Settings Sheet Overlay (Modal) -->
+        <!-- ================================================================ -->
+        <!-- Settings Sheet                                                     -->
+        <!-- ================================================================ -->
         <div class="setup-sheet" id="settings-sheet">
             <div class="sheet-header">
                 <button class="sheet-btn cancel" id="btn-settings-cancel">סגור</button>
@@ -272,17 +282,27 @@
             </div>
             
             <div class="sheet-content">
+                <!-- 1.1: City setting with searchable input -->
                 <div class="sheet-section">
                     <h4>עיר מגורים</h4>
-                    <!-- Fix 2: No dropdown, just show the GPS-detected city as read-only text -->
-                    <div class="form-row readonly-field" style="flex-direction: column; align-items: flex-start; gap: 4px;">
-                        <label style="font-size: 12px; opacity: 0.7;">עיר מגורים נוכחית (מזוהה ע"י GPS)</label>
-                        <div style="display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:10px; background:rgba(120,120,120,0.08); width:100%; box-sizing:border-box;">
-                            <i class="fa-solid fa-location-dot" style="color:var(--secondary-color);"></i>
-                            <span id="settings-city-display" style="font-weight:600; font-size:14px;">מזהה...</span>
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                        <label style="font-size:12px; color:var(--text-muted);">בחר מהרשימה או הקלד שם יישוב</label>
+                        <div style="position:relative;">
+                            <input type="text"
+                                id="settings-default-city"
+                                list="cities-source-datalist"
+                                placeholder="הקלד שם יישוב..."
+                                autocomplete="off"
+                                style="width:100%; padding:9px 36px 9px 12px; border-radius:10px; border:1.5px solid var(--border-color); background:rgba(120,120,120,0.06); color:var(--text-main); font-size:14px; font-family:var(--font-body); outline:none; text-align:right;">
+                            <i class="fa-solid fa-location-dot" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--secondary-color); pointer-events:none;"></i>
                         </div>
-                        <!-- Hidden input to hold the city value for the save action -->
-                        <input type="hidden" id="settings-default-city">
+                        <datalist id="cities-source-datalist">
+                            <!-- Populated dynamically from travelDatabaseSources -->
+                        </datalist>
+                        <p style="font-size:11px; color:var(--text-muted); margin:0;">
+                            <i class="fa-solid fa-circle-info" style="margin-left:3px;"></i>
+                            עיר זו משמשת לחישוב זמני נסיעה לאתרים
+                        </p>
                     </div>
                 </div>
                 
@@ -301,11 +321,11 @@
                     <div class="form-row" id="row-settings-snooze-interval">
                         <label for="settings-default-snooze-interval">מרווח נודניק ברירת מחדל</label>
                         <select id="settings-default-snooze-interval" style="width: 120px;">
-                            <option value="2">2 דקות</option>
-                            <option value="5" selected>5 דקות</option>
+                            <option value="5">5 דקות</option>
                             <option value="10">10 דקות</option>
                             <option value="15">15 דקות</option>
-                            <option value="30">30 דקות</option>
+                            <option value="30" selected>30 דקות</option>
+                            <option value="60">60 דקות</option>
                         </select>
                     </div>
                 </div>
@@ -335,12 +355,12 @@
                 </div>
                 
                 <div class="sheet-section" style="margin-top: 15px;">
+                    <!-- 1.2: Renamed to "ניהול זמני נסיעה" -->
                     <h4>ניהול נתונים</h4>
-
                     <div class="form-row" id="btn-settings-open-buildings" style="cursor: pointer; padding: 10px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; width: 100%;">
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <i class="fa-solid fa-building" style="color: var(--success-green); font-size: 14px;"></i>
-                            <span style="color: var(--text-main); font-size: 13px; font-weight: 600;">ניהול אתרי חברה</span>
+                            <i class="fa-solid fa-route" style="color: var(--success-green); font-size: 14px;"></i>
+                            <span style="color: var(--text-main); font-size: 13px; font-weight: 600;">ניהול זמני נסיעה</span>
                         </div>
                         <i class="fa-solid fa-chevron-left" style="color: var(--text-muted); font-size: 11px;"></i>
                     </div>
@@ -355,12 +375,13 @@
         </div>
         
 
-
-        <!-- Buildings List Sheet Overlay (Modal) -->
+        <!-- ================================================================ -->
+        <!-- Buildings List Sheet - ניהול זמני נסיעה (1.2 renamed)           -->
+        <!-- ================================================================ -->
         <div class="setup-sheet" id="buildings-list-sheet">
             <div class="sheet-header">
                 <button class="sheet-btn cancel" id="btn-buildings-list-close">סגור</button>
-                <h3>ניהול אתרי חברה</h3>
+                <h3>ניהול זמני נסיעה</h3>
                 <button class="sheet-btn confirm" id="btn-buildings-list-add"><i class="fa-solid fa-plus"></i></button>
             </div>
             
@@ -374,7 +395,7 @@
             </div>
         </div>
 
-        <!-- Onboarding Screen Overlay (Fix 5: shown only once, GPS city auto-used) -->
+        <!-- Onboarding Screen -->
         <div class="onboarding-screen" id="onboarding-screen">
             <div class="onboarding-content">
                 <div class="onboarding-logo">
@@ -475,5 +496,6 @@
             });
         }
     </script>
+
 </body>
 </html>

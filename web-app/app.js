@@ -120,33 +120,37 @@ let travelDatabaseCities = [];   // Destination cities (IEC site locations)
 let travelDatabaseSources = [];  // Source settlements (where employees live)
 let travelDatabaseTimes = {};
 
+// Version stamp - bump this to force-reset buildingsDatabase to DEFAULT_BUILDINGS
+const DB_VERSION = "v2";
+
 function initDatabases() {
     const savedBuildings = localStorage.getItem("iec_db_buildings");
-    if (savedBuildings) {
-        buildingsDatabase = JSON.parse(savedBuildings);
-        // Run data migration to ensure isPrimary and destinationCity exist
-        let updated = false;
-        buildingsDatabase.forEach(b => {
-            if (b.isPrimary === undefined) {
-                b.isPrimary = b.id === "haifa_headquarters" || b.id === "orot_rabin" || b.id === "rotenberg" || b.id === "eshkol" || b.id === "gezer" || b.id === "dan_district";
-                updated = true;
-            }
-            if (!b.destinationCity) {
-                if (b.id === "haifa_headquarters") b.destinationCity = "חיפה";
-                else if (b.id === "orot_rabin") b.destinationCity = "חדרה";
-                else if (b.id === "rotenberg") b.destinationCity = "אשקלון";
-                else if (b.id === "eshkol") b.destinationCity = "אשדוד";
-                else if (b.id === "gezer") b.destinationCity = "רמלה";
-                else if (b.id === "dan_district") b.destinationCity = "תל אביב - יפו";
-                else b.destinationCity = "חיפה";
-                updated = true;
-            }
-        });
-        if (updated) {
-            localStorage.setItem("iec_db_buildings", JSON.stringify(buildingsDatabase));
+    const savedVersion  = localStorage.getItem("iec_db_version");
+    
+    // Force reset to defaults if version mismatch (ensures מחוז דן + מטה are present)
+    if (!savedBuildings || savedVersion !== DB_VERSION) {
+        buildingsDatabase = JSON.parse(JSON.stringify(DEFAULT_BUILDINGS));
+        localStorage.setItem("iec_db_buildings", JSON.stringify(buildingsDatabase));
+        localStorage.setItem("iec_db_version", DB_VERSION);
+        return;
+    }
+    
+    buildingsDatabase = JSON.parse(savedBuildings);
+    
+    // Migration: ensure isPrimary and destinationCity exist
+    let updated = false;
+    buildingsDatabase.forEach(b => {
+        if (b.isPrimary === undefined) {
+            b.isPrimary = ["haifa_headquarters","orot_rabin","rotenberg","eshkol","gezer","dan_district"].includes(b.id);
+            updated = true;
         }
-    } else {
-        buildingsDatabase = DEFAULT_BUILDINGS;
+        if (!b.destinationCity) {
+            const map = { haifa_headquarters: "חיפה", orot_rabin: "חדרה", rotenberg: "אשקלון", eshkol: "אשדוד", gezer: "רמלה", dan_district: "תל אביב - יפו" };
+            b.destinationCity = map[b.id] || "חיפה";
+            updated = true;
+        }
+    });
+    if (updated) {
         localStorage.setItem("iec_db_buildings", JSON.stringify(buildingsDatabase));
     }
 }
@@ -155,7 +159,7 @@ function initDatabases() {
 let appPreferences = {
     defaultCity: "",
     defaultSnooze: true,
-    defaultSnoozeInterval: 5,
+    defaultSnoozeInterval: 30,   // Fix 3: default 30 min
     gpsUsageApproved: true,
     clockUsageApproved: true
 };
@@ -240,14 +244,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// Populate dropdown selectors in the shift setup sheet
+// Populate city datalist for settings screen (1.1)
 function populateCityDropdowns() {
-    // Fix 2: No longer populate city dropdowns (city comes from GPS)
-    // Only populate the onboarding if needed (should no longer use dropdown)
-    // The sources list is used internally for travel time lookup
     if (!travelDatabaseSources.length) return;
     
-    // Update app preference if GPS city is already known
+    // Populate the <datalist> for settings city input
+    const datalist = document.getElementById("cities-source-datalist");
+    if (datalist) {
+        datalist.innerHTML = travelDatabaseSources
+            .map(s => `<option value="${s}">`)
+            .join("");
+    }
+    
+    // If GPS city is already known and matches a source, use it
     if (currentCityName && travelDatabaseSources.includes(currentCityName)) {
         appPreferences.defaultCity = currentCityName;
         saveAppPreferences();
@@ -297,22 +306,46 @@ function bindUIEvents() {
     
     document.getElementById("setup-arrival-site").addEventListener("change", (e) => {
         const val = e.target.value;
-        const city = appPreferences.defaultCity || "חיפה";
+        const city = appPreferences.defaultCity || currentCityName || "חיפה";
         
-        document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(city, val);
+        // Show/hide custom text field
+        const customInput = document.getElementById("setup-arrival-custom");
+        customInput.style.display = (val === "other") ? "block" : "none";
         
-        // Align return building selection by default
+        if (val !== "other") {
+            document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(city, val);
+        }
+        
+        // Sync return site by default
         const returnSelect = document.getElementById("setup-return-site");
         returnSelect.value = val;
+        const customReturn = document.getElementById("setup-return-custom");
+        customReturn.style.display = (val === "other") ? "block" : "none";
+        if (customInput.value) customReturn.value = customInput.value;
         
-        document.getElementById("setup-return-travel").value = lookupReturnTravelTime(city, val);
+        if (val !== "other") {
+            document.getElementById("setup-return-travel").value = lookupReturnTravelTime(city, val);
+        }
+    });
+    
+    document.getElementById("setup-arrival-custom").addEventListener("input", (e) => {
+        // Sync custom return text too
+        const returnCustom = document.getElementById("setup-return-custom");
+        if (returnCustom.style.display !== "none") {
+            returnCustom.value = e.target.value;
+        }
     });
     
     document.getElementById("setup-return-site").addEventListener("change", (e) => {
         const val = e.target.value;
-        const city = appPreferences.defaultCity || "חיפה";
+        const city = appPreferences.defaultCity || currentCityName || "חיפה";
         
-        document.getElementById("setup-return-travel").value = lookupReturnTravelTime(city, val);
+        const customReturn = document.getElementById("setup-return-custom");
+        customReturn.style.display = (val === "other") ? "block" : "none";
+        
+        if (val !== "other") {
+            document.getElementById("setup-return-travel").value = lookupReturnTravelTime(city, val);
+        }
     });
     
     // Live Snooze Toggle
@@ -368,21 +401,20 @@ function bindUIEvents() {
         requestNotificationPermission();
     });
     
-    // Settings Button Open
+    // Settings Button Open (1.1: populate city text input)
     document.getElementById("btn-settings-toggle").addEventListener("click", () => {
         if (shiftState !== "idle") {
             alert("לא ניתן לשנות הגדרות כלליות במהלך משמרת פעילה!");
             return;
         }
-        // Fix 2: Show GPS city in settings instead of dropdown
-        const cityDisplay = document.getElementById("settings-city-display");
-        const hiddenCityInput = document.getElementById("settings-default-city");
-        const cityToShow = currentCityName || appPreferences.defaultCity || "מזהה...";
-        if (cityDisplay) cityDisplay.textContent = cityToShow;
-        if (hiddenCityInput) hiddenCityInput.value = cityToShow;
+        // Populate city input with current GPS city or saved preference
+        const cityInput = document.getElementById("settings-default-city");
+        if (cityInput) {
+            cityInput.value = currentCityName || appPreferences.defaultCity || "";
+        }
         
         document.getElementById("settings-default-snooze").checked = appPreferences.defaultSnooze;
-        document.getElementById("settings-default-snooze-interval").value = appPreferences.defaultSnoozeInterval || 5;
+        document.getElementById("settings-default-snooze-interval").value = appPreferences.defaultSnoozeInterval || 30;
         document.getElementById("row-settings-snooze-interval").style.display = appPreferences.defaultSnooze ? "flex" : "none";
         
         document.getElementById("settings-gps-approved").checked = appPreferences.gpsUsageApproved;
@@ -401,15 +433,13 @@ function bindUIEvents() {
         document.getElementById("settings-sheet").classList.remove("active");
     });
     
-    // Settings Save
+    // Settings Save (1.1: read city from text input)
     document.getElementById("btn-settings-save").addEventListener("click", () => {
-        // Fix 2: city comes from GPS (hidden input updated when settings opened)
-        const hiddenCity = document.getElementById("settings-default-city").value;
-        if (hiddenCity && hiddenCity !== "מזהה...") {
-            appPreferences.defaultCity = hiddenCity;
-        }
+        const cityVal = document.getElementById("settings-default-city").value.trim();
+        if (cityVal) appPreferences.defaultCity = cityVal;
+        
         appPreferences.defaultSnooze = document.getElementById("settings-default-snooze").checked;
-        appPreferences.defaultSnoozeInterval = parseInt(document.getElementById("settings-default-snooze-interval").value) || 5;
+        appPreferences.defaultSnoozeInterval = parseInt(document.getElementById("settings-default-snooze-interval").value) || 30;
         
         // Save approvals
         const prevGpsApproved = appPreferences.gpsUsageApproved;
@@ -768,22 +798,26 @@ function openSetupSheet() {
     
     document.getElementById("setup-arrival-time").value = `${hh}:${mm}`;
     
-    // Set picker selections based on auto detected building
     const arrivalSelect = document.getElementById("setup-arrival-site");
     const returnSelect = document.getElementById("setup-return-site");
+    const arrivalCustom = document.getElementById("setup-arrival-custom");
+    const returnCustom  = document.getElementById("setup-return-custom");
     
-    // Fix 4: Update label to show GPS city
+    // Reset custom fields
+    arrivalCustom.style.display = "none";
+    returnCustom.style.display = "none";
+    
+    // Fix 2.2: Update label to show GPS city
     const cityLabel = currentCityName || appPreferences.defaultCity || "";
     const arrivalLabelSpan = document.getElementById("setup-arrival-site-label");
     if (arrivalLabelSpan) {
         arrivalLabelSpan.textContent = cityLabel
-            ? `אתר הגעה (לפי GPS: ${cityLabel})`
-            : "אתר הגעה (לפי GPS)";
+            ? `אתר הגעה (GPS: ${cityLabel})`
+            : "אתר הגעה";
     }
     
-    // Fix 4: Use GPS city as the default city for travel time lookup
+    // Use GPS city for travel time lookup; update preference if new
     const defCity = currentCityName || appPreferences.defaultCity || "חיפה";
-    // Update defaultCity from GPS if detected
     if (currentCityName && currentCityName !== appPreferences.defaultCity) {
         appPreferences.defaultCity = currentCityName;
         saveAppPreferences();
@@ -792,13 +826,13 @@ function openSetupSheet() {
     if (detectedBuilding) {
         arrivalSelect.value = detectedBuilding.id;
         returnSelect.value = detectedBuilding.id;
-        
         document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(defCity, detectedBuilding.id);
         document.getElementById("setup-return-travel").value = lookupReturnTravelTime(defCity, detectedBuilding.id);
     } else {
         arrivalSelect.value = "other";
         returnSelect.value = "other";
-        
+        arrivalCustom.style.display = "block";
+        returnCustom.style.display = "block";
         document.getElementById("setup-arrival-travel").value = 30;
         document.getElementById("setup-return-travel").value = 30;
     }
@@ -826,13 +860,26 @@ function confirmStartShift() {
     arrivalDateObj.setMilliseconds(0);
     
     const arrivalSiteId = document.getElementById("setup-arrival-site").value;
-    const returnSiteId = document.getElementById("setup-return-site").value;
+    const returnSiteId  = document.getElementById("setup-return-site").value;
     
-    const travelToVal = parseInt(document.getElementById("setup-arrival-travel").value) || 0;
-    const travelBackVal = parseInt(document.getElementById("setup-return-travel").value) || 0;
+    // Resolve names for custom text fields
+    let arrivalName, returnName;
+    if (arrivalSiteId === "other") {
+        arrivalName = document.getElementById("setup-arrival-custom").value.trim() || "אתר אחר";
+    } else {
+        arrivalName = getBuildingName(arrivalSiteId);
+    }
+    if (returnSiteId === "other") {
+        returnName = document.getElementById("setup-return-custom").value.trim() || "אתר אחר";
+    } else {
+        returnName = getBuildingName(returnSiteId);
+    }
     
-    const snoozeVal = appPreferences.defaultSnooze;
-    const snoozeIntervalVal = appPreferences.defaultSnoozeInterval || 5;
+    const travelToVal   = parseInt(document.getElementById("setup-arrival-travel").value) || 0;
+    const travelBackVal = parseInt(document.getElementById("setup-return-travel").value)  || 0;
+    
+    const snoozeVal         = appPreferences.defaultSnooze;
+    const snoozeIntervalVal = appPreferences.defaultSnoozeInterval || 30;
     
     // Calculate leave home date = arrival date - travel to minutes
     const leaveHomeDateObj = new Date(arrivalDateObj.getTime() - (travelToVal * 60 * 1000));
@@ -845,38 +892,33 @@ function confirmStartShift() {
     const maxDurationOffset = ((12 * 60) - travelBackVal) * 60 * 1000;
     const maxEndDateObj = new Date(leaveHomeDateObj.getTime() + maxDurationOffset);
     
-    // Save to local model
     shiftData = {
         arrivalDate: arrivalDateObj.toISOString(),
         leaveHomeDate: leaveHomeDateObj.toISOString(),
         warningDate: warningDateObj.toISOString(),
         maxEndDate: maxEndDateObj.toISOString(),
         arrivalBuildingId: arrivalSiteId,
-        arrivalBuildingName: getBuildingName(arrivalSiteId),
+        arrivalBuildingName: arrivalName,
         travelToSiteMinutes: travelToVal,
         returnBuildingId: returnSiteId,
-        returnBuildingName: getBuildingName(returnSiteId),
+        returnBuildingName: returnName,
         travelBackMinutes: travelBackVal,
         snoozeEnabled: snoozeVal,
         snoozeIntervalMinutes: snoozeIntervalVal
     };
     
     shiftState = "active";
-    
-    // Clear previous alarm tracker
     lastSnoozeAlertTime = null;
     
-    // Zero Storage tracking - save to localStorage for duration of shift
     saveShiftStateToDisk();
     
-    // Fix 6: Schedule background notification via Service Worker
+    // Schedule background notification via Service Worker
     scheduleBackgroundNotification(
         warningDateObj,
         "עליך לסיים את היום!",
         "הגעת ל-11:50 שעות נוכחות כולל נסיעות. נא סמן סיום."
     );
     
-    // Close sheet and render view
     closeSetupSheet();
     renderViewState();
 }
