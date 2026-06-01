@@ -6,7 +6,9 @@ const DEFAULT_BUILDINGS = [
     "latitude": 32.7937,
     "longitude": 34.9608,
     "radius": 300,
-    "travelTimeMinutes": 30
+    "travelTimeMinutes": 30,
+    "destinationCity": "חיפה",
+    "isPrimary": true
   },
   {
     "id": "orot_rabin",
@@ -14,7 +16,9 @@ const DEFAULT_BUILDINGS = [
     "latitude": 32.4697,
     "longitude": 34.8878,
     "radius": 500,
-    "travelTimeMinutes": 45
+    "travelTimeMinutes": 45,
+    "destinationCity": "חדרה",
+    "isPrimary": true
   },
   {
     "id": "rotenberg",
@@ -22,7 +26,9 @@ const DEFAULT_BUILDINGS = [
     "latitude": 31.6293,
     "longitude": 34.5098,
     "radius": 500,
-    "travelTimeMinutes": 60
+    "travelTimeMinutes": 60,
+    "destinationCity": "אשקלון",
+    "isPrimary": true
   },
   {
     "id": "eshkol",
@@ -30,7 +36,9 @@ const DEFAULT_BUILDINGS = [
     "latitude": 31.8317,
     "longitude": 34.6547,
     "radius": 400,
-    "travelTimeMinutes": 45
+    "travelTimeMinutes": 45,
+    "destinationCity": "אשדוד",
+    "isPrimary": true
   },
   {
     "id": "gezer",
@@ -38,7 +46,9 @@ const DEFAULT_BUILDINGS = [
     "latitude": 31.8906,
     "longitude": 34.8814,
     "radius": 400,
-    "travelTimeMinutes": 35
+    "travelTimeMinutes": 35,
+    "destinationCity": "רמלה",
+    "isPrimary": true
   },
   {
     "id": "dan_district",
@@ -46,65 +56,44 @@ const DEFAULT_BUILDINGS = [
     "latitude": 32.0725,
     "longitude": 34.7865,
     "radius": 200,
-    "travelTimeMinutes": 40
+    "travelTimeMinutes": 40,
+    "destinationCity": "תל אביב - יפו",
+    "isPrimary": true
   }
 ];
 
-const DEFAULT_TRAVEL_TIMES = [
-  { "cityName": "חיפה", "siteId": "haifa_headquarters", "arrivalTimeMinutes": 15, "returnTimeMinutes": 15 },
-  { "cityName": "חיפה", "siteId": "orot_rabin", "arrivalTimeMinutes": 40, "returnTimeMinutes": 45 },
-  { "cityName": "חיפה", "siteId": "rotenberg", "arrivalTimeMinutes": 120, "returnTimeMinutes": 130 },
-  { "cityName": "חיפה", "siteId": "eshkol", "arrivalTimeMinutes": 95, "returnTimeMinutes": 105 },
-  { "cityName": "חיפה", "siteId": "gezer", "arrivalTimeMinutes": 80, "returnTimeMinutes": 90 },
-  { "cityName": "חיפה", "siteId": "dan_district", "arrivalTimeMinutes": 70, "returnTimeMinutes": 80 },
-  
-  { "cityName": "תל אביב", "siteId": "haifa_headquarters", "arrivalTimeMinutes": 70, "returnTimeMinutes": 80 },
-  { "cityName": "תל אביב", "siteId": "orot_rabin", "arrivalTimeMinutes": 45, "returnTimeMinutes": 50 },
-  { "cityName": "תל אביב", "siteId": "rotenberg", "arrivalTimeMinutes": 65, "returnTimeMinutes": 75 },
-  { "cityName": "תל אביב", "siteId": "eshkol", "arrivalTimeMinutes": 40, "returnTimeMinutes": 45 },
-  { "cityName": "תל אביב", "siteId": "gezer", "arrivalTimeMinutes": 30, "returnTimeMinutes": 35 },
-  { "cityName": "תל אביב", "siteId": "dan_district", "arrivalTimeMinutes": 15, "returnTimeMinutes": 15 },
-
-  { "cityName": "חדרה", "siteId": "haifa_headquarters", "arrivalTimeMinutes": 40, "returnTimeMinutes": 45 },
-  { "cityName": "חדרה", "siteId": "orot_rabin", "arrivalTimeMinutes": 15, "returnTimeMinutes": 15 },
-  { "cityName": "חדרה", "siteId": "rotenberg", "arrivalTimeMinutes": 95, "returnTimeMinutes": 105 },
-  { "cityName": "חדרה", "siteId": "eshkol", "arrivalTimeMinutes": 75, "returnTimeMinutes": 80 },
-  { "cityName": "חדרה", "siteId": "gezer", "arrivalTimeMinutes": 60, "returnTimeMinutes": 65 },
-  { "cityName": "חדרה", "siteId": "dan_district", "arrivalTimeMinutes": 45, "returnTimeMinutes": 50 },
-
-  { "cityName": "אשדוד", "siteId": "haifa_headquarters", "arrivalTimeMinutes": 95, "returnTimeMinutes": 105 },
-  { "cityName": "אשדוד", "siteId": "orot_rabin", "arrivalTimeMinutes": 75, "returnTimeMinutes": 80 },
-  { "cityName": "אשדוד", "siteId": "rotenberg", "arrivalTimeMinutes": 30, "returnTimeMinutes": 35 },
-  { "cityName": "אשדוד", "siteId": "eshkol", "arrivalTimeMinutes": 15, "returnTimeMinutes": 15 },
-  { "cityName": "אשדוד", "siteId": "gezer", "arrivalTimeMinutes": 35, "returnTimeMinutes": 40 },
-  { "cityName": "אשדוד", "siteId": "dan_district", "arrivalTimeMinutes": 40, "returnTimeMinutes": 45 },
-
-  { "cityName": "אשקלון", "siteId": "haifa_headquarters", "arrivalTimeMinutes": 120, "returnTimeMinutes": 130 },
-  { "cityName": "אשקלון", "siteId": "orot_rabin", "arrivalTimeMinutes": 95, "returnTimeMinutes": 105 },
-  { "cityName": "אשקלון", "siteId": "rotenberg", "arrivalTimeMinutes": 15, "returnTimeMinutes": 15 },
-  { "cityName": "אשקלון", "siteId": "eshkol", "arrivalTimeMinutes": 30, "returnTimeMinutes": 35 },
-  { "cityName": "אשקלון", "siteId": "gezer", "arrivalTimeMinutes": 50, "returnTimeMinutes": 55 },
-  { "cityName": "אשקלון", "siteId": "dan_district", "arrivalTimeMinutes": 65, "returnTimeMinutes": 75 }
-];
-
 let buildingsDatabase = [];
-let travelTimesDatabase = [];
+let travelDatabaseCities = [];
+let travelDatabaseTimes = {};
 
 function initDatabases() {
     const savedBuildings = localStorage.getItem("iec_db_buildings");
     if (savedBuildings) {
         buildingsDatabase = JSON.parse(savedBuildings);
+        // Run data migration to ensure isPrimary and destinationCity exist
+        let updated = false;
+        buildingsDatabase.forEach(b => {
+            if (b.isPrimary === undefined) {
+                b.isPrimary = b.id === "haifa_headquarters" || b.id === "orot_rabin" || b.id === "rotenberg" || b.id === "eshkol" || b.id === "gezer" || b.id === "dan_district";
+                updated = true;
+            }
+            if (!b.destinationCity) {
+                if (b.id === "haifa_headquarters") b.destinationCity = "חיפה";
+                else if (b.id === "orot_rabin") b.destinationCity = "חדרה";
+                else if (b.id === "rotenberg") b.destinationCity = "אשקלון";
+                else if (b.id === "eshkol") b.destinationCity = "אשדוד";
+                else if (b.id === "gezer") b.destinationCity = "רמלה";
+                else if (b.id === "dan_district") b.destinationCity = "תל אביב - יפו";
+                else b.destinationCity = "חיפה";
+                updated = true;
+            }
+        });
+        if (updated) {
+            localStorage.setItem("iec_db_buildings", JSON.stringify(buildingsDatabase));
+        }
     } else {
         buildingsDatabase = DEFAULT_BUILDINGS;
         localStorage.setItem("iec_db_buildings", JSON.stringify(buildingsDatabase));
-    }
-
-    const savedTravelTimes = localStorage.getItem("iec_db_travel_times");
-    if (savedTravelTimes) {
-        travelTimesDatabase = JSON.parse(savedTravelTimes);
-    } else {
-        travelTimesDatabase = DEFAULT_TRAVEL_TIMES;
-        localStorage.setItem("iec_db_travel_times", JSON.stringify(travelTimesDatabase));
     }
 }
 
@@ -160,6 +149,19 @@ document.addEventListener("DOMContentLoaded", () => {
     // Load preferences (Persistent onboarding/snooze settings)
     loadAppPreferences();
     
+    // Load travel database
+    fetch("travel_db.json")
+        .then(res => res.json())
+        .then(data => {
+            travelDatabaseCities = data.cities;
+            travelDatabaseTimes = data.times;
+            populateCitySelectors();
+            populateSiteSelectors();
+        })
+        .catch(err => {
+            console.error("Failed to load travel database:", err);
+        });
+
     // Initial GPS calculation
     updateGPSStatus();
     
@@ -171,8 +173,6 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Initialize select dropdown options
     populateSiteSelectors();
-    populateCitySelectors();
-    renderTravelTimesTable();
     renderBuildingsTable();
     
     // Refresh inspector views
@@ -184,9 +184,20 @@ function populateSiteSelectors() {
     const arrivalSelect = document.getElementById("setup-arrival-site");
     const returnSelect = document.getElementById("setup-return-site");
     
+    if (!arrivalSelect || !returnSelect) return;
+    
+    // Sort buildingsDatabase so isPrimary comes first
+    const sortedBuildings = [...buildingsDatabase].sort((a, b) => {
+        const aPri = a.isPrimary ? 1 : 0;
+        const bPri = b.isPrimary ? 1 : 0;
+        if (aPri !== bPri) return bPri - aPri;
+        return a.name.localeCompare(b.name, 'he');
+    });
+    
     let htmlContent = "";
-    buildingsDatabase.forEach(b => {
-        htmlContent += `<option value="${b.id}">${b.name}</option>`;
+    sortedBuildings.forEach(b => {
+        const prefix = b.isPrimary ? "⭐ " : "";
+        htmlContent += `<option value="${b.id}">${prefix}${b.name}</option>`;
     });
     htmlContent += `<option value="other">אחר (הזנה ידנית)</option>`;
     
@@ -372,51 +383,7 @@ function bindUIEvents() {
         document.getElementById("settings-sheet").classList.remove("active");
     });
 
-    // Travel Times Modal close buttons
-    document.getElementById("btn-sim-modal-close").addEventListener("click", () => {
-        document.getElementById("sim-travel-time-modal").classList.remove("active");
-    });
-    document.getElementById("btn-sim-modal-cancel").addEventListener("click", () => {
-        document.getElementById("sim-travel-time-modal").classList.remove("active");
-    });
-    
-    // Travel Times Modal save button
-    document.getElementById("btn-sim-modal-save").addEventListener("click", () => {
-        saveSimTravelTime();
-    });
-    
-    // Travel Times Modal add button
-    document.getElementById("btn-add-travel-time").addEventListener("click", () => {
-        openSimTravelTimeModal();
-    });
-    
-    // Toggle custom city in modal
-    document.getElementById("chk-sim-custom-city").addEventListener("change", (e) => {
-        const isCustom = e.target.checked;
-        document.getElementById("sim-group-city-custom").style.display = isCustom ? "flex" : "none";
-        document.getElementById("sim-input-city").disabled = isCustom;
-    });
 
-    // Open Travel Times List inside app settings
-    document.getElementById("btn-settings-open-travel-times").addEventListener("click", () => {
-        document.getElementById("travel-times-list-sheet").classList.add("active");
-        renderAppTravelTimesList();
-    });
-
-    // Close Travel Times List
-    document.getElementById("btn-travel-times-list-close").addEventListener("click", () => {
-        document.getElementById("travel-times-list-sheet").classList.remove("active");
-    });
-
-    // Add Travel Time from app list
-    document.getElementById("btn-travel-times-list-add").addEventListener("click", () => {
-        openSimTravelTimeModal();
-    });
-
-    // Search Travel Times inside app list
-    document.getElementById("sim-app-search-travel-times").addEventListener("input", () => {
-        renderAppTravelTimesList();
-    });
 
     // Open Buildings List inside app settings
     document.getElementById("btn-settings-open-buildings").addEventListener("click", () => {
@@ -661,16 +628,45 @@ function getBuildingName(id) {
     return b ? b.name : "עבודה מהבית / שטח";
 }
 
+function getTravelTimeFromDB(city, destCity) {
+    if (!city || !destCity || !travelDatabaseCities.length) return null;
+    
+    const cityIdx = travelDatabaseCities.indexOf(city);
+    const destIdx = travelDatabaseCities.indexOf(destCity);
+    
+    if (cityIdx === -1 || destIdx === -1) return null;
+    
+    const cityKey = cityIdx.toString();
+    const destKey = destIdx.toString();
+    
+    if (travelDatabaseTimes[cityKey] && travelDatabaseTimes[cityKey][destKey]) {
+        return travelDatabaseTimes[cityKey][destKey]; // returns [arrival, return]
+    }
+    return null;
+}
+
 function lookupArrivalTravelTime(city, siteId) {
     if (city === "other" || siteId === "other") return 30;
-    const match = travelTimesDatabase.find(x => x.cityName === city && x.siteId === siteId);
-    return match ? match.arrivalTimeMinutes : 30;
+    
+    const building = buildingsDatabase.find(x => x.id === siteId);
+    if (building && building.destinationCity) {
+        const times = getTravelTimeFromDB(city, building.destinationCity);
+        if (times) return times[0];
+    }
+    
+    return 30;
 }
 
 function lookupReturnTravelTime(city, siteId) {
     if (city === "other" || siteId === "other") return 30;
-    const match = travelTimesDatabase.find(x => x.cityName === city && x.siteId === siteId);
-    return match ? match.returnTimeMinutes : 30;
+    
+    const building = buildingsDatabase.find(x => x.id === siteId);
+    if (building && building.destinationCity) {
+        const times = getTravelTimeFromDB(city, building.destinationCity);
+        if (times) return times[1];
+    }
+    
+    return 30;
 }
 
 // ==========================================================================
@@ -961,262 +957,43 @@ function updateStorageInspector() {
 // ==========================================================================
 
 function populateCitySelectors() {
-    // Get unique cities from travelTimesDatabase
-    const citiesSet = new Set();
-    travelTimesDatabase.forEach(item => {
-        citiesSet.add(item.cityName);
-    });
+    if (!travelDatabaseCities.length) return;
     
-    // Convert to sorted array
-    const cities = Array.from(citiesSet).sort();
-    
-    // Update onboarding, settings, and modal city dropdowns
     const onboardingSelect = document.getElementById("onboarding-city");
     const settingsSelect = document.getElementById("settings-default-city");
-    const modalSelect = document.getElementById("sim-input-city");
     
     let htmlContent = "";
-    cities.forEach(city => {
+    travelDatabaseCities.forEach(city => {
         htmlContent += `<option value="${city}">${city}</option>`;
     });
     htmlContent += `<option value="other">אחר (הזנה ידנית)</option>`;
     
     if (onboardingSelect) onboardingSelect.innerHTML = htmlContent;
     if (settingsSelect) settingsSelect.innerHTML = htmlContent;
-    
-    let modalHtml = "";
-    cities.forEach(city => {
-        modalHtml += `<option value="${city}">${city}</option>`;
-    });
-    if (modalSelect) modalSelect.innerHTML = modalHtml;
 }
 
-function renderTravelTimesTable() {
-    const tbody = document.getElementById("travel-times-table-body");
-    if (!tbody) return;
+function toggleBuildingPrimary(id) {
+    const building = buildingsDatabase.find(x => x.id === id);
+    if (!building) return;
     
-    tbody.innerHTML = "";
-    
-    travelTimesDatabase.forEach((item) => {
-        const tr = document.createElement("tr");
-        
-        const building = buildingsDatabase.find(b => b.id === item.siteId);
-        const siteName = building ? building.name.replace("חברת החשמל", "").replace("תחנת הכוח", "").trim() : item.siteId;
-        
-        tr.innerHTML = `
-            <td>${item.cityName}</td>
-            <td>${siteName}</td>
-            <td>${item.arrivalTimeMinutes} דק'</td>
-            <td>${item.returnTimeMinutes} דק'</td>
-            <td>
-                <div class="table-actions">
-                    <button class="action-icon-btn edit" onclick="openSimTravelTimeModal('${item.cityName}', '${item.siteId}')" title="ערוך">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button class="action-icon-btn delete" onclick="deleteSimTravelTime('${item.cityName}', '${item.siteId}')" title="מחק">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                </div>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
-
-window.openSimTravelTimeModal = function(cityName, siteId) {
-    const modal = document.getElementById("sim-travel-time-modal");
-    const title = document.getElementById("sim-modal-title");
-    
-    // Populate site options
-    const siteSelect = document.getElementById("sim-input-site");
-    let siteHtml = "";
-    buildingsDatabase.forEach(b => {
-        siteHtml += `<option value="${b.id}">${b.name}</option>`;
-    });
-    siteSelect.innerHTML = siteHtml;
-    
-    if (cityName && siteId) {
-        // Edit mode
-        title.innerText = "עריכת זמני נסיעה";
-        document.getElementById("sim-edit-original-city").value = cityName;
-        document.getElementById("sim-edit-original-site").value = siteId;
-        
-        const record = travelTimesDatabase.find(x => x.cityName === cityName && x.siteId === siteId);
-        if (record) {
-            document.getElementById("sim-input-city").value = cityName;
-            document.getElementById("sim-input-site").value = siteId;
-            document.getElementById("sim-input-arrival").value = record.arrivalTimeMinutes;
-            document.getElementById("sim-input-return").value = record.returnTimeMinutes;
+    if (!building.isPrimary) {
+        const primaryCount = buildingsDatabase.filter(x => x.isPrimary).length;
+        if (primaryCount >= 10) {
+            alert("ניתן לסמן עד 10 אתרים עיקריים בלבד!");
+            return;
         }
-        
-        document.getElementById("chk-sim-custom-city").checked = false;
-        document.getElementById("sim-group-city-custom").style.display = "none";
-        document.getElementById("sim-group-city-select").style.opacity = "0.7";
-        document.getElementById("sim-input-city").disabled = true;
-        document.getElementById("sim-input-site").disabled = true;
-        document.getElementById("chk-sim-custom-city").disabled = true;
+        building.isPrimary = true;
     } else {
-        // Add mode
-        title.innerText = "הוספת זמני נסיעה";
-        document.getElementById("sim-edit-original-city").value = "";
-        document.getElementById("sim-edit-original-site").value = "";
-        
-        document.getElementById("sim-input-arrival").value = 30;
-        document.getElementById("sim-input-return").value = 30;
-        
-        document.getElementById("chk-sim-custom-city").checked = false;
-        document.getElementById("sim-input-custom-city").value = "";
-        document.getElementById("sim-group-city-custom").style.display = "none";
-        document.getElementById("sim-group-city-select").style.opacity = "1";
-        document.getElementById("sim-input-city").disabled = false;
-        document.getElementById("sim-input-site").disabled = false;
-        document.getElementById("chk-sim-custom-city").disabled = false;
+        building.isPrimary = false;
     }
     
-    modal.classList.add("active");
-};
-
-window.deleteSimTravelTime = function(cityName, siteId) {
-    if (confirm(`האם אתה בטוח שברצונך למחוק את זמני הנסיעה עבור ${cityName} אל ${getBuildingName(siteId)}?`)) {
-        const index = travelTimesDatabase.findIndex(x => x.cityName === cityName && x.siteId === siteId);
-        if (index > -1) {
-            travelTimesDatabase.splice(index, 1);
-            localStorage.setItem("iec_db_travel_times", JSON.stringify(travelTimesDatabase));
-            
-            // Re-render and repopulate UI
-            renderTravelTimesTable();
-            populateCitySelectors();
-            populateSiteSelectors();
-            renderAppTravelTimesList();
-        }
-    }
-};
-
-function saveSimTravelTime() {
-    const origCity = document.getElementById("sim-edit-original-city").value;
-    const origSite = document.getElementById("sim-edit-original-site").value;
+    localStorage.setItem("iec_db_buildings", JSON.stringify(buildingsDatabase));
     
-    const isCustom = document.getElementById("chk-sim-custom-city").checked;
-    let city = "";
-    
-    if (origCity) {
-        // Edit mode (key is fixed)
-        city = origCity;
-    } else {
-        // Add mode
-        city = isCustom ? document.getElementById("sim-input-custom-city").value.trim() : document.getElementById("sim-input-city").value;
-    }
-    
-    const site = origSite || document.getElementById("sim-input-site").value;
-    const arrival = parseInt(document.getElementById("sim-input-arrival").value) || 0;
-    const returnTime = parseInt(document.getElementById("sim-input-return").value) || 0;
-    
-    if (!city) {
-        alert("נא להזין שם עיר חוקי.");
-        return;
-    }
-    
-    if (arrival < 0 || returnTime < 0) {
-        alert("זמני הנסיעה חייבים להיות מספרים חיוביים.");
-        return;
-    }
-    
-    if (origCity && origSite) {
-        // Update existing record
-        const record = travelTimesDatabase.find(x => x.cityName === city && x.siteId === site);
-        if (record) {
-            record.arrivalTimeMinutes = arrival;
-            record.returnTimeMinutes = returnTime;
-        }
-    } else {
-        // Add or overwrite new record
-        const existingIndex = travelTimesDatabase.findIndex(x => x.cityName === city && x.siteId === site);
-        if (existingIndex > -1) {
-            // Overwrite existing record
-            travelTimesDatabase[existingIndex] = {
-                cityName: city,
-                siteId: site,
-                arrivalTimeMinutes: arrival,
-                returnTimeMinutes: returnTime
-            };
-        } else {
-            // Push new record
-            travelTimesDatabase.push({
-                cityName: city,
-                siteId: site,
-                arrivalTimeMinutes: arrival,
-                returnTimeMinutes: returnTime
-            });
-        }
-    }
-    
-    localStorage.setItem("iec_db_travel_times", JSON.stringify(travelTimesDatabase));
-    
-    // Close modal
-    document.getElementById("sim-travel-time-modal").classList.remove("active");
-    
-    // Re-render and repopulate UI
-    renderTravelTimesTable();
-    populateCitySelectors();
+    renderAppBuildingsList();
+    renderBuildingsTable();
     populateSiteSelectors();
-    renderAppTravelTimesList();
 }
-
-function renderAppTravelTimesList() {
-    const listContainer = document.getElementById("sim-app-travel-times-list");
-    if (!listContainer) return;
-    
-    listContainer.innerHTML = "";
-    const searchVal = (document.getElementById("sim-app-search-travel-times")?.value || "").toLowerCase().trim();
-    
-    // Filter
-    const filtered = travelTimesDatabase.filter(item => {
-        if (!searchVal) return true;
-        const b = buildingsDatabase.find(x => x.id === item.siteId);
-        const bName = b ? b.name : "";
-        return item.cityName.toLowerCase().includes(searchVal) || bName.toLowerCase().includes(searchVal);
-    });
-    
-    if (filtered.length === 0) {
-        listContainer.innerHTML = `<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">לא נמצאו רשומות</div>`;
-        return;
-    }
-    
-    filtered.forEach(item => {
-        const b = buildingsDatabase.find(x => x.id === item.siteId);
-        const bName = b ? b.name : item.siteId;
-        
-        const row = document.createElement("div");
-        row.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color); cursor: pointer; direction: rtl;";
-        
-        row.innerHTML = `
-            <div style="display: flex; flex-direction: column; gap: 2px; text-align: right;">
-                <span style="font-size: 14px; font-weight: 600; color: var(--text-main);">${item.cityName}</span>
-                <span style="font-size: 11px; color: var(--text-muted);">אתר: ${bName}</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 11px; text-align: left;">
-                    <span style="color: var(--secondary-color);">הלוך: ${item.arrivalTimeMinutes} דק'</span>
-                    <span style="color: var(--accent-orange);">חזור: ${item.returnTimeMinutes} דק'</span>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="action-icon-btn edit" onclick="event.stopPropagation(); openSimTravelTimeModal('${item.cityName}', '${item.siteId}')" style="font-size: 12px;">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button class="action-icon-btn delete" onclick="event.stopPropagation(); deleteSimTravelTime('${item.cityName}', '${item.siteId}')" style="font-size: 12px;">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        row.addEventListener("click", () => {
-            openSimTravelTimeModal(item.cityName, item.siteId);
-        });
-        
-        listContainer.appendChild(row);
-    });
-}
+window.toggleBuildingPrimary = toggleBuildingPrimary;
 
 function renderBuildingsTable() {
     const tbody = document.getElementById("buildings-table-body");
@@ -1224,12 +1001,25 @@ function renderBuildingsTable() {
     
     tbody.innerHTML = "";
     
-    buildingsDatabase.forEach((b) => {
+    let sorted = [...buildingsDatabase].sort((a, b) => {
+        const aPri = a.isPrimary ? 1 : 0;
+        const bPri = b.isPrimary ? 1 : 0;
+        if (aPri !== bPri) return bPri - aPri;
+        return a.name.localeCompare(b.name, 'he');
+    });
+    
+    sorted.forEach((b) => {
         const tr = document.createElement("tr");
         const nameShort = b.name.replace("חברת החשמל", "").replace("תחנת הכוח", "").trim();
+        const starClass = b.isPrimary ? "fa-solid fa-star" : "fa-regular fa-star";
         
         tr.innerHTML = `
-            <td>${nameShort}</td>
+            <td>
+                <button class="star-toggle" onclick="toggleBuildingPrimary('${b.id}')" style="color: ${b.isPrimary ? '#ffb300' : 'var(--text-muted)'}; font-size: 12px; background: none; border: none; cursor: pointer; padding: 2px;">
+                    <i class="${starClass}"></i>
+                </button>
+                ${nameShort}
+            </td>
             <td>${b.latitude.toFixed(3)}, ${b.longitude.toFixed(3)}</td>
             <td>${b.radius} מ'</td>
             <td>
@@ -1255,9 +1045,17 @@ function renderAppBuildingsList() {
     const searchVal = (document.getElementById("sim-app-search-buildings")?.value || "").toLowerCase().trim();
     
     // Filter
-    const filtered = buildingsDatabase.filter(b => {
+    let filtered = buildingsDatabase.filter(b => {
         if (!searchVal) return true;
         return b.name.toLowerCase().includes(searchVal);
+    });
+    
+    // Sort so that isPrimary === true buildings come first
+    filtered = [...filtered].sort((a, b) => {
+        const aPri = a.isPrimary ? 1 : 0;
+        const bPri = b.isPrimary ? 1 : 0;
+        if (aPri !== bPri) return bPri - aPri;
+        return a.name.localeCompare(b.name, 'he');
     });
     
     if (filtered.length === 0) {
@@ -1268,11 +1066,17 @@ function renderAppBuildingsList() {
     filtered.forEach(b => {
         const row = document.createElement("div");
         row.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color); cursor: pointer; direction: rtl;";
+        const starClass = b.isPrimary ? "fa-solid fa-star" : "fa-regular fa-star";
         
         row.innerHTML = `
-            <div style="display: flex; flex-direction: column; gap: 2px; text-align: right;">
-                <span style="font-size: 14px; font-weight: 600; color: var(--text-main);">${b.name}</span>
-                <span style="font-size: 11px; color: var(--text-muted);">קואורדינטות: ${b.latitude.toFixed(4)}, ${b.longitude.toFixed(4)}</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button class="action-icon-btn star-toggle" onclick="event.stopPropagation(); toggleBuildingPrimary('${b.id}')" style="color: ${b.isPrimary ? '#ffb300' : 'var(--text-muted)'}; font-size: 14px; background: none; border: none; cursor: pointer; padding: 4px;">
+                     <i class="${starClass}"></i>
+                </button>
+                <div style="display: flex; flex-direction: column; gap: 2px; text-align: right;">
+                    <span style="font-size: 14px; font-weight: 600; color: var(--text-main);">${b.name}</span>
+                    <span style="font-size: 11px; color: var(--text-muted);">קואורדינטות: ${b.latitude.toFixed(4)}, ${b.longitude.toFixed(4)}</span>
+                </div>
             </div>
             <div style="display: flex; align-items: center; gap: 12px;">
                 <span style="font-size: 12px; color: var(--secondary-color); font-weight: 600;">רדיוס: ${b.radius} מ'</span>
@@ -1299,6 +1103,15 @@ window.openSimBuildingModal = function(buildingId) {
     const modal = document.getElementById("sim-building-modal");
     const title = document.getElementById("sim-building-modal-title");
     
+    const destCitySelect = document.getElementById("sim-input-building-dest-city");
+    if (destCitySelect && travelDatabaseCities.length) {
+        let options = "";
+        travelDatabaseCities.forEach(city => {
+            options += `<option value="${city}">${city}</option>`;
+        });
+        destCitySelect.innerHTML = options;
+    }
+    
     if (buildingId) {
         // Edit mode
         title.innerText = "עריכת אתר חברה";
@@ -1310,6 +1123,7 @@ window.openSimBuildingModal = function(buildingId) {
             document.getElementById("sim-input-building-lat").value = b.latitude;
             document.getElementById("sim-input-building-lng").value = b.longitude;
             document.getElementById("sim-input-building-radius").value = b.radius;
+            if (destCitySelect) destCitySelect.value = b.destinationCity || "חיפה";
         }
     } else {
         // Add mode
@@ -1320,6 +1134,7 @@ window.openSimBuildingModal = function(buildingId) {
         document.getElementById("sim-input-building-lat").value = "";
         document.getElementById("sim-input-building-lng").value = "";
         document.getElementById("sim-input-building-radius").value = 300;
+        if (destCitySelect) destCitySelect.value = "חיפה";
     }
     
     modal.classList.add("active");
@@ -1329,7 +1144,11 @@ window.deleteSimBuilding = function(buildingId) {
     const b = buildingsDatabase.find(x => x.id === buildingId);
     if (!b) return;
     
-    if (confirm(`האם אתה בטוח שברצונך למחוק את האתר "${b.name}"?\nפעולה זו תמחק גם את כל זמני הנסיעה המשויכים אליו!`)) {
+window.deleteSimBuilding = function(buildingId) {
+    const b = buildingsDatabase.find(x => x.id === buildingId);
+    if (!b) return;
+    
+    if (confirm(`האם אתה בטוח שברצונך למחוק את האתר "${b.name}"?`)) {
         // Delete building
         const bIndex = buildingsDatabase.findIndex(x => x.id === buildingId);
         if (bIndex > -1) {
@@ -1337,18 +1156,12 @@ window.deleteSimBuilding = function(buildingId) {
             localStorage.setItem("iec_db_buildings", JSON.stringify(buildingsDatabase));
         }
         
-        // Cascading delete corresponding travel times
-        travelTimesDatabase = travelTimesDatabase.filter(x => x.siteId !== buildingId);
-        localStorage.setItem("iec_db_travel_times", JSON.stringify(travelTimesDatabase));
-        
         // Re-evaluate GPS status in case user was in this building
         updateGPSStatus();
         
         // Re-render and repopulate UI
         renderBuildingsTable();
         renderAppBuildingsList();
-        renderTravelTimesTable();
-        renderAppTravelTimesList();
         populateSiteSelectors();
     }
 };
@@ -1360,6 +1173,7 @@ function saveSimBuilding() {
     const lat = parseFloat(document.getElementById("sim-input-building-lat").value);
     const lng = parseFloat(document.getElementById("sim-input-building-lng").value);
     const radius = parseFloat(document.getElementById("sim-input-building-radius").value);
+    const destCityVal = document.getElementById("sim-input-building-dest-city").value;
     
     if (!name) {
         alert("נא להזין שם אתר.");
@@ -1384,6 +1198,7 @@ function saveSimBuilding() {
             b.latitude = lat;
             b.longitude = lng;
             b.radius = radius;
+            b.destinationCity = destCityVal;
         }
     } else {
         // Add mode
@@ -1393,7 +1208,9 @@ function saveSimBuilding() {
             name: name,
             latitude: lat,
             longitude: lng,
-            radius: radius
+            radius: radius,
+            destinationCity: destCityVal,
+            isPrimary: false
         });
     }
     
@@ -1408,7 +1225,5 @@ function saveSimBuilding() {
     // Re-render and repopulate UI
     renderBuildingsTable();
     renderAppBuildingsList();
-    renderTravelTimesTable();
-    renderAppTravelTimesList();
     populateSiteSelectors();
 }
