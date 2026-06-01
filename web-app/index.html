@@ -77,9 +77,10 @@
                     <p>האפליקציה תזהה אוטומטית את האתר שבו אתה נמצא ותחשב את זמני הנסיעה הלוך וחזור.</p>
                 </div>
                 
-                <div class="gps-badge" id="gps-status-badge">
+                <div class="gps-badge" id="gps-status-badge" style="cursor: pointer;" title="לחץ לריענון מיקום">
                     <span class="badge-dot orange"></span>
                     <span class="badge-text" id="gps-status-text">מזהה מיקום GPS...</span>
+                    <i class="fa-solid fa-arrows-rotate" id="gps-refresh-icon" style="margin-right: 6px; font-size: 11px; opacity: 0.7;"></i>
                 </div>
                 
                 <button class="action-btn primary ripple" id="btn-start-setup">
@@ -490,6 +491,13 @@
                 <div class="sim-form-group">
                     <label for="sim-input-building-radius">רדיוס זיהוי (מטרים)</label>
                     <input type="number" id="sim-input-building-radius" min="10" max="2000" value="300">
+                </div>
+                
+                <div class="sim-form-group">
+                    <label for="sim-input-building-dest-city">עיר נסיעה (לחישוב זמנים)</label>
+                    <select id="sim-input-building-dest-city">
+                        <!-- Loaded dynamically -->
+                    </select>
                 </div>
             </div>
             <div class="sim-modal-footer">
