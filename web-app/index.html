@@ -317,13 +317,7 @@
                 
                 <div class="sheet-section" style="margin-top: 15px;">
                     <h4>ניהול נתונים</h4>
-                    <div class="form-row" id="btn-settings-open-travel-times" style="cursor: pointer; padding: 10px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <i class="fa-solid fa-map-location-dot" style="color: var(--secondary-color); font-size: 14px;"></i>
-                            <span style="color: var(--text-main); font-size: 13px; font-weight: 600;">ניהול מרחקי נסיעה</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-left" style="color: var(--text-muted); font-size: 11px;"></i>
-                    </div>
+
                     <div class="form-row" id="btn-settings-open-buildings" style="cursor: pointer; padding: 10px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; width: 100%;">
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <i class="fa-solid fa-building" style="color: var(--success-green); font-size: 14px;"></i>
@@ -341,23 +335,7 @@
             </div>
         </div>
         
-        <!-- Travel Times List Sheet Overlay (Modal) -->
-        <div class="setup-sheet" id="travel-times-list-sheet">
-            <div class="sheet-header">
-                <button class="sheet-btn cancel" id="btn-travel-times-list-close">סגור</button>
-                <h3>ניהול מרחקי נסיעה</h3>
-                <button class="sheet-btn confirm" id="btn-travel-times-list-add"><i class="fa-solid fa-plus"></i></button>
-            </div>
-            
-            <div class="sheet-content" style="padding: 0;">
-                <div style="padding: 10px 16px;">
-                    <input type="text" id="sim-app-search-travel-times" placeholder="חפש לפי עיר או אתר..." style="width:100%; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.04); color: var(--text-main); font-size: 13px; text-align: right; outline: none;">
-                </div>
-                <div id="sim-app-travel-times-list" style="padding: 0 16px; display: flex; flex-direction: column; overflow-y: auto;">
-                    <!-- Populated dynamically -->
-                </div>
-            </div>
-        </div>
+
 
         <!-- Buildings List Sheet Overlay (Modal) -->
         <div class="setup-sheet" id="buildings-list-sheet">
@@ -406,56 +384,7 @@
         
     </div>
 
-    <!-- PWA Travel Times Add/Edit Modal (iOS-style standalone) -->
-    <div class="sim-modal-overlay" id="sim-travel-time-modal">
-        <div class="sim-modal-card">
-            <div class="sim-modal-header">
-                <h3 id="sim-modal-title">הוספת זמני נסיעה</h3>
-                <button class="sim-modal-close" id="btn-sim-modal-close">&times;</button>
-            </div>
-            <div class="sim-modal-body">
-                <input type="hidden" id="sim-edit-original-city">
-                <input type="hidden" id="sim-edit-original-site">
-                
-                <div class="sim-form-group" id="sim-group-city-select">
-                    <label for="sim-input-city">עיר מגורים</label>
-                    <select id="sim-input-city">
-                        <!-- Dynamic cities -->
-                    </select>
-                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px;">
-                        <input type="checkbox" id="chk-sim-custom-city" style="width: auto;">
-                        <label for="chk-sim-custom-city" style="font-size: 11px; color: var(--text-muted);">עיר מותאמת אישית</label>
-                    </div>
-                </div>
-                
-                <div class="sim-form-group" id="sim-group-city-custom" style="display: none;">
-                    <label for="sim-input-custom-city">עיר מותאמת אישית</label>
-                    <input type="text" id="sim-input-custom-city" placeholder="הכנס שם עיר...">
-                </div>
-                
-                <div class="sim-form-group">
-                    <label for="sim-input-site">אתר חברת החשמל</label>
-                    <select id="sim-input-site">
-                        <!-- Dynamic sites -->
-                    </select>
-                </div>
-                
-                <div class="sim-form-group">
-                    <label for="sim-input-arrival">זמן הגעה (הלוך בדקות)</label>
-                    <input type="number" id="sim-input-arrival" min="0" max="240" value="30">
-                </div>
-                
-                <div class="sim-form-group">
-                    <label for="sim-input-return">זמן חזרה (חזור בדקות)</label>
-                    <input type="number" id="sim-input-return" min="0" max="240" value="30">
-                </div>
-            </div>
-            <div class="sim-modal-footer">
-                <button class="sim-modal-btn cancel" id="btn-sim-modal-cancel">ביטול</button>
-                <button class="sim-modal-btn confirm" id="btn-sim-modal-save">שמור</button>
-            </div>
-        </div>
-    </div>
+
 
     <!-- PWA Buildings Add/Edit Modal (iOS-style standalone) -->
     <div class="sim-modal-overlay" id="sim-building-modal">

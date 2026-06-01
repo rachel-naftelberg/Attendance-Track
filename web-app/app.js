@@ -59,74 +59,7 @@ const DEFAULT_BUILDINGS = [
     "travelTimeMinutes": 40,
     "destinationCity": "תל אביב - יפו",
     "isPrimary": true
-  },
-  {
-    "id": "jerusalem_site",
-    "name": "סניף ירושלים",
-    "latitude": 31.7683,
-    "longitude": 35.2137,
-    "radius": 300,
-    "travelTimeMinutes": 45,
-    "destinationCity": "ירושלים",
-    "isPrimary": false
-  },
-  {
-    "id": "beer_sheva_site",
-    "name": "סניף באר שבע",
-    "latitude": 31.2529,
-    "longitude": 34.7972,
-    "radius": 300,
-    "travelTimeMinutes": 40,
-    "destinationCity": "באר שבע",
-    "isPrimary": false
-  },
-  {
-    "id": "eilat_site",
-    "name": "סניף אילת",
-    "latitude": 29.5577,
-    "longitude": 34.9519,
-    "radius": 300,
-    "travelTimeMinutes": 90,
-    "destinationCity": "אילת",
-    "isPrimary": false
   }
-];
-
-const DEFAULT_TRAVEL_TIMES = [
-  { "cityName": "חיפה", "siteId": "haifa_headquarters", "arrivalTimeMinutes": 15, "returnTimeMinutes": 15 },
-  { "cityName": "חיפה", "siteId": "orot_rabin", "arrivalTimeMinutes": 40, "returnTimeMinutes": 45 },
-  { "cityName": "חיפה", "siteId": "rotenberg", "arrivalTimeMinutes": 120, "returnTimeMinutes": 130 },
-  { "cityName": "חיפה", "siteId": "eshkol", "arrivalTimeMinutes": 95, "returnTimeMinutes": 105 },
-  { "cityName": "חיפה", "siteId": "gezer", "arrivalTimeMinutes": 80, "returnTimeMinutes": 90 },
-  { "cityName": "חיפה", "siteId": "dan_district", "arrivalTimeMinutes": 70, "returnTimeMinutes": 80 },
-  
-  { "cityName": "תל אביב", "siteId": "haifa_headquarters", "arrivalTimeMinutes": 70, "returnTimeMinutes": 80 },
-  { "cityName": "תל אביב", "siteId": "orot_rabin", "arrivalTimeMinutes": 45, "returnTimeMinutes": 50 },
-  { "cityName": "תל אביב", "siteId": "rotenberg", "arrivalTimeMinutes": 65, "returnTimeMinutes": 75 },
-  { "cityName": "תל אביב", "siteId": "eshkol", "arrivalTimeMinutes": 40, "returnTimeMinutes": 45 },
-  { "cityName": "תל אביב", "siteId": "gezer", "arrivalTimeMinutes": 30, "returnTimeMinutes": 35 },
-  { "cityName": "תל אביב", "siteId": "dan_district", "arrivalTimeMinutes": 15, "returnTimeMinutes": 15 },
-
-  { "cityName": "חדרה", "siteId": "haifa_headquarters", "arrivalTimeMinutes": 40, "returnTimeMinutes": 45 },
-  { "cityName": "חדרה", "siteId": "orot_rabin", "arrivalTimeMinutes": 15, "returnTimeMinutes": 15 },
-  { "cityName": "חדרה", "siteId": "rotenberg", "arrivalTimeMinutes": 95, "returnTimeMinutes": 105 },
-  { "cityName": "חדרה", "siteId": "eshkol", "arrivalTimeMinutes": 75, "returnTimeMinutes": 80 },
-  { "cityName": "חדרה", "siteId": "gezer", "arrivalTimeMinutes": 60, "returnTimeMinutes": 65 },
-  { "cityName": "חדרה", "siteId": "dan_district", "arrivalTimeMinutes": 45, "returnTimeMinutes": 50 },
-
-  { "cityName": "אשדוד", "siteId": "haifa_headquarters", "arrivalTimeMinutes": 95, "returnTimeMinutes": 105 },
-  { "cityName": "אשדוד", "siteId": "orot_rabin", "arrivalTimeMinutes": 75, "returnTimeMinutes": 80 },
-  { "cityName": "אשדוד", "siteId": "rotenberg", "arrivalTimeMinutes": 30, "returnTimeMinutes": 35 },
-  { "cityName": "אשדוד", "siteId": "eshkol", "arrivalTimeMinutes": 15, "returnTimeMinutes": 15 },
-  { "cityName": "אשדוד", "siteId": "gezer", "arrivalTimeMinutes": 35, "returnTimeMinutes": 40 },
-  { "cityName": "אשדוד", "siteId": "dan_district", "arrivalTimeMinutes": 40, "returnTimeMinutes": 45 },
-
-  { "cityName": "אשקלון", "siteId": "haifa_headquarters", "arrivalTimeMinutes": 120, "returnTimeMinutes": 130 },
-  { "cityName": "אשקלון", "siteId": "orot_rabin", "arrivalTimeMinutes": 95, "returnTimeMinutes": 105 },
-  { "cityName": "אשקלון", "siteId": "rotenberg", "arrivalTimeMinutes": 15, "returnTimeMinutes": 15 },
-  { "cityName": "אשקלון", "siteId": "eshkol", "arrivalTimeMinutes": 30, "returnTimeMinutes": 35 },
-  { "cityName": "אשקלון", "siteId": "gezer", "arrivalTimeMinutes": 50, "returnTimeMinutes": 55 },
-  { "cityName": "אשקלון", "siteId": "dan_district", "arrivalTimeMinutes": 65, "returnTimeMinutes": 75 }
 ];
 
 // Database of major Israeli cities for offline reverse geocoding fallback
@@ -183,7 +116,6 @@ const CITIES_COORDINATES = [
 ];
 
 let buildingsDatabase = [];
-let travelTimesDatabase = [];
 let travelDatabaseCities = [];
 let travelDatabaseTimes = {};
 
@@ -215,14 +147,6 @@ function initDatabases() {
     } else {
         buildingsDatabase = DEFAULT_BUILDINGS;
         localStorage.setItem("iec_db_buildings", JSON.stringify(buildingsDatabase));
-    }
-
-    const savedTravelTimes = localStorage.getItem("iec_db_travel_times");
-    if (savedTravelTimes) {
-        travelTimesDatabase = JSON.parse(savedTravelTimes);
-    } else {
-        travelTimesDatabase = DEFAULT_TRAVEL_TIMES;
-        localStorage.setItem("iec_db_travel_times", JSON.stringify(travelTimesDatabase));
     }
 }
 
@@ -502,46 +426,7 @@ function bindUIEvents() {
         document.getElementById("settings-sheet").classList.remove("active");
     });
 
-    // Travel Times Modal close buttons
-    document.getElementById("btn-sim-modal-close").addEventListener("click", () => {
-        document.getElementById("sim-travel-time-modal").classList.remove("active");
-    });
-    document.getElementById("btn-sim-modal-cancel").addEventListener("click", () => {
-        document.getElementById("sim-travel-time-modal").classList.remove("active");
-    });
-    
-    // Travel Times Modal save button
-    document.getElementById("btn-sim-modal-save").addEventListener("click", () => {
-        saveSimTravelTime();
-    });
-    
-    // Toggle custom city in modal
-    document.getElementById("chk-sim-custom-city").addEventListener("change", (e) => {
-        const isCustom = e.target.checked;
-        document.getElementById("sim-group-city-custom").style.display = isCustom ? "flex" : "none";
-        document.getElementById("sim-input-city").disabled = isCustom;
-    });
 
-    // Open Travel Times List inside app settings
-    document.getElementById("btn-settings-open-travel-times").addEventListener("click", () => {
-        document.getElementById("travel-times-list-sheet").classList.add("active");
-        renderAppTravelTimesList();
-    });
-
-    // Close Travel Times List
-    document.getElementById("btn-travel-times-list-close").addEventListener("click", () => {
-        document.getElementById("travel-times-list-sheet").classList.remove("active");
-    });
-
-    // Add Travel Time from app list
-    document.getElementById("btn-travel-times-list-add").addEventListener("click", () => {
-        openSimTravelTimeModal();
-    });
-
-    // Search Travel Times inside app list
-    document.getElementById("sim-app-search-travel-times").addEventListener("input", () => {
-        renderAppTravelTimesList();
-    });
 
     // Open Buildings List inside app settings
     document.getElementById("btn-settings-open-buildings").addEventListener("click", () => {
@@ -997,8 +882,7 @@ function lookupArrivalTravelTime(city, siteId) {
         if (times) return times[0];
     }
     
-    const match = travelTimesDatabase.find(x => x.cityName === city && x.siteId === siteId);
-    return match ? match.arrivalTimeMinutes : 30;
+    return 30;
 }
 
 function lookupReturnTravelTime(city, siteId) {
@@ -1010,8 +894,7 @@ function lookupReturnTravelTime(city, siteId) {
         if (times) return times[1];
     }
     
-    const match = travelTimesDatabase.find(x => x.cityName === city && x.siteId === siteId);
-    return match ? match.returnTimeMinutes : 30;
+    return 30;
 }
 
 // ==========================================================================
@@ -1284,161 +1167,7 @@ function saveAppPreferences() {
 // DATABASE EDITORS LOGIC
 // ==========================================================================
 
-function renderAppTravelTimesList() {
-    const searchVal = document.getElementById("sim-app-search-travel-times").value.trim().toLowerCase();
-    const listContainer = document.getElementById("sim-app-travel-times-list");
-    listContainer.innerHTML = "";
-    
-    let filtered = travelTimesDatabase;
-    if (searchVal) {
-        filtered = travelTimesDatabase.filter(x => {
-            const bName = getBuildingName(x.siteId).toLowerCase();
-            return x.cityName.toLowerCase().includes(searchVal) || bName.includes(searchVal);
-        });
-    }
-    
-    if (filtered.length === 0) {
-        listContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">לא נמצאו רשומות</div>`;
-        return;
-    }
-    
-    filtered.forEach(item => {
-        const row = document.createElement("div");
-        row.className = "travel-time-item-row";
-        row.innerHTML = `
-            <div style="display: flex; flex-direction: column; gap: 4px;">
-                <span style="font-weight: bold; font-size: 13px;">${item.cityName}</span>
-                <span style="color: var(--text-muted); font-size: 11px;">אתר: ${getBuildingName(item.siteId)}</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <div style="text-align: left; font-size: 11px;">
-                    <div style="color: var(--primary-color); font-weight: bold;">הלוך: ${item.arrivalTimeMinutes} דק'</div>
-                    <div style="color: var(--accent-orange); font-weight: bold;">חזור: ${item.returnTimeMinutes} דק'</div>
-                </div>
-                <div class="table-actions">
-                    <button class="action-icon-btn edit" onclick="event.stopPropagation(); openSimTravelTimeModal('${item.cityName}', '${item.siteId}')"><i class="fa-solid fa-pen-to-square"></i></button>
-                    <button class="action-icon-btn delete" onclick="event.stopPropagation(); deleteSimTravelTime('${item.cityName}', '${item.siteId}')"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            </div>
-        `;
-        listContainer.appendChild(row);
-    });
-}
 
-function openSimTravelTimeModal(city = null, siteId = null) {
-    const isEdit = city !== null && siteId !== null;
-    document.getElementById("sim-modal-title").innerText = isEdit ? "עריכת זמני נסיעה" : "הוספת זמני נסיעה";
-    
-    const citySelect = document.getElementById("sim-input-city");
-    const siteSelect = document.getElementById("sim-input-site");
-    
-    // Populate city dropdown options
-    const citiesSet = new Set(["חיפה", "תל אביב", "חדרה", "אשדוד", "אשקלון"]);
-    travelTimesDatabase.forEach(x => citiesSet.add(x.cityName));
-    let cityHtml = "";
-    Array.from(citiesSet).sort().forEach(c => {
-        cityHtml += `<option value="${c}">${c}</option>`;
-    });
-    citySelect.innerHTML = cityHtml;
-    
-    // Populate sites dropdown options
-    let sitesHtml = "";
-    buildingsDatabase.forEach(b => {
-        sitesHtml += `<option value="${b.id}">${b.name}</option>`;
-    });
-    siteSelect.innerHTML = sitesHtml;
-    
-    if (isEdit) {
-        document.getElementById("sim-edit-original-city").value = city;
-        document.getElementById("sim-edit-original-site").value = siteId;
-        
-        citySelect.value = city;
-        citySelect.disabled = true;
-        siteSelect.value = siteId;
-        siteSelect.disabled = true;
-        
-        const record = travelTimesDatabase.find(x => x.cityName === city && x.siteId === siteId);
-        document.getElementById("sim-input-arrival").value = record ? record.arrivalTimeMinutes : 30;
-        document.getElementById("sim-input-return").value = record ? record.returnTimeMinutes : 30;
-        
-        document.getElementById("chk-sim-custom-city").checked = false;
-        document.getElementById("chk-sim-custom-city").disabled = true;
-        document.getElementById("sim-group-city-custom").style.display = "none";
-    } else {
-        document.getElementById("sim-edit-original-city").value = "";
-        document.getElementById("sim-edit-original-site").value = "";
-        
-        citySelect.disabled = false;
-        siteSelect.disabled = false;
-        
-        document.getElementById("sim-input-arrival").value = 30;
-        document.getElementById("sim-input-return").value = 30;
-        
-        document.getElementById("chk-sim-custom-city").checked = false;
-        document.getElementById("chk-sim-custom-city").disabled = false;
-        document.getElementById("sim-group-city-custom").style.display = "none";
-        document.getElementById("sim-input-custom-city").value = "";
-    }
-    
-    document.getElementById("sim-travel-time-modal").classList.add("active");
-}
-
-function saveSimTravelTime() {
-    const isEdit = document.getElementById("sim-edit-original-city").value !== "";
-    const isCustomCity = document.getElementById("chk-sim-custom-city").checked;
-    
-    let city = "";
-    if (isEdit) {
-        city = document.getElementById("sim-edit-original-city").value;
-    } else if (isCustomCity) {
-        city = document.getElementById("sim-input-custom-city").value.trim();
-    } else {
-        city = document.getElementById("sim-input-city").value;
-    }
-    
-    const siteId = isEdit ? document.getElementById("sim-edit-original-site").value : document.getElementById("sim-input-site").value;
-    const arrivalVal = parseInt(document.getElementById("sim-input-arrival").value) || 0;
-    const returnVal = parseInt(document.getElementById("sim-input-return").value) || 0;
-    
-    if (!city) {
-        alert("נא להזין שם עיר תקין");
-        return;
-    }
-    
-    if (isEdit) {
-        const idx = travelTimesDatabase.findIndex(x => x.cityName === city && x.siteId === siteId);
-        if (idx !== -1) {
-            travelTimesDatabase[idx].arrivalTimeMinutes = arrivalVal;
-            travelTimesDatabase[idx].returnTimeMinutes = returnVal;
-        }
-    } else {
-        // Check duplicate
-        const exists = travelTimesDatabase.some(x => x.cityName === city && x.siteId === siteId);
-        if (exists) {
-            alert("כבר קיימים זמני נסיעה עבור עיר ואתר אלו. נא בחר לערוך אותם.");
-            return;
-        }
-        travelTimesDatabase.push({
-            cityName: city,
-            siteId: siteId,
-            arrivalTimeMinutes: arrivalVal,
-            returnTimeMinutes: returnVal
-        });
-    }
-    
-    localStorage.setItem("iec_db_travel_times", JSON.stringify(travelTimesDatabase));
-    document.getElementById("sim-travel-time-modal").classList.remove("active");
-    
-    renderAppTravelTimesList();
-}
-
-function deleteSimTravelTime(city, siteId) {
-    if (confirm(`האם אתה בטוח שברצונך למחוק את זמני הנסיעה בין ${city} ל-${getBuildingName(siteId)}?`)) {
-        travelTimesDatabase = travelTimesDatabase.filter(x => !(x.cityName === city && x.siteId === siteId));
-        localStorage.setItem("iec_db_travel_times", JSON.stringify(travelTimesDatabase));
-        renderAppTravelTimesList();
-    }
-}
 
 // --------------------------------------------------------------------------
 // Buildings List & Modals
@@ -1596,14 +1325,10 @@ function saveSimBuilding() {
 }
 
 function deleteSimBuilding(id) {
-    if (confirm(`האם אתה בטוח שברצונך למחוק את אתר החברה הזה? מחיקתו תמחוק אוטומטית גם את כל זמני הנסיעה המשויכים אליו.`)) {
+    if (confirm(`האם אתה בטוח שברצונך למחוק את אתר החברה הזה?`)) {
         // Cascade delete building
         buildingsDatabase = buildingsDatabase.filter(x => x.id !== id);
         localStorage.setItem("iec_db_buildings", JSON.stringify(buildingsDatabase));
-        
-        // Cascade delete travel times associated with it
-        travelTimesDatabase = travelTimesDatabase.filter(x => x.siteId !== id);
-        localStorage.setItem("iec_db_travel_times", JSON.stringify(travelTimesDatabase));
         
         populateSiteSelectors();
         renderAppBuildingsList();
@@ -1612,8 +1337,6 @@ function deleteSimBuilding(id) {
 }
 
 // Global functions for inline HTML button triggers
-window.deleteSimTravelTime = deleteSimTravelTime;
-window.openSimTravelTimeModal = openSimTravelTimeModal;
 window.deleteSimBuilding = deleteSimBuilding;
 window.openSimBuildingModal = openSimBuildingModal;
 window.toggleBuildingPrimary = toggleBuildingPrimary;
