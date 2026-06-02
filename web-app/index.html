@@ -290,15 +290,12 @@
                         <div style="position:relative;">
                             <input type="text"
                                 id="settings-default-city"
-                                list="cities-source-datalist"
                                 placeholder="הקלד שם יישוב..."
                                 autocomplete="off"
                                 style="width:100%; padding:9px 36px 9px 12px; border-radius:10px; border:1.5px solid var(--border-color); background:rgba(120,120,120,0.06); color:var(--text-main); font-size:14px; font-family:var(--font-body); outline:none; text-align:right;">
                             <i class="fa-solid fa-location-dot" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--secondary-color); pointer-events:none;"></i>
+                            <div id="settings-city-dropdown" class="custom-autocomplete-dropdown"></div>
                         </div>
-                        <datalist id="cities-source-datalist">
-                            <!-- Populated dynamically from travelDatabaseSources -->
-                        </datalist>
                         <p style="font-size:11px; color:var(--text-muted); margin:0;">
                             <i class="fa-solid fa-circle-info" style="margin-left:3px;"></i>
                             עיר זו משמשת לחישוב זמני נסיעה לאתרים
@@ -417,6 +414,42 @@
             });
         }
     </script>
+
+    <style>
+    /* Custom Autocomplete Dropdown */
+    .custom-autocomplete-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin-top: 4px;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .custom-autocomplete-dropdown.active {
+        display: block;
+    }
+    .autocomplete-item {
+        padding: 10px 12px;
+        font-size: 14px;
+        color: var(--text-main);
+        cursor: pointer;
+        border-bottom: 1px solid var(--border-color);
+        text-align: right;
+    }
+    .autocomplete-item:last-child {
+        border-bottom: none;
+    }
+    .autocomplete-item:hover, .autocomplete-item:active {
+        background: rgba(0,0,0,0.05);
+    }
+    </style>
 
 </body>
 </html>

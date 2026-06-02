@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
             travelDatabaseCities = data.cities || [];    // Destination cities
             travelDatabaseSources = data.sources || data.cities || []; // Source settlements
             travelDatabaseTimes = data.times || {};
-            populateCityDropdowns();
+            renderCityAutocomplete(); // pre-render empty or full list
             populateSiteSelectors();
         })
         .catch(err => {
@@ -183,24 +183,35 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// Populate city datalist for settings screen (1.1)
-function populateCityDropdowns() {
-    if (!travelDatabaseSources.length) return;
+// Populate custom autocomplete dropdown for city setting
+function renderCityAutocomplete(searchTerm = "") {
+    const dropdown = document.getElementById("settings-city-dropdown");
+    if (!dropdown || !travelDatabaseSources) return;
     
-    // Populate the <datalist> for settings city input
-    const datalist = document.getElementById("cities-source-datalist");
-    if (datalist) {
-        datalist.innerHTML = travelDatabaseSources
-            .map(s => `<option value="${s}">`)
-            .join("");
+    dropdown.innerHTML = "";
+    
+    // Filter
+    const filtered = travelDatabaseSources.filter(c => c.includes(searchTerm));
+    
+    if (filtered.length === 0) {
+        dropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">לא נמצאו יישובים</div>`;
+        return;
     }
     
-    // If GPS city is already known and matches a source, use it
-    if (currentCityName && travelDatabaseSources.includes(currentCityName)) {
-        appPreferences.defaultCity = currentCityName;
-        saveAppPreferences();
-    }
+    // Render limit for perf
+    const limit = 50; 
+    filtered.slice(0, limit).forEach(city => {
+        const item = document.createElement("div");
+        item.className = "autocomplete-item";
+        item.textContent = city;
+        item.addEventListener("click", () => {
+            document.getElementById("settings-default-city").value = city;
+            dropdown.classList.remove("active");
+        });
+        dropdown.appendChild(item);
+    });
 }
+
 
 function populateSiteSelectors() {
     const arrivalSelect = document.getElementById("setup-arrival-site");
@@ -404,7 +415,26 @@ function bindUIEvents() {
         document.getElementById("settings-sheet").classList.remove("active");
     });
 
-
+    // Custom city autocomplete logic
+    const cityInput = document.getElementById("settings-default-city");
+    const cityDropdown = document.getElementById("settings-city-dropdown");
+    if (cityInput && cityDropdown) {
+        cityInput.addEventListener("input", (e) => {
+            cityDropdown.classList.add("active");
+            renderCityAutocomplete(e.target.value.trim());
+        });
+        cityInput.addEventListener("focus", (e) => {
+            cityDropdown.classList.add("active");
+            renderCityAutocomplete(e.target.value.trim());
+        });
+        
+        // Hide dropdown when clicking outside
+        document.addEventListener("click", (e) => {
+            if (!cityInput.contains(e.target) && !cityDropdown.contains(e.target)) {
+                cityDropdown.classList.remove("active");
+            }
+        });
+    }
 
     // Close push notification banner on click
     document.getElementById("ios-push-banner").addEventListener("click", () => {
