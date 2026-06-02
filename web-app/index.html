@@ -89,7 +89,7 @@
                 </button>
                 
                 <div style="margin-top: 15px; font-size: 11px; color: var(--text-muted); opacity: 0.7; text-align: center;">
-                    עודכן לאחרונה: 02/06/2026 18:00
+                    עודכן לאחרונה: 02/06/2026 18:25
                 </div>
             </div>
             
@@ -533,6 +533,50 @@
         background: rgba(0,0,0,0.05);
     }
     </style>
+
+    <!-- Smart Time Picker Modal -->
+    <div class="sim-modal-overlay" id="smart-time-picker-modal">
+        <div class="sim-modal-card" style="max-width: 320px; padding: 20px;">
+            <div class="sim-modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 8px;">
+                <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--text-main);">עדכון שעת הגעה</h3>
+                <button class="sim-modal-close" id="btn-close-smart-picker" style="background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer;">&times;</button>
+            </div>
+            <div class="sim-modal-body" style="display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 10px 0;">
+                <div style="font-size: 34px; font-weight: 700; font-family: monospace; letter-spacing: 1px; color: var(--text-main);" id="smart-picker-display">17:55</div>
+                
+                <!-- Hour select -->
+                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 180px; gap: 12px;">
+                    <button class="action-btn primary ripple" id="btn-hour-dec" style="width: 36px; height: 36px; border-radius: 50%; font-size: 18px; padding: 0; display: flex; align-items: center; justify-content: center;">-</button>
+                    <div style="text-align: center;">
+                        <span style="font-size: 10px; color: var(--text-muted); display: block;">שעות</span>
+                        <span style="font-size: 16px; font-weight: 700; color: var(--text-main);" id="smart-picker-hour-val">17</span>
+                    </div>
+                    <button class="action-btn primary ripple" id="btn-hour-inc" style="width: 36px; height: 36px; border-radius: 50%; font-size: 18px; padding: 0; display: flex; align-items: center; justify-content: center;">+</button>
+                </div>
+
+                <!-- Minute select -->
+                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 180px; gap: 12px;">
+                    <button class="action-btn primary ripple" id="btn-min-dec" style="width: 36px; height: 36px; border-radius: 50%; font-size: 18px; padding: 0; display: flex; align-items: center; justify-content: center;">-</button>
+                    <div style="text-align: center;">
+                        <span style="font-size: 10px; color: var(--text-muted); display: block;">דקות</span>
+                        <span style="font-size: 16px; font-weight: 700; color: var(--text-main);" id="smart-picker-min-val">55</span>
+                    </div>
+                    <button class="action-btn primary ripple" id="btn-min-inc" style="width: 36px; height: 36px; border-radius: 50%; font-size: 18px; padding: 0; display: flex; align-items: center; justify-content: center;">+</button>
+                </div>
+                
+                <!-- Quick presets -->
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; width: 100%; margin-top: 6px;">
+                    <button type="button" class="time-btn" id="btn-preset-now" style="background: rgba(120,120,120,0.1); border: 1px solid var(--border-color); color: var(--text-main); font-size: 11px; padding: 4px 10px; border-radius: 8px; cursor: pointer;">עכשיו</button>
+                    <button type="button" class="time-btn" id="btn-preset-minus10" style="background: rgba(120,120,120,0.1); border: 1px solid var(--border-color); color: var(--text-main); font-size: 11px; padding: 4px 10px; border-radius: 8px; cursor: pointer;">10- דק'</button>
+                    <button type="button" class="time-btn" id="btn-preset-minus30" style="background: rgba(120,120,120,0.1); border: 1px solid var(--border-color); color: var(--text-main); font-size: 11px; padding: 4px 10px; border-radius: 8px; cursor: pointer;">30- דק'</button>
+                </div>
+            </div>
+            <div class="sim-modal-footer" style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 10px;">
+                <button class="sim-modal-btn cancel" id="btn-cancel-smart-picker" style="height: 36px; padding: 0 12px; font-size: 13px;">ביטול</button>
+                <button class="sim-modal-btn confirm" id="btn-save-smart-picker" style="height: 36px; padding: 0 12px; font-size: 13px;">שמור</button>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>

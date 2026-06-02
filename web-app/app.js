@@ -133,6 +133,46 @@ function setTravelValueWithNote(inputId, noteId, val, destCity) {
     inputEl.value = displayVal;
 }
 
+let pickerHour = 17;
+let pickerMinute = 55;
+
+function openSmartTimePicker() {
+    const input = document.getElementById("setup-arrival-time");
+    if (!input) return;
+    
+    let currentVal = input.value.trim();
+    let parts = currentVal.split(":");
+    if (parts.length === 2) {
+        pickerHour = parseInt(parts[0]) || 0;
+        pickerMinute = parseInt(parts[1]) || 0;
+    } else {
+        const now = new Date();
+        pickerHour = now.getHours();
+        pickerMinute = now.getMinutes();
+    }
+    
+    updateSmartPickerUI();
+    const modal = document.getElementById("smart-time-picker-modal");
+    if (modal) modal.classList.add("active");
+}
+
+function updateSmartPickerUI() {
+    pickerHour = (pickerHour + 24) % 24;
+    pickerMinute = (pickerMinute + 60) % 60;
+    
+    const hh = String(pickerHour).padStart(2, '0');
+    const mm = String(pickerMinute).padStart(2, '0');
+    
+    const hourValEl = document.getElementById("smart-picker-hour-val");
+    if (hourValEl) hourValEl.innerText = hh;
+    
+    const minValEl = document.getElementById("smart-picker-min-val");
+    if (minValEl) minValEl.innerText = mm;
+    
+    const displayEl = document.getElementById("smart-picker-display");
+    if (displayEl) displayEl.innerText = `${hh}:${mm}`;
+}
+
 function initDatabases() {
     const savedBuildings = localStorage.getItem("iec_db_buildings");
     const savedVersion  = localStorage.getItem("iec_db_version");
@@ -844,6 +884,104 @@ function bindUIEvents() {
     if (gpsStatusBadge) {
         gpsStatusBadge.addEventListener("click", () => {
             startRealGPS();
+        });
+    }
+
+    // Smart Time Picker bindings
+    const timeInput = document.getElementById("setup-arrival-time");
+    if (timeInput) {
+        timeInput.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openSmartTimePicker();
+        });
+        timeInput.addEventListener("focus", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openSmartTimePicker();
+            timeInput.blur();
+        });
+    }
+
+    const closeSmartPicker = () => {
+        const modal = document.getElementById("smart-time-picker-modal");
+        if (modal) modal.classList.remove("active");
+    };
+
+    const btnClosePicker = document.getElementById("btn-close-smart-picker");
+    if (btnClosePicker) btnClosePicker.addEventListener("click", closeSmartPicker);
+
+    const btnCancelPicker = document.getElementById("btn-cancel-smart-picker");
+    if (btnCancelPicker) btnCancelPicker.addEventListener("click", closeSmartPicker);
+
+    const btnSavePicker = document.getElementById("btn-save-smart-picker");
+    if (btnSavePicker) {
+        btnSavePicker.addEventListener("click", () => {
+            const hh = String(pickerHour).padStart(2, '0');
+            const mm = String(pickerMinute).padStart(2, '0');
+            const input = document.getElementById("setup-arrival-time");
+            if (input) input.value = `${hh}:${mm}`;
+            closeSmartPicker();
+        });
+    }
+
+    const btnHourDec = document.getElementById("btn-hour-dec");
+    if (btnHourDec) btnHourDec.addEventListener("click", () => {
+        pickerHour--;
+        updateSmartPickerUI();
+    });
+
+    const btnHourInc = document.getElementById("btn-hour-inc");
+    if (btnHourInc) btnHourInc.addEventListener("click", () => {
+        pickerHour++;
+        updateSmartPickerUI();
+    });
+
+    const btnMinDec = document.getElementById("btn-min-dec");
+    if (btnMinDec) btnMinDec.addEventListener("click", () => {
+        pickerMinute = (pickerMinute - 5 + 60) % 60;
+        updateSmartPickerUI();
+    });
+
+    const btnMinInc = document.getElementById("btn-min-inc");
+    if (btnMinInc) btnMinInc.addEventListener("click", () => {
+        pickerMinute = (pickerMinute + 5) % 60;
+        updateSmartPickerUI();
+    });
+
+    const btnPresetNow = document.getElementById("btn-preset-now");
+    if (btnPresetNow) {
+        btnPresetNow.addEventListener("click", () => {
+            const now = new Date();
+            pickerHour = now.getHours();
+            pickerMinute = now.getMinutes();
+            updateSmartPickerUI();
+        });
+    }
+
+    const btnPresetMinus10 = document.getElementById("btn-preset-minus10");
+    if (btnPresetMinus10) {
+        btnPresetMinus10.addEventListener("click", () => {
+            pickerMinute = (pickerMinute - 10 + 60) % 60;
+            updateSmartPickerUI();
+        });
+    }
+
+    const btnPresetMinus30 = document.getElementById("btn-preset-minus30");
+    if (btnPresetMinus30) {
+        btnPresetMinus30.addEventListener("click", () => {
+            pickerMinute = (pickerMinute - 30 + 60) % 60;
+            updateSmartPickerUI();
+        });
+    }
+
+    const pickerModal = document.getElementById("smart-time-picker-modal");
+    if (pickerModal) {
+        pickerModal.addEventListener("click", (e) => {
+            const card = document.querySelector("#smart-time-picker-modal .sim-modal-card");
+            if (card && !card.contains(e.target)) {
+                closeSmartPicker();
+            }
         });
     }
 }
