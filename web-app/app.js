@@ -1008,16 +1008,18 @@ function openSetupSheet() {
         saveAppPreferences();
     }
     
+    // If no building detected, fallback to GPS city, then default city, then main office, then Haifa
+    const fallbackDest = currentCityName || appPreferences.defaultCity || appPreferences.mainOfficeCity || "חיפה";
+
     if (detectedBuilding) {
         arrivalInput.value = detectedBuilding.destinationCity;
         returnInput.value = detectedBuilding.destinationCity;
         document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(detectedBuilding);
         document.getElementById("setup-return-travel").value = lookupReturnTravelTime(detectedBuilding);
     } else {
-        const dest = appPreferences.mainOfficeCity || "חיפה";
-        arrivalInput.value = dest;
-        returnInput.value = dest;
-        const b = { destinationCity: dest };
+        arrivalInput.value = fallbackDest;
+        returnInput.value = fallbackDest;
+        const b = { destinationCity: fallbackDest };
         document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(b);
         document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
     }
