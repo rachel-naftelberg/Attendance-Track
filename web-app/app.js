@@ -151,10 +151,13 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch("travel_db.json")
         .then(res => res.json())
         .then(data => {
-            travelDatabaseCities = data.cities || [];    // Destination cities
             travelDatabaseSources = data.sources || data.cities || []; // Source settlements
             travelDatabaseTimes = data.times || {};
+            const destSet = new Set();
+            Object.values(travelDatabaseTimes).forEach(dObj => Object.keys(dObj).forEach(d => destSet.add(d)));
+            travelDatabaseCities = Array.from(destSet).sort((a,b) => a.localeCompare(b, 'he'));
             renderCityAutocomplete(); // pre-render empty or full list
+            renderOfficeAutocomplete();
             populateSiteSelectors();
         })
         .catch(err => {
@@ -206,6 +209,34 @@ function renderCityAutocomplete(searchTerm = "") {
         item.textContent = city;
         item.addEventListener("click", () => {
             document.getElementById("settings-default-city").value = city;
+            dropdown.classList.remove("active");
+        });
+        dropdown.appendChild(item);
+    });
+}
+
+// Populate custom autocomplete dropdown for office setting
+function renderOfficeAutocomplete(searchTerm = "") {
+    const dropdown = document.getElementById("settings-office-dropdown");
+    if (!dropdown || !travelDatabaseCities) return;
+    
+    dropdown.innerHTML = "";
+    
+    // Filter
+    const filtered = travelDatabaseCities.filter(c => c.includes(searchTerm));
+    
+    if (filtered.length === 0) {
+        dropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">לא נמצאו יישובים</div>`;
+        return;
+    }
+    
+    const limit = 50; 
+    filtered.slice(0, limit).forEach(city => {
+        const item = document.createElement("div");
+        item.className = "autocomplete-item";
+        item.textContent = city;
+        item.addEventListener("click", () => {
+            document.getElementById("settings-main-office-city").value = city;
             dropdown.classList.remove("active");
         });
         dropdown.appendChild(item);
@@ -357,10 +388,15 @@ function bindUIEvents() {
             alert("לא ניתן לשנות הגדרות כלליות במהלך משמרת פעילה!");
             return;
         }
-        // Populate city input with current GPS city or saved preference
+        // Populate city input with saved preference or current GPS city
         const cityInput = document.getElementById("settings-default-city");
         if (cityInput) {
-            cityInput.value = currentCityName || appPreferences.defaultCity || "";
+            cityInput.value = appPreferences.defaultCity || currentCityName || "";
+        }
+        
+        const officeInput = document.getElementById("settings-main-office-city");
+        if (officeInput) {
+            officeInput.value = appPreferences.mainOfficeCity || "";
         }
         
         document.getElementById("settings-default-snooze").checked = appPreferences.defaultSnooze;
@@ -387,6 +423,9 @@ function bindUIEvents() {
     document.getElementById("btn-settings-save").addEventListener("click", () => {
         const cityVal = document.getElementById("settings-default-city").value.trim();
         if (cityVal) appPreferences.defaultCity = cityVal;
+        
+        const officeVal = document.getElementById("settings-main-office-city").value.trim();
+        appPreferences.mainOfficeCity = officeVal;
         
         appPreferences.defaultSnooze = document.getElementById("settings-default-snooze").checked;
         appPreferences.defaultSnoozeInterval = parseInt(document.getElementById("settings-default-snooze-interval").value) || 30;
@@ -432,6 +471,27 @@ function bindUIEvents() {
         document.addEventListener("click", (e) => {
             if (!cityInput.contains(e.target) && !cityDropdown.contains(e.target)) {
                 cityDropdown.classList.remove("active");
+            }
+        });
+    }
+
+    // Custom office autocomplete logic
+    const officeInput = document.getElementById("settings-main-office-city");
+    const officeDropdown = document.getElementById("settings-office-dropdown");
+    if (officeInput && officeDropdown) {
+        officeInput.addEventListener("input", (e) => {
+            officeDropdown.classList.add("active");
+            renderOfficeAutocomplete(e.target.value.trim());
+        });
+        officeInput.addEventListener("focus", (e) => {
+            officeDropdown.classList.add("active");
+            renderOfficeAutocomplete(e.target.value.trim());
+        });
+        
+        // Hide dropdown when clicking outside
+        document.addEventListener("click", (e) => {
+            if (!officeInput.contains(e.target) && !officeDropdown.contains(e.target)) {
+                officeDropdown.classList.remove("active");
             }
         });
     }
@@ -879,6 +939,9 @@ function lookupArrivalTravelTime(city, siteId) {
     
     const building = buildingsDatabase.find(x => x.id === siteId);
     if (building && building.destinationCity) {
+        if (appPreferences.mainOfficeCity && building.destinationCity === appPreferences.mainOfficeCity) {
+            return 0;
+        }
         const times = getTravelTimeFromDB(city, building.destinationCity);
         if (times) return times[0];
     }
@@ -891,6 +954,9 @@ function lookupReturnTravelTime(city, siteId) {
     
     const building = buildingsDatabase.find(x => x.id === siteId);
     if (building && building.destinationCity) {
+        if (appPreferences.mainOfficeCity && building.destinationCity === appPreferences.mainOfficeCity) {
+            return 0;
+        }
         const times = getTravelTimeFromDB(city, building.destinationCity);
         if (times) return times[1];
     }

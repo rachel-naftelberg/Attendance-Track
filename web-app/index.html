@@ -87,6 +87,10 @@
                     <i class="fa-solid fa-play"></i>
                     התחלת עבודה מאתר מרוחק
                 </button>
+                
+                <div style="margin-top: 15px; font-size: 11px; color: var(--text-muted); opacity: 0.7; text-align: center;">
+                    עודכן לאחרונה: 02/06/2026 13:44
+                </div>
             </div>
             
             <!-- View 2: Active View -->
@@ -299,6 +303,25 @@
                         <p style="font-size:11px; color:var(--text-muted); margin:0;">
                             <i class="fa-solid fa-circle-info" style="margin-left:3px;"></i>
                             עיר זו משמשת לחישוב זמני נסיעה לאתרים
+                        </p>
+                </div>
+                
+                <div class="sheet-section">
+                    <h4>עיר משרד ראשי</h4>
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                        <label style="font-size:12px; color:var(--text-muted);">בחר מהרשימה או הקלד שם יישוב</label>
+                        <div style="position:relative;">
+                            <input type="text"
+                                id="settings-main-office-city"
+                                placeholder="הקלד שם יישוב..."
+                                autocomplete="off"
+                                style="width:100%; padding:9px 36px 9px 12px; border-radius:10px; border:1.5px solid var(--border-color); background:rgba(120,120,120,0.06); color:var(--text-main); font-size:14px; font-family:var(--font-body); outline:none; text-align:right;">
+                            <i class="fa-solid fa-building" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--secondary-color); pointer-events:none;"></i>
+                            <div id="settings-office-dropdown" class="custom-autocomplete-dropdown"></div>
+                        </div>
+                        <p style="font-size:11px; color:var(--text-muted); margin:0;">
+                            <i class="fa-solid fa-circle-info" style="margin-left:3px;"></i>
+                            נסיעות לאתר זה יחושבו כ-0 דקות
                         </p>
                     </div>
                 </div>
