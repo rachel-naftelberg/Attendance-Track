@@ -1,66 +1,5 @@
 // Predefined Default Databases
-const DEFAULT_BUILDINGS = [
-  {
-    "id": "haifa_headquarters",
-    "name": "מטה חברת החשמל (חיפה)",
-    "latitude": 32.7937,
-    "longitude": 34.9608,
-    "radius": 300,
-    "travelTimeMinutes": 30,
-    "destinationCity": "חיפה",
-    "isPrimary": true
-  },
-  {
-    "id": "orot_rabin",
-    "name": "תחנת הכוח אורות רבין (חדרה)",
-    "latitude": 32.4697,
-    "longitude": 34.8878,
-    "radius": 500,
-    "travelTimeMinutes": 45,
-    "destinationCity": "חדרה",
-    "isPrimary": true
-  },
-  {
-    "id": "rotenberg",
-    "name": "תחנת הכוח רוטנברג (אשקלון)",
-    "latitude": 31.6293,
-    "longitude": 34.5098,
-    "radius": 500,
-    "travelTimeMinutes": 60,
-    "destinationCity": "אשקלון",
-    "isPrimary": true
-  },
-  {
-    "id": "eshkol",
-    "name": "תחנת הכוח אשכול (אשדוד)",
-    "latitude": 31.8317,
-    "longitude": 34.6547,
-    "radius": 400,
-    "travelTimeMinutes": 45,
-    "destinationCity": "אשדוד",
-    "isPrimary": true
-  },
-  {
-    "id": "gezer",
-    "name": "תחנת הכוח גזר (רמלה)",
-    "latitude": 31.8906,
-    "longitude": 34.8814,
-    "radius": 400,
-    "travelTimeMinutes": 35,
-    "destinationCity": "רמלה",
-    "isPrimary": true
-  },
-  {
-    "id": "dan_district",
-    "name": "מחוז דן (תל אביב)",
-    "latitude": 32.0725,
-    "longitude": 34.7865,
-    "radius": 200,
-    "travelTimeMinutes": 40,
-    "destinationCity": "תל אביב - יפו",
-    "isPrimary": true
-  }
-];
+const DEFAULT_BUILDINGS = [];
 
 // Database of major Israeli cities for offline reverse geocoding fallback
 const CITIES_COORDINATES = [
@@ -121,7 +60,7 @@ let travelDatabaseSources = [];  // Source settlements (where employees live)
 let travelDatabaseTimes = {};
 
 // Version stamp - bump this to force-reset buildingsDatabase to DEFAULT_BUILDINGS
-const DB_VERSION = "v2";
+const DB_VERSION = "v3";
 
 function initDatabases() {
     const savedBuildings = localStorage.getItem("iec_db_buildings");
