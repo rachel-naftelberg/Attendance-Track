@@ -629,20 +629,8 @@ function getBuildingName(id) {
 }
 
 function getTravelTimeFromDB(city, destCity) {
-    if (!city || !destCity || !travelDatabaseCities.length) return null;
-    
-    const cityIdx = travelDatabaseCities.indexOf(city);
-    const destIdx = travelDatabaseCities.indexOf(destCity);
-    
-    if (cityIdx === -1 || destIdx === -1) return null;
-    
-    const cityKey = cityIdx.toString();
-    const destKey = destIdx.toString();
-    
-    if (travelDatabaseTimes[cityKey] && travelDatabaseTimes[cityKey][destKey]) {
-        return travelDatabaseTimes[cityKey][destKey]; // returns [arrival, return]
-    }
-    return null;
+    if (!city || !destCity || !travelDatabaseTimes) return null;
+    return travelDatabaseTimes[city]?.[destCity] || null;
 }
 
 function lookupArrivalTravelTime(city, siteId) {

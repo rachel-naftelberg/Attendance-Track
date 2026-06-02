@@ -1123,23 +1123,8 @@ function getBuildingName(id) {
 }
 
 function getTravelTimeFromDB(sourceCity, destCity) {
-    if (!sourceCity || !destCity) return null;
-    if (!travelDatabaseSources.length || !travelDatabaseCities.length) return null;
-    
-    // Source city is where the employee lives (use sources array)
-    const srcIdx = travelDatabaseSources.indexOf(sourceCity);
-    // Destination city is the IEC site city (use cities array)
-    const destIdx = travelDatabaseCities.indexOf(destCity);
-    
-    if (srcIdx === -1 || destIdx === -1) return null;
-    
-    const srcKey = srcIdx.toString();
-    const destKey = destIdx.toString();
-    
-    if (travelDatabaseTimes[srcKey] && travelDatabaseTimes[srcKey][destKey]) {
-        return travelDatabaseTimes[srcKey][destKey]; // returns [arrival, return]
-    }
-    return null;
+    if (!sourceCity || !destCity || !travelDatabaseTimes) return null;
+    return travelDatabaseTimes[sourceCity]?.[destCity] || null;
 }
 
 
