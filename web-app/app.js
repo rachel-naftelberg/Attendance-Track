@@ -100,7 +100,8 @@ let appPreferences = {
     defaultSnooze: true,
     defaultSnoozeInterval: 30,   // Fix 3: default 30 min
     gpsUsageApproved: true,
-    clockUsageApproved: true
+    clockUsageApproved: true,
+    customTravelTimes: {}
 };
 
 // Real GPS Variables
@@ -241,6 +242,120 @@ function renderOfficeAutocomplete(searchTerm = "") {
         });
         dropdown.appendChild(item);
     });
+}
+
+function renderEditTravelAutocomplete(searchTerm = "") {
+    const dropdown = document.getElementById("settings-edit-travel-dropdown");
+    if (!dropdown || !travelDatabaseCities) return;
+    
+    dropdown.innerHTML = "";
+    const filtered = travelDatabaseCities.filter(c => c.includes(searchTerm));
+    
+    if (filtered.length === 0) {
+        dropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">לא נמצאו יישובים</div>`;
+        return;
+    }
+    
+    filtered.slice(0, 50).forEach(city => {
+        const item = document.createElement("div");
+        item.className = "autocomplete-item";
+        item.textContent = city;
+        item.addEventListener("click", () => {
+            document.getElementById("settings-edit-travel-dest").value = city;
+            dropdown.classList.remove("active");
+            updateTravelFields(city);
+        });
+        dropdown.appendChild(item);
+    });
+}
+
+function formatMinutes(mins) {
+    if (isNaN(mins) || mins === null) return "00:00";
+    const h = Math.floor(mins / 60).toString().padStart(2, '0');
+    const m = (mins % 60).toString().padStart(2, '0');
+    return `${h}:${m}`;
+}
+
+function lookupArrivalTravelTime(building) {
+    if (building.destinationCity === appPreferences.mainOfficeCity) {
+        return 0; // overrides completely
+    }
+    
+    const destCity = building.destinationCity;
+    if (appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity] && appPreferences.customTravelTimes[destCity].arrival !== undefined) {
+        return appPreferences.customTravelTimes[destCity].arrival;
+    }
+    
+    const originCity = appPreferences.defaultCity || currentCityName;
+    if (!originCity || !destCity) return 0;
+    
+    const times = travelDatabaseTimes[originCity]?.[destCity];
+    if (times && times.length >= 2) {
+        return times[0]; 
+    }
+    return 0; 
+}
+
+function lookupReturnTravelTime(building) {
+    if (building.destinationCity === appPreferences.mainOfficeCity) {
+        return 0; // overrides completely
+    }
+    
+    const destCity = building.destinationCity;
+    if (appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity] && appPreferences.customTravelTimes[destCity].return !== undefined) {
+        return appPreferences.customTravelTimes[destCity].return;
+    }
+    
+    const originCity = appPreferences.defaultCity || currentCityName;
+    if (!originCity || !destCity) return 0;
+    
+    const times = travelDatabaseTimes[originCity]?.[destCity];
+    if (times && times.length >= 2) {
+        return times[1]; 
+    }
+    return 0; 
+}
+
+function updateTravelFields(destCity) {
+    const originCity = document.getElementById("settings-default-city").value.trim() || appPreferences.defaultCity;
+    const fieldsContainer = document.getElementById("settings-edit-travel-fields");
+    
+    if (!originCity || !destCity || !travelDatabaseCities.includes(destCity)) {
+        fieldsContainer.style.display = "none";
+        return;
+    }
+    
+    fieldsContainer.style.display = "block";
+    
+    let distance = "--";
+    let totalTime = "--";
+    let arrival = "00:00";
+    let returnTime = "00:00";
+    
+    const times = travelDatabaseTimes[originCity]?.[destCity];
+    if (times && times.length >= 4) {
+        arrival = formatMinutes(times[0]);
+        returnTime = formatMinutes(times[1]);
+        distance = times[2] !== "" ? times[2] : "--";
+        totalTime = times[3] !== undefined ? formatMinutes(times[3]) : "--";
+    } else if (times && times.length >= 2) {
+        arrival = formatMinutes(times[0]);
+        returnTime = formatMinutes(times[1]);
+    }
+    
+    if (appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity]) {
+        if (appPreferences.customTravelTimes[destCity].arrival !== undefined) {
+            arrival = formatMinutes(appPreferences.customTravelTimes[destCity].arrival);
+        }
+        if (appPreferences.customTravelTimes[destCity].return !== undefined) {
+            returnTime = formatMinutes(appPreferences.customTravelTimes[destCity].return);
+        }
+    }
+    
+    document.getElementById("settings-travel-distance").value = distance;
+    document.getElementById("settings-travel-total").value = totalTime;
+    document.getElementById("settings-travel-arrival").value = arrival;
+    document.getElementById("settings-travel-return").value = returnTime;
 }
 
 
@@ -435,6 +550,25 @@ function bindUIEvents() {
         appPreferences.gpsUsageApproved = document.getElementById("settings-gps-approved").checked;
         appPreferences.clockUsageApproved = document.getElementById("settings-clock-approved").checked;
         
+        // Save Custom Travel Times
+        const destCity = document.getElementById("settings-edit-travel-dest").value.trim();
+        if (destCity && document.getElementById("settings-edit-travel-fields").style.display === "block") {
+            const arrStr = document.getElementById("settings-travel-arrival").value;
+            const retStr = document.getElementById("settings-travel-return").value;
+            if (!appPreferences.customTravelTimes) appPreferences.customTravelTimes = {};
+            
+            const pTime = (ts) => {
+                if (!ts) return undefined;
+                const p = ts.split(":");
+                return parseInt(p[0]||0, 10)*60 + parseInt(p[1]||0, 10);
+            };
+            
+            appPreferences.customTravelTimes[destCity] = {
+                arrival: pTime(arrStr),
+                return: pTime(retStr)
+            };
+        }
+        
         saveAppPreferences();
         
         // Restart or stop GPS based on preferences
@@ -492,6 +626,27 @@ function bindUIEvents() {
         document.addEventListener("click", (e) => {
             if (!officeInput.contains(e.target) && !officeDropdown.contains(e.target)) {
                 officeDropdown.classList.remove("active");
+            }
+        });
+    }
+
+    // Custom Edit Travel Times logic
+    const editTravelInput = document.getElementById("settings-edit-travel-dest");
+    const editTravelDropdown = document.getElementById("settings-edit-travel-dropdown");
+    if (editTravelInput && editTravelDropdown) {
+        editTravelInput.addEventListener("input", (e) => {
+            editTravelDropdown.classList.add("active");
+            renderEditTravelAutocomplete(e.target.value.trim());
+            updateTravelFields(e.target.value.trim());
+        });
+        editTravelInput.addEventListener("focus", (e) => {
+            editTravelDropdown.classList.add("active");
+            renderEditTravelAutocomplete(e.target.value.trim());
+        });
+        
+        document.addEventListener("click", (e) => {
+            if (!editTravelInput.contains(e.target) && !editTravelDropdown.contains(e.target)) {
+                editTravelDropdown.classList.remove("active");
             }
         });
     }
