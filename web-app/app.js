@@ -103,18 +103,31 @@ function findCanonicalCityName(rawCityName) {
     return rawCityName;
 }
 
+function hasOriginalTravelTime(originCity, destCity) {
+    if (!originCity || !destCity) return false;
+    const times = getTravelTimeFromDB(originCity, destCity);
+    if (!times) return false;
+    const arr = parseInt(times[0]) || 0;
+    const ret = parseInt(times[1]) || 0;
+    const tot = parseInt(times[3]) || 0;
+    return (arr > 0) || (ret > 0) || (tot > 0);
+}
+
 function setTravelValueWithNote(inputId, noteId, val, destCity) {
     const inputEl = document.getElementById(inputId);
     const noteEl = document.getElementById(noteId);
     if (!inputEl) return;
     
-    let displayVal = val;
+    let displayVal = val.toString().replace("*", "").trim();
+    const originCity = appPreferences.defaultCity || currentCityName;
+    const hasOrig = hasOriginalTravelTime(originCity, destCity);
+    const isZero = (displayVal === "00:00" || displayVal === "0:00");
     const isCustom = appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity];
-    if (!isCustom && displayVal !== "00:00") {
+    
+    if (!isCustom && isZero && hasOrig) {
         if (!displayVal.includes("*")) displayVal += "*";
         if (noteEl) noteEl.style.display = "block";
     } else {
-        displayVal = displayVal.replace("*", "");
         if (noteEl) noteEl.style.display = "none";
     }
     inputEl.value = displayVal;

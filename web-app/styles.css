@@ -908,6 +908,9 @@ input:checked + .slider:before {
     font-family: var(--font-body) !important;
     box-shadow: none !important;
     transition: border-color 0.2s ease !important;
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    pointer-events: auto !important;
 }
 .editable-input:focus {
     border-color: var(--primary-color) !important;
