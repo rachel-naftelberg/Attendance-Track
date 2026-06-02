@@ -269,6 +269,40 @@ function renderEditTravelAutocomplete(searchTerm = "") {
     });
 }
 
+function renderSetupAutocomplete(searchTerm, type) {
+    const dropdown = document.getElementById(type === "arrival" ? "setup-arrival-dropdown" : "setup-return-dropdown");
+    if (!dropdown || !travelDatabaseCities) return;
+    
+    dropdown.innerHTML = "";
+    const filtered = travelDatabaseCities.filter(c => c.includes(searchTerm));
+    
+    if (filtered.length === 0) {
+        dropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">לא נמצאו יישובים</div>`;
+        return;
+    }
+    
+    filtered.slice(0, 50).forEach(city => {
+        const item = document.createElement("div");
+        item.className = "autocomplete-item";
+        item.textContent = city;
+        item.addEventListener("click", () => {
+            document.getElementById(`setup-${type}-custom`).value = city;
+            dropdown.classList.remove("active");
+            
+            const b = { destinationCity: city };
+            const time = type === "arrival" ? lookupArrivalTravelTime(b) : lookupReturnTravelTime(b);
+            document.getElementById(`setup-${type}-travel`).value = time;
+            
+            if (type === "arrival") {
+                const returnCustom = document.getElementById("setup-return-custom");
+                returnCustom.value = city;
+                document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
+            }
+        });
+        dropdown.appendChild(item);
+    });
+}
+
 function formatMinutes(mins) {
     if (isNaN(mins) || mins === null) return "00:00";
     const h = Math.floor(mins / 60).toString().padStart(2, '0');
@@ -402,47 +436,94 @@ function bindUIEvents() {
     
     document.getElementById("setup-arrival-site").addEventListener("change", (e) => {
         const val = e.target.value;
-        const city = appPreferences.defaultCity || currentCityName || "חיפה";
+        const customContainer = document.getElementById("setup-arrival-custom-container");
+        customContainer.style.display = (val === "other") ? "block" : "none";
         
-        // Show/hide custom text field
-        const customInput = document.getElementById("setup-arrival-custom");
-        customInput.style.display = (val === "other") ? "block" : "none";
-        
+        let arrivalCity = "";
         if (val !== "other") {
-            document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(city, val);
+            const b = buildingsDatabase.find(x => x.id === val);
+            if (b) {
+                arrivalCity = b.destinationCity;
+                document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(b);
+            }
         }
         
         // Sync return site by default
         const returnSelect = document.getElementById("setup-return-site");
         returnSelect.value = val;
-        const customReturn = document.getElementById("setup-return-custom");
-        customReturn.style.display = (val === "other") ? "block" : "none";
-        if (customInput.value) customReturn.value = customInput.value;
+        const returnCustomContainer = document.getElementById("setup-return-custom-container");
+        returnCustomContainer.style.display = (val === "other") ? "block" : "none";
         
         if (val !== "other") {
-            document.getElementById("setup-return-travel").value = lookupReturnTravelTime(city, val);
+            const b = buildingsDatabase.find(x => x.id === val);
+            if (b) {
+                document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
+            }
+        } else {
+            const customInput = document.getElementById("setup-arrival-custom");
+            const customReturn = document.getElementById("setup-return-custom");
+            if (customInput.value) customReturn.value = customInput.value;
         }
     });
     
     document.getElementById("setup-arrival-custom").addEventListener("input", (e) => {
         // Sync custom return text too
         const returnCustom = document.getElementById("setup-return-custom");
-        if (returnCustom.style.display !== "none") {
+        const returnContainer = document.getElementById("setup-return-custom-container");
+        if (returnContainer.style.display !== "none") {
             returnCustom.value = e.target.value;
         }
     });
     
     document.getElementById("setup-return-site").addEventListener("change", (e) => {
         const val = e.target.value;
-        const city = appPreferences.defaultCity || currentCityName || "חיפה";
-        
-        const customReturn = document.getElementById("setup-return-custom");
-        customReturn.style.display = (val === "other") ? "block" : "none";
+        const customContainer = document.getElementById("setup-return-custom-container");
+        customContainer.style.display = (val === "other") ? "block" : "none";
         
         if (val !== "other") {
-            document.getElementById("setup-return-travel").value = lookupReturnTravelTime(city, val);
+            const b = buildingsDatabase.find(x => x.id === val);
+            if (b) {
+                document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
+            }
         }
     });
+    
+    // Add Setup Screen Autocomplete Logic
+    const arrivalCustomInput = document.getElementById("setup-arrival-custom");
+    const arrivalDropdown = document.getElementById("setup-arrival-dropdown");
+    if (arrivalCustomInput && arrivalDropdown) {
+        arrivalCustomInput.addEventListener("input", (e) => {
+            arrivalDropdown.classList.add("active");
+            renderSetupAutocomplete(e.target.value.trim(), "arrival");
+        });
+        arrivalCustomInput.addEventListener("focus", (e) => {
+            arrivalDropdown.classList.add("active");
+            renderSetupAutocomplete(e.target.value.trim(), "arrival");
+        });
+        document.addEventListener("click", (e) => {
+            if (!arrivalCustomInput.contains(e.target) && !arrivalDropdown.contains(e.target)) {
+                arrivalDropdown.classList.remove("active");
+            }
+        });
+    }
+
+    const returnCustomInput = document.getElementById("setup-return-custom");
+    const returnDropdown = document.getElementById("setup-return-dropdown");
+    if (returnCustomInput && returnDropdown) {
+        returnCustomInput.addEventListener("input", (e) => {
+            returnDropdown.classList.add("active");
+            renderSetupAutocomplete(e.target.value.trim(), "return");
+        });
+        returnCustomInput.addEventListener("focus", (e) => {
+            returnDropdown.classList.add("active");
+            renderSetupAutocomplete(e.target.value.trim(), "return");
+        });
+        document.addEventListener("click", (e) => {
+            if (!returnCustomInput.contains(e.target) && !returnDropdown.contains(e.target)) {
+                returnDropdown.classList.remove("active");
+            }
+        });
+    }
     
     // Live Snooze Toggle
     document.getElementById("chk-active-snooze").addEventListener("change", (e) => {

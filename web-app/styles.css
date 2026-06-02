@@ -900,21 +900,21 @@ input:checked + .slider:before {
     font-weight: 700;
 }
 .editable-input {
-    background: rgba(23, 162, 184, 0.08) !important;
-    border: 1.5px solid rgba(23, 162, 184, 0.5) !important;
+    background: rgba(120, 120, 120, 0.06) !important;
+    border: 1.5px solid var(--border-color) !important;
     border-radius: 8px !important;
     color: var(--text-main) !important;
-    font-weight: 700 !important;
-    box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.1) !important;
-    transition: box-shadow 0.2s ease !important;
+    font-weight: 500 !important;
+    font-family: var(--font-body) !important;
+    box-shadow: none !important;
+    transition: border-color 0.2s ease !important;
 }
 .editable-input:focus {
-    box-shadow: 0 0 0 4px rgba(23, 162, 184, 0.25) !important;
-    border-color: var(--secondary-color) !important;
+    border-color: var(--primary-color) !important;
     outline: none !important;
 }
 .dark-mode .editable-input {
-    background: rgba(23, 162, 184, 0.12) !important;
+    background: rgba(120, 120, 120, 0.12) !important;
 }
 
 

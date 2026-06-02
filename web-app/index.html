@@ -89,7 +89,7 @@
                 </button>
                 
                 <div style="margin-top: 15px; font-size: 11px; color: var(--text-muted); opacity: 0.7; text-align: center;">
-                    עודכן לאחרונה: 02/06/2026 14:58
+                    עודכן לאחרונה: 02/06/2026 15:08
                 </div>
             </div>
             
@@ -231,8 +231,13 @@
                             <!-- Dynamic options -->
                         </select>
                         <!-- Custom text input shown when "other" selected -->
-                        <input type="text" id="setup-arrival-custom" placeholder="הקלד שם יישוב / אתר..."
-                            style="display:none; width:100%; padding:6px 10px; border-radius:8px; border:1.5px solid rgba(23,162,184,0.5); background:rgba(23,162,184,0.08); color:var(--text-main); font-size:13px; outline:none;">
+                        <div style="position:relative; display:none;" id="setup-arrival-custom-container">
+                            <input type="text" id="setup-arrival-custom" placeholder="הקלד שם יישוב / אתר..."
+                                autocomplete="off" class="editable-input"
+                                style="width:100%; padding:9px 36px 9px 12px; outline:none; text-align:right;">
+                            <i class="fa-solid fa-map-pin" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--secondary-color); pointer-events:none;"></i>
+                            <div id="setup-arrival-dropdown" class="custom-autocomplete-dropdown"></div>
+                        </div>
                     </div>
                     
                     <!-- EDITABLE: Arrival travel time -->
@@ -259,8 +264,13 @@
                             <!-- Dynamic options -->
                         </select>
                         <!-- Custom text input shown when "other" selected -->
-                        <input type="text" id="setup-return-custom" placeholder="הקלד שם יישוב / אתר..."
-                            style="display:none; width:100%; padding:6px 10px; border-radius:8px; border:1.5px solid rgba(23,162,184,0.5); background:rgba(23,162,184,0.08); color:var(--text-main); font-size:13px; outline:none;">
+                        <div style="position:relative; display:none;" id="setup-return-custom-container">
+                            <input type="text" id="setup-return-custom" placeholder="הקלד שם יישוב / אתר..."
+                                autocomplete="off" class="editable-input"
+                                style="width:100%; padding:9px 36px 9px 12px; outline:none; text-align:right;">
+                            <i class="fa-solid fa-map-pin" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--secondary-color); pointer-events:none;"></i>
+                            <div id="setup-return-dropdown" class="custom-autocomplete-dropdown"></div>
+                        </div>
                     </div>
                     
                     <!-- EDITABLE: Return travel time -->
