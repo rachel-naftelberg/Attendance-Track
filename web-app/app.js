@@ -419,13 +419,36 @@ function bindUIEvents() {
     if (arrivalInput && arrivalDropdown) {
         arrivalInput.addEventListener("input", (e) => {
             arrivalDropdown.classList.add("active");
-            renderSetupAutocomplete(e.target.value.trim(), "arrival");
+            const val = e.target.value.trim();
+            renderSetupAutocomplete(val, "arrival");
             
             // Sync return text too
             const returnInput = document.getElementById("setup-return-site");
             if (returnInput) {
-                returnInput.value = e.target.value;
+                returnInput.value = val;
             }
+            
+            // Auto update instantly if it matches a city perfectly
+            if (travelDatabaseCities && travelDatabaseCities.includes(val)) {
+                const b = { destinationCity: val };
+                document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(b);
+                if (returnInput && returnInput.value === val) {
+                    document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
+                }
+            }
+        });
+        arrivalInput.addEventListener("blur", (e) => {
+            setTimeout(() => {
+                const city = e.target.value.trim();
+                if (city) {
+                    const b = { destinationCity: city };
+                    document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(b);
+                    const returnInput = document.getElementById("setup-return-site");
+                    if (returnInput && returnInput.value === city) {
+                        document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
+                    }
+                }
+            }, 200);
         });
         arrivalInput.addEventListener("focus", (e) => {
             arrivalDropdown.classList.add("active");
@@ -443,7 +466,23 @@ function bindUIEvents() {
     if (returnInput && returnDropdown) {
         returnInput.addEventListener("input", (e) => {
             returnDropdown.classList.add("active");
-            renderSetupAutocomplete(e.target.value.trim(), "return");
+            const val = e.target.value.trim();
+            renderSetupAutocomplete(val, "return");
+            
+            // Auto update instantly if it matches a city perfectly
+            if (travelDatabaseCities && travelDatabaseCities.includes(val)) {
+                const b = { destinationCity: val };
+                document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
+            }
+        });
+        returnInput.addEventListener("blur", (e) => {
+            setTimeout(() => {
+                const city = e.target.value.trim();
+                if (city) {
+                    const b = { destinationCity: city };
+                    document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
+                }
+            }, 200);
         });
         returnInput.addEventListener("focus", (e) => {
             returnDropdown.classList.add("active");
