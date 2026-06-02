@@ -824,6 +824,8 @@ function bindUIEvents() {
             const note = document.getElementById("settings-return-travel-note");
             if (note) note.style.display = "none";
         });
+    }
+    
     // GPS Badge Manual Refresh Click
     const gpsStatusBadge = document.getElementById("gps-status-badge");
     if (gpsStatusBadge) {
