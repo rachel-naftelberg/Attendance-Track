@@ -354,46 +354,14 @@
                     </div>
                 </div>
                 
-                <div class="sheet-section" style="margin-top: 15px;">
-                    <!-- 1.2: Renamed to "ניהול זמני נסיעה" -->
-                    <h4>ניהול נתונים</h4>
-                    <div class="form-row" id="btn-settings-open-buildings" style="cursor: pointer; padding: 10px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <i class="fa-solid fa-route" style="color: var(--success-green); font-size: 14px;"></i>
-                            <span style="color: var(--text-main); font-size: 13px; font-weight: 600;">ניהול זמני נסיעה</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-left" style="color: var(--text-muted); font-size: 11px;"></i>
-                    </div>
-                    
-                    <div class="settings-footer-note" style="margin-top: 20px; padding: 10px 0; border-top: 1px solid var(--border-color);">
-                        <p style="font-size: 11px; color: var(--text-muted); line-height: 1.4; text-align: right; margin: 0;">
-                            <strong>שים לב:</strong> כל הנתונים נמחקים בסימון סיום עבודה, או בסוף היום (Zero Storage).
-                        </p>
-                    </div>
-                </div>
+                <!-- The 'ניהול נתונים' section was removed per user request -->
+
             </div>
         </div>
         
 
-        <!-- ================================================================ -->
-        <!-- Buildings List Sheet - ניהול זמני נסיעה (1.2 renamed)           -->
-        <!-- ================================================================ -->
-        <div class="setup-sheet" id="buildings-list-sheet">
-            <div class="sheet-header">
-                <button class="sheet-btn cancel" id="btn-buildings-list-close">סגור</button>
-                <h3>ניהול זמני נסיעה</h3>
-                <button class="sheet-btn confirm" id="btn-buildings-list-add"><i class="fa-solid fa-plus"></i></button>
-            </div>
-            
-            <div class="sheet-content" style="padding: 0;">
-                <div style="padding: 10px 16px;">
-                    <input type="text" id="sim-app-search-buildings" placeholder="חפש לפי שם אתר..." style="width:100%; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.04); color: var(--text-main); font-size: 13px; text-align: right; outline: none;">
-                </div>
-                <div id="sim-app-buildings-list" style="padding: 0 16px; display: flex; flex-direction: column; overflow-y: auto;">
-                    <!-- Populated dynamically -->
-                </div>
-            </div>
-        </div>
+        <!-- The buildings list sheet was removed per user request -->
+
 
         <!-- Onboarding Screen -->
         <div class="onboarding-screen" id="onboarding-screen">
@@ -432,55 +400,8 @@
 
 
 
-    <!-- PWA Buildings Add/Edit Modal (iOS-style standalone) -->
-    <div class="sim-modal-overlay" id="sim-building-modal">
-        <div class="sim-modal-card">
-            <div class="sim-modal-header">
-                <h3 id="sim-building-modal-title">הוספת אתר חברה</h3>
-                <button class="sim-modal-close" id="btn-sim-building-modal-close">&times;</button>
-            </div>
-            <div class="sim-modal-body">
-                <input type="hidden" id="sim-edit-original-building-id">
-                
-                <div class="sim-form-group">
-                    <label for="sim-input-building-name">שם האתר</label>
-                    <input type="text" id="sim-input-building-name" placeholder="לדוגמה: בניין המה״ר">
-                </div>
-                
-                <div class="sim-form-group">
-                    <label for="sim-input-building-lat">קו רוחב (Latitude)</label>
-                    <input type="number" id="sim-input-building-lat" step="any" placeholder="32.7937">
-                </div>
-                
-                <div class="sim-form-group">
-                    <label for="sim-input-building-lng">קו אורך (Longitude)</label>
-                    <input type="number" id="sim-input-building-lng" step="any" placeholder="34.9608">
-                </div>
-                
-                <div class="sim-form-group" style="flex-direction: row; justify-content: flex-start; align-items: center; gap: 8px; margin: 4px 0;">
-                    <button type="button" class="time-btn" id="btn-sim-building-prefill-gps" style="width: auto; background: rgba(23, 162, 184, 0.15); color: var(--secondary-color); font-size: 11px; padding: 6px 12px; border: 1px solid rgba(23, 162, 184, 0.3);">
-                        <i class="fa-solid fa-location-crosshairs"></i> עדכן לפי מיקום GPS נוכחי
-                    </button>
-                </div>
-                
-                <div class="sim-form-group">
-                    <label for="sim-input-building-radius">רדיוס זיהוי (מטרים)</label>
-                    <input type="number" id="sim-input-building-radius" min="10" max="2000" value="300">
-                </div>
-                
-                <div class="sim-form-group">
-                    <label for="sim-input-building-dest-city">עיר נסיעה (לחישוב זמנים)</label>
-                    <select id="sim-input-building-dest-city">
-                        <!-- Loaded dynamically -->
-                    </select>
-                </div>
-            </div>
-            <div class="sim-modal-footer">
-                <button class="sim-modal-btn cancel" id="btn-sim-building-modal-cancel">ביטול</button>
-                <button class="sim-modal-btn confirm" id="btn-sim-building-modal-save">שמור</button>
-            </div>
-        </div>
-    </div>
+    <!-- PWA Buildings Add/Edit Modal was removed per user request -->
+
 
     <!-- Audio Element for Alert sounds -->
     <audio id="alert-sound" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-84.wav" preload="auto"></audio>
