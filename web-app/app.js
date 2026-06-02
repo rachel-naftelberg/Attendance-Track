@@ -312,43 +312,47 @@ function formatMinutes(mins) {
 }
 
 function lookupArrivalTravelTime(building) {
-    if (building.destinationCity === appPreferences.mainOfficeCity) {
+    if (!building || !building.destinationCity) return 30;
+    
+    const destCity = building.destinationCity;
+    if (appPreferences.mainOfficeCity && destCity === appPreferences.mainOfficeCity) {
         return 0; // overrides completely
     }
     
-    const destCity = building.destinationCity;
     if (appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity] && appPreferences.customTravelTimes[destCity].arrival !== undefined) {
         return appPreferences.customTravelTimes[destCity].arrival;
     }
     
     const originCity = appPreferences.defaultCity || currentCityName;
-    if (!originCity || !destCity) return 0;
+    if (!originCity || !destCity) return 30;
     
-    const times = travelDatabaseTimes[originCity]?.[destCity];
+    const times = getTravelTimeFromDB(originCity, destCity);
     if (times && times.length >= 2) {
         return times[0]; 
     }
-    return 0; 
+    return 30; 
 }
 
 function lookupReturnTravelTime(building) {
-    if (building.destinationCity === appPreferences.mainOfficeCity) {
+    if (!building || !building.destinationCity) return 30;
+    
+    const destCity = building.destinationCity;
+    if (appPreferences.mainOfficeCity && destCity === appPreferences.mainOfficeCity) {
         return 0; // overrides completely
     }
     
-    const destCity = building.destinationCity;
     if (appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity] && appPreferences.customTravelTimes[destCity].return !== undefined) {
         return appPreferences.customTravelTimes[destCity].return;
     }
     
     const originCity = appPreferences.defaultCity || currentCityName;
-    if (!originCity || !destCity) return 0;
+    if (!originCity || !destCity) return 30;
     
-    const times = travelDatabaseTimes[originCity]?.[destCity];
+    const times = getTravelTimeFromDB(originCity, destCity);
     if (times && times.length >= 2) {
         return times[1]; 
     }
-    return 0; 
+    return 30; 
 }
 
 function updateTravelFields(destCity) {
@@ -367,7 +371,7 @@ function updateTravelFields(destCity) {
     let arrival = "00:00";
     let returnTime = "00:00";
     
-    const times = travelDatabaseTimes[originCity]?.[destCity];
+    const times = getTravelTimeFromDB(originCity, destCity);
     if (times && times.length >= 4) {
         arrival = formatMinutes(times[0]);
         returnTime = formatMinutes(times[1]);
@@ -1128,35 +1132,6 @@ function getTravelTimeFromDB(sourceCity, destCity) {
     return null;
 }
 
-function lookupArrivalTravelTime(city, siteId) {
-    if (city === "other" || siteId === "other") return 30;
-    
-    const building = buildingsDatabase.find(x => x.id === siteId);
-    if (building && building.destinationCity) {
-        if (appPreferences.mainOfficeCity && building.destinationCity === appPreferences.mainOfficeCity) {
-            return 0;
-        }
-        const times = getTravelTimeFromDB(city, building.destinationCity);
-        if (times) return times[0];
-    }
-    
-    return 30;
-}
-
-function lookupReturnTravelTime(city, siteId) {
-    if (city === "other" || siteId === "other") return 30;
-    
-    const building = buildingsDatabase.find(x => x.id === siteId);
-    if (building && building.destinationCity) {
-        if (appPreferences.mainOfficeCity && building.destinationCity === appPreferences.mainOfficeCity) {
-            return 0;
-        }
-        const times = getTravelTimeFromDB(city, building.destinationCity);
-        if (times) return times[1];
-    }
-    
-    return 30;
-}
 
 // ==========================================================================
 // ACTIVE SHIFT VIEWS AND MONITORING
