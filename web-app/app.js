@@ -995,6 +995,16 @@ function openSetupSheet() {
     const mm = String(now.getMinutes()).padStart(2, '0');
     
     document.getElementById("setup-arrival-time").value = `${hh}:${mm}`;
+
+    // Populate read-only profile city fields
+    const homeCityInput = document.getElementById("setup-user-home-city");
+    if (homeCityInput) {
+        homeCityInput.value = appPreferences.defaultCity || "לא הוגדרה";
+    }
+    const officeCityInput = document.getElementById("setup-user-office-city");
+    if (officeCityInput) {
+        officeCityInput.value = appPreferences.mainOfficeCity || "לא הוגדרה";
+    }
     
     const arrivalInput = document.getElementById("setup-arrival-site");
     const returnInput = document.getElementById("setup-return-site");

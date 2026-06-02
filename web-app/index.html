@@ -89,7 +89,7 @@
                 </button>
                 
                 <div style="margin-top: 15px; font-size: 11px; color: var(--text-muted); opacity: 0.7; text-align: center;">
-                    עודכן לאחרונה: 02/06/2026 16:15
+                    עודכן לאחרונה: 02/06/2026 16:30
                 </div>
             </div>
             
@@ -208,6 +208,20 @@
             </div>
             
             <div class="sheet-content">
+                <!-- User Profile Info (Read-only) (2) -->
+                <div class="sheet-section" style="margin-bottom: 5px;">
+                    <div style="display: flex; gap: 10px;">
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                            <label style="font-size: 11px; color: var(--text-muted); font-weight: 700;">עיר מגורים</label>
+                            <input type="text" id="setup-user-home-city" class="readonly-input" readonly value="--" style="width: 100%; padding: 9px 12px; border-radius: 10px; text-align: right; font-size: 13px;">
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                            <label style="font-size: 11px; color: var(--text-muted); font-weight: 700;">עיר משרד ראשי</label>
+                            <input type="text" id="setup-user-office-city" class="readonly-input" readonly value="--" style="width: 100%; padding: 9px 12px; border-radius: 10px; text-align: right; font-size: 13px;">
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Arrival Settings Section -->
                 <div class="sheet-section">
                     <h4>זמן הגעה ואתר נוכחי</h4>
@@ -215,7 +229,7 @@
                     <!-- EDITABLE: Arrival time (2.1) -->
                     <div class="form-row editable-field">
                         <label for="setup-arrival-time">
-                            <i class="fa-solid fa-clock" style="font-size:11px; color:var(--secondary-color); margin-left:4px;"></i>
+                            <i class="fa-solid fa-clock" style="font-size:11px; color:var(--text-muted); margin-left:4px;"></i>
                             שעת הגעה בפועל
                         </label>
                         <input type="time" id="setup-arrival-time" class="editable-input">
@@ -223,15 +237,15 @@
                     
                     <!-- EDITABLE: Arrival site – GPS default + searchable list (2.2) -->
                     <div class="form-row editable-field" style="flex-direction: column; align-items: stretch; gap: 6px;">
-                        <label style="color:var(--secondary-color); font-weight:700;">
-                            <i class="fa-solid fa-pen-to-square" style="font-size:11px; margin-left:4px;"></i>
+                        <label style="color:var(--text-main); font-weight:600;">
+                            <i class="fa-solid fa-pen-to-square" style="font-size:11px; margin-left:4px; color:var(--text-muted);"></i>
                             <span id="setup-arrival-site-label">אתר הגעה (לפי GPS)</span>
                         </label>
                         <div style="position:relative;" id="setup-arrival-site-container">
                             <input type="text" id="setup-arrival-site" placeholder="הקלד שם יישוב / אתר..."
                                 autocomplete="off" class="editable-input"
                                 style="width:100%; padding:9px 36px 9px 12px; outline:none; text-align:right;">
-                            <i class="fa-solid fa-map-pin" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--secondary-color); pointer-events:none;"></i>
+                            <i class="fa-solid fa-map-pin" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); pointer-events:none;"></i>
                             <div id="setup-arrival-dropdown" class="custom-autocomplete-dropdown"></div>
                         </div>
                     </div>
@@ -239,7 +253,7 @@
                     <!-- EDITABLE: Arrival travel time -->
                     <div class="form-row editable-field">
                         <label for="setup-arrival-travel">
-                            <i class="fa-solid fa-car-side" style="font-size:11px; color:var(--secondary-color); margin-left:4px;"></i>
+                            <i class="fa-solid fa-car-side" style="font-size:11px; color:var(--text-muted); margin-left:4px;"></i>
                             זמן נסיעה מהבית
                         </label>
                         <input type="text" id="setup-arrival-travel" placeholder="00:00" value="00:00" class="editable-input" style="text-align: center;">
@@ -252,15 +266,15 @@
                     
                     <!-- EDITABLE: Return site – default same as arrival (2.3) -->
                     <div class="form-row editable-field" style="flex-direction: column; align-items: stretch; gap: 6px;">
-                        <label style="color:var(--secondary-color); font-weight:700;">
-                            <i class="fa-solid fa-pen-to-square" style="font-size:11px; margin-left:4px;"></i>
+                        <label style="color:var(--text-main); font-weight:600;">
+                            <i class="fa-solid fa-pen-to-square" style="font-size:11px; margin-left:4px; color:var(--text-muted);"></i>
                             אתר חזרה
                         </label>
                         <div style="position:relative;" id="setup-return-site-container">
                             <input type="text" id="setup-return-site" placeholder="הקלד שם יישוב / אתר..."
                                 autocomplete="off" class="editable-input"
                                 style="width:100%; padding:9px 36px 9px 12px; outline:none; text-align:right;">
-                            <i class="fa-solid fa-map-pin" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--secondary-color); pointer-events:none;"></i>
+                            <i class="fa-solid fa-map-pin" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); pointer-events:none;"></i>
                             <div id="setup-return-dropdown" class="custom-autocomplete-dropdown"></div>
                         </div>
                     </div>
@@ -268,7 +282,7 @@
                     <!-- EDITABLE: Return travel time -->
                     <div class="form-row editable-field">
                         <label for="setup-return-travel">
-                            <i class="fa-solid fa-car-side" style="font-size:11px; color:var(--secondary-color); margin-left:4px;"></i>
+                            <i class="fa-solid fa-car-side" style="font-size:11px; color:var(--text-muted); margin-left:4px;"></i>
                             זמן נסיעה הביתה
                         </label>
                         <input type="text" id="setup-return-travel" placeholder="00:00" value="00:00" class="editable-input" style="text-align: center;">
