@@ -634,7 +634,7 @@ function getTravelTimeFromDB(city, destCity) {
 }
 
 function lookupArrivalTravelTime(city, siteId) {
-    if (city === "other" || siteId === "other") return 30;
+    if (city === "other" || siteId === "other") return 0;
     
     const building = buildingsDatabase.find(x => x.id === siteId);
     if (building && building.destinationCity) {
@@ -642,11 +642,11 @@ function lookupArrivalTravelTime(city, siteId) {
         if (times) return times[0];
     }
     
-    return 30;
+    return 0;
 }
 
 function lookupReturnTravelTime(city, siteId) {
-    if (city === "other" || siteId === "other") return 30;
+    if (city === "other" || siteId === "other") return 0;
     
     const building = buildingsDatabase.find(x => x.id === siteId);
     if (building && building.destinationCity) {
@@ -654,7 +654,7 @@ function lookupReturnTravelTime(city, siteId) {
         if (times) return times[1];
     }
     
-    return 30;
+    return 0;
 }
 
 // ==========================================================================

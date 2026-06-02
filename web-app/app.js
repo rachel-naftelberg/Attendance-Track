@@ -312,7 +312,7 @@ function formatMinutes(mins) {
 }
 
 function lookupArrivalTravelTime(building) {
-    if (!building || !building.destinationCity) return 30;
+    if (!building || !building.destinationCity) return 0;
     
     const destCity = building.destinationCity;
     if (appPreferences.mainOfficeCity && destCity === appPreferences.mainOfficeCity) {
@@ -324,17 +324,17 @@ function lookupArrivalTravelTime(building) {
     }
     
     const originCity = appPreferences.defaultCity || currentCityName;
-    if (!originCity || !destCity) return 30;
+    if (!originCity || !destCity) return 0;
     
     const times = getTravelTimeFromDB(originCity, destCity);
     if (times && times.length >= 2) {
         return times[0]; 
     }
-    return 30; 
+    return 0; 
 }
 
 function lookupReturnTravelTime(building) {
-    if (!building || !building.destinationCity) return 30;
+    if (!building || !building.destinationCity) return 0;
     
     const destCity = building.destinationCity;
     if (appPreferences.mainOfficeCity && destCity === appPreferences.mainOfficeCity) {
@@ -346,17 +346,26 @@ function lookupReturnTravelTime(building) {
     }
     
     const originCity = appPreferences.defaultCity || currentCityName;
-    if (!originCity || !destCity) return 30;
+    if (!originCity || !destCity) return 0;
     
     const times = getTravelTimeFromDB(originCity, destCity);
     if (times && times.length >= 2) {
         return times[1]; 
     }
-    return 30; 
+    return 0; 
 }
 
 function updateTravelFields(destCity) {
     const originCity = document.getElementById("settings-default-city").value.trim() || appPreferences.defaultCity;
+    // If the origin city (GPS or user selected) is not present in the travel database, default to 0 minutes
+    if (!travelDatabaseSources.includes(originCity)) {
+        // No travel data available – keep zeros and hide extra fields
+        document.getElementById("settings-travel-distance").value = "--";
+        document.getElementById("settings-travel-total").value = "--";
+        document.getElementById("settings-travel-arrival").value = "00:00";
+        document.getElementById("settings-travel-return").value = "00:00";
+        return;
+    }
     const fieldsContainer = document.getElementById("settings-edit-travel-fields");
     
     if (!originCity || !destCity || !travelDatabaseCities.includes(destCity)) {
@@ -389,6 +398,12 @@ function updateTravelFields(destCity) {
         if (appPreferences.customTravelTimes[destCity].return !== undefined) {
             returnTime = formatMinutes(appPreferences.customTravelTimes[destCity].return);
         }
+    }
+    
+    // Append asterisk for general travel times (non‑custom)
+    if (!(appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity])) {
+        if (arrival !== "00:00") arrival += "*";
+        if (returnTime !== "00:00") returnTime += "*";
     }
     
     document.getElementById("settings-travel-distance").value = distance;
@@ -1024,14 +1039,22 @@ function openSetupSheet() {
     if (detectedBuilding) {
         arrivalInput.value = detectedBuilding.destinationCity;
         returnInput.value = detectedBuilding.destinationCity;
-        document.getElementById("setup-arrival-travel").value = formatMinutes(lookupArrivalTravelTime(detectedBuilding));
-        document.getElementById("setup-return-travel").value = formatMinutes(lookupReturnTravelTime(detectedBuilding));
+        let arrVal = formatMinutes(lookupArrivalTravelTime(detectedBuilding));
+        let retVal = formatMinutes(lookupReturnTravelTime(detectedBuilding));
+        // Append asterisk if not using custom travel times
+        const destCity = detectedBuilding.destinationCity;
+        if (!(appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity])) {
+            if (arrVal !== "00:00") arrVal += "*";
+            if (retVal !== "00:00") retVal += "*";
+        }
+        document.getElementById("setup-arrival-travel").value = arrVal;
+        document.getElementById("setup-return-travel").value = retVal;
     } else {
         arrivalInput.value = fallbackDest;
         returnInput.value = fallbackDest;
         const b = { destinationCity: fallbackDest };
-        document.getElementById("setup-arrival-travel").value = formatMinutes(lookupArrivalTravelTime(b));
-        document.getElementById("setup-return-travel").value = formatMinutes(lookupReturnTravelTime(b));
+        document.getElementById("setup-arrival-travel").value = formatMinutes(0);
+        document.getElementById("setup-return-travel").value = formatMinutes(0); // fallback no travel time
     }
     
     document.getElementById("setup-sheet").classList.add("active");
