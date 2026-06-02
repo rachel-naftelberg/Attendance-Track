@@ -950,14 +950,8 @@ function openSetupSheet() {
     
     document.getElementById("setup-arrival-time").value = `${hh}:${mm}`;
     
-    const arrivalSelect = document.getElementById("setup-arrival-site");
-    const returnSelect = document.getElementById("setup-return-site");
-    const arrivalCustom = document.getElementById("setup-arrival-custom");
-    const returnCustom  = document.getElementById("setup-return-custom");
-    
-    // Reset custom fields
-    arrivalCustom.style.display = "none";
-    returnCustom.style.display = "none";
+    const arrivalInput = document.getElementById("setup-arrival-site");
+    const returnInput = document.getElementById("setup-return-site");
     
     // Fix 2.2: Update label to show GPS city
     const cityLabel = currentCityName || appPreferences.defaultCity || "";
@@ -976,17 +970,17 @@ function openSetupSheet() {
     }
     
     if (detectedBuilding) {
-        arrivalSelect.value = detectedBuilding.id;
-        returnSelect.value = detectedBuilding.id;
-        document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(defCity, detectedBuilding.id);
-        document.getElementById("setup-return-travel").value = lookupReturnTravelTime(defCity, detectedBuilding.id);
+        arrivalInput.value = detectedBuilding.destinationCity;
+        returnInput.value = detectedBuilding.destinationCity;
+        document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(detectedBuilding);
+        document.getElementById("setup-return-travel").value = lookupReturnTravelTime(detectedBuilding);
     } else {
-        arrivalSelect.value = "other";
-        returnSelect.value = "other";
-        arrivalCustom.style.display = "block";
-        returnCustom.style.display = "block";
-        document.getElementById("setup-arrival-travel").value = 30;
-        document.getElementById("setup-return-travel").value = 30;
+        const dest = appPreferences.mainOfficeCity || "חיפה";
+        arrivalInput.value = dest;
+        returnInput.value = dest;
+        const b = { destinationCity: dest };
+        document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(b);
+        document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
     }
     
     document.getElementById("setup-sheet").classList.add("active");
@@ -1011,21 +1005,10 @@ function confirmStartShift() {
     arrivalDateObj.setSeconds(0);
     arrivalDateObj.setMilliseconds(0);
     
-    const arrivalSiteId = document.getElementById("setup-arrival-site").value;
-    const returnSiteId  = document.getElementById("setup-return-site").value;
-    
-    // Resolve names for custom text fields
-    let arrivalName, returnName;
-    if (arrivalSiteId === "other") {
-        arrivalName = document.getElementById("setup-arrival-custom").value.trim() || "אתר אחר";
-    } else {
-        arrivalName = getBuildingName(arrivalSiteId);
-    }
-    if (returnSiteId === "other") {
-        returnName = document.getElementById("setup-return-custom").value.trim() || "אתר אחר";
-    } else {
-        returnName = getBuildingName(returnSiteId);
-    }
+    const arrivalName = document.getElementById("setup-arrival-site").value.trim() || "אתר הגעה";
+    const returnName = document.getElementById("setup-return-site").value.trim() || "אתר חזרה";
+    const arrivalSiteId = "other";
+    const returnSiteId = "other";
     
     const travelToVal   = parseInt(document.getElementById("setup-arrival-travel").value) || 0;
     const travelBackVal = parseInt(document.getElementById("setup-return-travel").value)  || 0;
