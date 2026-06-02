@@ -160,57 +160,6 @@ document.addEventListener("DOMContentLoaded", () => {
             renderCityAutocomplete(); // pre-render empty or full list
             renderOfficeAutocomplete();
             renderEditTravelAutocomplete();
-            
-            // Onboarding Autocompletes
-            const obCityInput = document.getElementById("onboarding-default-city");
-            const obCityDropdown = document.getElementById("onboarding-city-dropdown");
-            if (obCityInput && obCityDropdown) {
-                obCityInput.addEventListener("input", (e) => {
-                    obCityDropdown.classList.add("active");
-                    const term = e.target.value.trim();
-                    obCityDropdown.innerHTML = "";
-                    const filtered = travelDatabaseSources.filter(c => c.includes(term));
-                    if (filtered.length === 0) {
-                        obCityDropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">לא נמצאו יישובים</div>`;
-                        return;
-                    }
-                    filtered.slice(0, 50).forEach(city => {
-                        const item = document.createElement("div");
-                        item.className = "autocomplete-item";
-                        item.textContent = city;
-                        item.addEventListener("click", () => {
-                            obCityInput.value = city;
-                            obCityDropdown.classList.remove("active");
-                        });
-                        obCityDropdown.appendChild(item);
-                    });
-                });
-            }
-            
-            const obOfficeInput = document.getElementById("onboarding-office-city");
-            const obOfficeDropdown = document.getElementById("onboarding-office-dropdown");
-            if (obOfficeInput && obOfficeDropdown) {
-                obOfficeInput.addEventListener("input", (e) => {
-                    obOfficeDropdown.classList.add("active");
-                    const term = e.target.value.trim();
-                    obOfficeDropdown.innerHTML = "";
-                    const filtered = travelDatabaseCities.filter(c => c.includes(term));
-                    if (filtered.length === 0) {
-                        obOfficeDropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">לא נמצאו יישובים</div>`;
-                        return;
-                    }
-                    filtered.slice(0, 50).forEach(city => {
-                        const item = document.createElement("div");
-                        item.className = "autocomplete-item";
-                        item.textContent = city;
-                        item.addEventListener("click", () => {
-                            obOfficeInput.value = city;
-                            obOfficeDropdown.classList.remove("active");
-                        });
-                        obOfficeDropdown.appendChild(item);
-                    });
-                });
-            }
             populateSiteSelectors();
         })
         .catch(err => {
@@ -343,12 +292,12 @@ function renderSetupAutocomplete(searchTerm, type) {
             
             const b = { destinationCity: city };
             const time = type === "arrival" ? lookupArrivalTravelTime(b) : lookupReturnTravelTime(b);
-            document.getElementById(`setup-${type}-travel`).value = time;
+            document.getElementById(`setup-${type}-travel`).value = formatMinutes(time);
             
             if (type === "arrival") {
                 const returnInput = document.getElementById("setup-return-site");
                 returnInput.value = city;
-                document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
+                document.getElementById("setup-return-travel").value = formatMinutes(lookupReturnTravelTime(b));
             }
         });
         dropdown.appendChild(item);
@@ -483,9 +432,9 @@ function bindUIEvents() {
             // Auto update instantly if it matches a city perfectly
             if (travelDatabaseCities && travelDatabaseCities.includes(val)) {
                 const b = { destinationCity: val };
-                document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(b);
+                document.getElementById("setup-arrival-travel").value = formatMinutes(lookupArrivalTravelTime(b));
                 if (returnInput && returnInput.value === val) {
-                    document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
+                    document.getElementById("setup-return-travel").value = formatMinutes(lookupReturnTravelTime(b));
                 }
             }
         });
@@ -494,10 +443,10 @@ function bindUIEvents() {
                 const city = e.target.value.trim();
                 if (city) {
                     const b = { destinationCity: city };
-                    document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(b);
+                    document.getElementById("setup-arrival-travel").value = formatMinutes(lookupArrivalTravelTime(b));
                     const returnInput = document.getElementById("setup-return-site");
                     if (returnInput && returnInput.value === city) {
-                        document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
+                        document.getElementById("setup-return-travel").value = formatMinutes(lookupReturnTravelTime(b));
                     }
                 }
             }, 200);
@@ -524,7 +473,7 @@ function bindUIEvents() {
             // Auto update instantly if it matches a city perfectly
             if (travelDatabaseCities && travelDatabaseCities.includes(val)) {
                 const b = { destinationCity: val };
-                document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
+                document.getElementById("setup-return-travel").value = formatMinutes(lookupReturnTravelTime(b));
             }
         });
         returnInput.addEventListener("blur", (e) => {
@@ -532,7 +481,7 @@ function bindUIEvents() {
                 const city = e.target.value.trim();
                 if (city) {
                     const b = { destinationCity: city };
-                    document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
+                    document.getElementById("setup-return-travel").value = formatMinutes(lookupReturnTravelTime(b));
                 }
             }, 200);
         });
@@ -587,16 +536,6 @@ function bindUIEvents() {
     
     // Onboarding Submit
     document.getElementById("btn-onboarding-submit").addEventListener("click", () => {
-        const obCity = document.getElementById("onboarding-default-city").value.trim();
-        const obOffice = document.getElementById("onboarding-office-city").value.trim();
-        
-        if (!obCity) {
-            alert("חובה להזין עיר מגורים כדי לחשב זמני נסיעה.");
-            return;
-        }
-        
-        appPreferences.defaultCity = obCity;
-        appPreferences.mainOfficeCity = obOffice;
         appPreferences.gpsUsageApproved = true;
         appPreferences.clockUsageApproved = true;
         saveAppPreferences();
@@ -1056,7 +995,7 @@ function openSetupSheet() {
     const arrivalInput = document.getElementById("setup-arrival-site");
     const returnInput = document.getElementById("setup-return-site");
     
-    // Fix 2.2: Update label to show GPS city
+    // Update label to show GPS city
     const cityLabel = currentCityName || appPreferences.defaultCity || "";
     const arrivalLabelSpan = document.getElementById("setup-arrival-site-label");
     if (arrivalLabelSpan) {
@@ -1065,27 +1004,20 @@ function openSetupSheet() {
             : "אתר הגעה";
     }
     
-    // Use GPS city for travel time lookup; update preference if new
-    const defCity = currentCityName || appPreferences.defaultCity || "חיפה";
-    if (currentCityName && currentCityName !== appPreferences.defaultCity) {
-        appPreferences.defaultCity = currentCityName;
-        saveAppPreferences();
-    }
-    
     // If no building detected, fallback to GPS city, then default city, then main office, then Haifa
     const fallbackDest = currentCityName || appPreferences.defaultCity || appPreferences.mainOfficeCity || "חיפה";
 
     if (detectedBuilding) {
         arrivalInput.value = detectedBuilding.destinationCity;
         returnInput.value = detectedBuilding.destinationCity;
-        document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(detectedBuilding);
-        document.getElementById("setup-return-travel").value = lookupReturnTravelTime(detectedBuilding);
+        document.getElementById("setup-arrival-travel").value = formatMinutes(lookupArrivalTravelTime(detectedBuilding));
+        document.getElementById("setup-return-travel").value = formatMinutes(lookupReturnTravelTime(detectedBuilding));
     } else {
         arrivalInput.value = fallbackDest;
         returnInput.value = fallbackDest;
         const b = { destinationCity: fallbackDest };
-        document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(b);
-        document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
+        document.getElementById("setup-arrival-travel").value = formatMinutes(lookupArrivalTravelTime(b));
+        document.getElementById("setup-return-travel").value = formatMinutes(lookupReturnTravelTime(b));
     }
     
     document.getElementById("setup-sheet").classList.add("active");
@@ -1115,8 +1047,15 @@ function confirmStartShift() {
     const arrivalSiteId = "other";
     const returnSiteId = "other";
     
-    const travelToVal   = parseInt(document.getElementById("setup-arrival-travel").value) || 0;
-    const travelBackVal = parseInt(document.getElementById("setup-return-travel").value)  || 0;
+    const parseHHMM = (val) => {
+        if (!val) return 0;
+        const p = val.toString().split(":");
+        if (p.length === 1) return parseInt(p[0]) || 0;
+        return parseInt(p[0]||0, 10)*60 + parseInt(p[1]||0, 10);
+    };
+    
+    const travelToVal   = parseHHMM(document.getElementById("setup-arrival-travel").value);
+    const travelBackVal = parseHHMM(document.getElementById("setup-return-travel").value);
     
     const snoozeVal         = appPreferences.defaultSnooze;
     const snoozeIntervalVal = appPreferences.defaultSnoozeInterval || 30;

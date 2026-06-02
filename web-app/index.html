@@ -89,7 +89,7 @@
                 </button>
                 
                 <div style="margin-top: 15px; font-size: 11px; color: var(--text-muted); opacity: 0.7; text-align: center;">
-                    עודכן לאחרונה: 02/06/2026 15:52
+                    עודכן לאחרונה: 02/06/2026 16:04
                 </div>
             </div>
             
@@ -240,9 +240,9 @@
                     <div class="form-row editable-field">
                         <label for="setup-arrival-travel">
                             <i class="fa-solid fa-car-side" style="font-size:11px; color:var(--secondary-color); margin-left:4px;"></i>
-                            זמן נסיעה מהבית (דקות)
+                            זמן נסיעה מהבית
                         </label>
-                        <input type="number" id="setup-arrival-travel" min="0" max="240" value="0" class="editable-input">
+                        <input type="text" id="setup-arrival-travel" placeholder="00:00" value="00:00" class="editable-input" style="text-align: center;">
                     </div>
                 </div>
                 
@@ -269,9 +269,9 @@
                     <div class="form-row editable-field">
                         <label for="setup-return-travel">
                             <i class="fa-solid fa-car-side" style="font-size:11px; color:var(--secondary-color); margin-left:4px;"></i>
-                            זמן נסיעה הביתה (דקות)
+                            זמן נסיעה הביתה
                         </label>
-                        <input type="number" id="setup-return-travel" min="0" max="240" value="0" class="editable-input">
+                        <input type="text" id="setup-return-travel" placeholder="00:00" value="00:00" class="editable-input" style="text-align: center;">
                     </div>
                 </div>
             </div>
@@ -432,27 +432,9 @@
                     <i class="fa-solid fa-bolt"></i>
                 </div>
                 <h2>ברוך הבא!</h2>
-                <p>כדי שהאפליקציה תוכל לחשב זמני נסיעה בצורה מדויקת, אנא מלא את הפרטים הבאים ואשר את ההרשאות הנדרשות.</p>
+                <p>האפליקציה תזהה אוטומטית את מיקומך ותחשב זמני נסיעה. אנא אשר את הרשאות המיקום וההתראות כדי להמשיך.</p>
                 
-                <div style="text-align: right; width: 100%; margin-top: 15px; margin-bottom: 15px;">
-                    <div style="margin-bottom: 12px;">
-                        <label style="font-size: 12px; color: var(--text-muted); margin-bottom: 5px; display: block;">עיר מגורים (חובה לחישוב זמני נסיעה)</label>
-                        <div style="position:relative;">
-                            <input type="text" id="onboarding-default-city" placeholder="התחל להקליד שם יישוב..." autocomplete="off" class="editable-input" style="width:100%; padding:10px 12px; border-radius:10px; border:1.5px solid var(--border-color); background:rgba(120,120,120,0.06); color:var(--text-main); font-size:14px; font-family:var(--font-body); outline:none;">
-                            <div id="onboarding-city-dropdown" class="custom-autocomplete-dropdown"></div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label style="font-size: 12px; color: var(--text-muted); margin-bottom: 5px; display: block;">עיר משרד ראשי (אופציונלי - נסיעות לאתר זה יחושבו כ-0)</label>
-                        <div style="position:relative;">
-                            <input type="text" id="onboarding-office-city" placeholder="התחל להקליד שם יישוב..." autocomplete="off" class="editable-input" style="width:100%; padding:10px 12px; border-radius:10px; border:1.5px solid var(--border-color); background:rgba(120,120,120,0.06); color:var(--text-main); font-size:14px; font-family:var(--font-body); outline:none;">
-                            <div id="onboarding-office-dropdown" class="custom-autocomplete-dropdown"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="background: rgba(255,255,255,0.1); border-radius: 14px; padding: 16px; margin: 10px 0 20px 0; width: 100%; box-sizing: border-box; text-align: right;">
+                <div style="background: rgba(255,255,255,0.1); border-radius: 14px; padding: 16px; margin: 20px 0; width: 100%; box-sizing: border-box; text-align: right;">
                     <div style="display:flex; align-items:center; gap:10px; margin-bottom: 10px;">
                         <i class="fa-solid fa-location-dot" style="color:#7ee8fa; font-size:18px;"></i>
                         <div>
