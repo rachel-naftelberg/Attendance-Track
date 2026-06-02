@@ -286,7 +286,7 @@ function renderSetupAutocomplete(searchTerm, type) {
         item.className = "autocomplete-item";
         item.textContent = city;
         item.addEventListener("click", () => {
-            document.getElementById(`setup-${type}-custom`).value = city;
+            document.getElementById(`setup-${type}-site`).value = city;
             dropdown.classList.remove("active");
             
             const b = { destinationCity: city };
@@ -294,8 +294,8 @@ function renderSetupAutocomplete(searchTerm, type) {
             document.getElementById(`setup-${type}-travel`).value = time;
             
             if (type === "arrival") {
-                const returnCustom = document.getElementById("setup-return-custom");
-                returnCustom.value = city;
+                const returnInput = document.getElementById("setup-return-site");
+                returnInput.value = city;
                 document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
             }
         });
@@ -394,28 +394,7 @@ function updateTravelFields(destCity) {
 
 
 function populateSiteSelectors() {
-    const arrivalSelect = document.getElementById("setup-arrival-site");
-    const returnSelect = document.getElementById("setup-return-site");
-    
-    if (!arrivalSelect || !returnSelect) return;
-    
-    // Sort buildingsDatabase so isPrimary comes first
-    const sortedBuildings = [...buildingsDatabase].sort((a, b) => {
-        const aPri = a.isPrimary ? 1 : 0;
-        const bPri = b.isPrimary ? 1 : 0;
-        if (aPri !== bPri) return bPri - aPri;
-        return a.name.localeCompare(b.name, 'he');
-    });
-    
-    let htmlContent = "";
-    sortedBuildings.forEach(b => {
-        const prefix = b.isPrimary ? "⭐ " : "";
-        htmlContent += `<option value="${b.id}">${prefix}${b.name}</option>`;
-    });
-    htmlContent += `<option value="other">אחר (הזנה ידנית)</option>`;
-    
-    arrivalSelect.innerHTML = htmlContent;
-    returnSelect.innerHTML = htmlContent;
+    // Deprecated, no longer using predefined selects
 }
 
 function bindUIEvents() {
@@ -434,92 +413,44 @@ function bindUIEvents() {
         confirmStartShift();
     });
     
-    document.getElementById("setup-arrival-site").addEventListener("change", (e) => {
-        const val = e.target.value;
-        const customContainer = document.getElementById("setup-arrival-custom-container");
-        customContainer.style.display = (val === "other") ? "block" : "none";
-        
-        let arrivalCity = "";
-        if (val !== "other") {
-            const b = buildingsDatabase.find(x => x.id === val);
-            if (b) {
-                arrivalCity = b.destinationCity;
-                document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(b);
-            }
-        }
-        
-        // Sync return site by default
-        const returnSelect = document.getElementById("setup-return-site");
-        returnSelect.value = val;
-        const returnCustomContainer = document.getElementById("setup-return-custom-container");
-        returnCustomContainer.style.display = (val === "other") ? "block" : "none";
-        
-        if (val !== "other") {
-            const b = buildingsDatabase.find(x => x.id === val);
-            if (b) {
-                document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
-            }
-        } else {
-            const customInput = document.getElementById("setup-arrival-custom");
-            const customReturn = document.getElementById("setup-return-custom");
-            if (customInput.value) customReturn.value = customInput.value;
-        }
-    });
-    
-    document.getElementById("setup-arrival-custom").addEventListener("input", (e) => {
-        // Sync custom return text too
-        const returnCustom = document.getElementById("setup-return-custom");
-        const returnContainer = document.getElementById("setup-return-custom-container");
-        if (returnContainer.style.display !== "none") {
-            returnCustom.value = e.target.value;
-        }
-    });
-    
-    document.getElementById("setup-return-site").addEventListener("change", (e) => {
-        const val = e.target.value;
-        const customContainer = document.getElementById("setup-return-custom-container");
-        customContainer.style.display = (val === "other") ? "block" : "none";
-        
-        if (val !== "other") {
-            const b = buildingsDatabase.find(x => x.id === val);
-            if (b) {
-                document.getElementById("setup-return-travel").value = lookupReturnTravelTime(b);
-            }
-        }
-    });
-    
-    // Add Setup Screen Autocomplete Logic
-    const arrivalCustomInput = document.getElementById("setup-arrival-custom");
+    // Setup Screen Autocomplete Logic
+    const arrivalInput = document.getElementById("setup-arrival-site");
     const arrivalDropdown = document.getElementById("setup-arrival-dropdown");
-    if (arrivalCustomInput && arrivalDropdown) {
-        arrivalCustomInput.addEventListener("input", (e) => {
+    if (arrivalInput && arrivalDropdown) {
+        arrivalInput.addEventListener("input", (e) => {
             arrivalDropdown.classList.add("active");
             renderSetupAutocomplete(e.target.value.trim(), "arrival");
+            
+            // Sync return text too
+            const returnInput = document.getElementById("setup-return-site");
+            if (returnInput) {
+                returnInput.value = e.target.value;
+            }
         });
-        arrivalCustomInput.addEventListener("focus", (e) => {
+        arrivalInput.addEventListener("focus", (e) => {
             arrivalDropdown.classList.add("active");
             renderSetupAutocomplete(e.target.value.trim(), "arrival");
         });
         document.addEventListener("click", (e) => {
-            if (!arrivalCustomInput.contains(e.target) && !arrivalDropdown.contains(e.target)) {
+            if (!arrivalInput.contains(e.target) && !arrivalDropdown.contains(e.target)) {
                 arrivalDropdown.classList.remove("active");
             }
         });
     }
 
-    const returnCustomInput = document.getElementById("setup-return-custom");
+    const returnInput = document.getElementById("setup-return-site");
     const returnDropdown = document.getElementById("setup-return-dropdown");
-    if (returnCustomInput && returnDropdown) {
-        returnCustomInput.addEventListener("input", (e) => {
+    if (returnInput && returnDropdown) {
+        returnInput.addEventListener("input", (e) => {
             returnDropdown.classList.add("active");
             renderSetupAutocomplete(e.target.value.trim(), "return");
         });
-        returnCustomInput.addEventListener("focus", (e) => {
+        returnInput.addEventListener("focus", (e) => {
             returnDropdown.classList.add("active");
             renderSetupAutocomplete(e.target.value.trim(), "return");
         });
         document.addEventListener("click", (e) => {
-            if (!returnCustomInput.contains(e.target) && !returnDropdown.contains(e.target)) {
+            if (!returnInput.contains(e.target) && !returnDropdown.contains(e.target)) {
                 returnDropdown.classList.remove("active");
             }
         });
