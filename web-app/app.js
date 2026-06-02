@@ -159,6 +159,58 @@ document.addEventListener("DOMContentLoaded", () => {
             travelDatabaseCities = Array.from(destSet).sort((a,b) => a.localeCompare(b, 'he'));
             renderCityAutocomplete(); // pre-render empty or full list
             renderOfficeAutocomplete();
+            renderEditTravelAutocomplete();
+            
+            // Onboarding Autocompletes
+            const obCityInput = document.getElementById("onboarding-default-city");
+            const obCityDropdown = document.getElementById("onboarding-city-dropdown");
+            if (obCityInput && obCityDropdown) {
+                obCityInput.addEventListener("input", (e) => {
+                    obCityDropdown.classList.add("active");
+                    const term = e.target.value.trim();
+                    obCityDropdown.innerHTML = "";
+                    const filtered = travelDatabaseSources.filter(c => c.includes(term));
+                    if (filtered.length === 0) {
+                        obCityDropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">לא נמצאו יישובים</div>`;
+                        return;
+                    }
+                    filtered.slice(0, 50).forEach(city => {
+                        const item = document.createElement("div");
+                        item.className = "autocomplete-item";
+                        item.textContent = city;
+                        item.addEventListener("click", () => {
+                            obCityInput.value = city;
+                            obCityDropdown.classList.remove("active");
+                        });
+                        obCityDropdown.appendChild(item);
+                    });
+                });
+            }
+            
+            const obOfficeInput = document.getElementById("onboarding-office-city");
+            const obOfficeDropdown = document.getElementById("onboarding-office-dropdown");
+            if (obOfficeInput && obOfficeDropdown) {
+                obOfficeInput.addEventListener("input", (e) => {
+                    obOfficeDropdown.classList.add("active");
+                    const term = e.target.value.trim();
+                    obOfficeDropdown.innerHTML = "";
+                    const filtered = travelDatabaseCities.filter(c => c.includes(term));
+                    if (filtered.length === 0) {
+                        obOfficeDropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">לא נמצאו יישובים</div>`;
+                        return;
+                    }
+                    filtered.slice(0, 50).forEach(city => {
+                        const item = document.createElement("div");
+                        item.className = "autocomplete-item";
+                        item.textContent = city;
+                        item.addEventListener("click", () => {
+                            obOfficeInput.value = city;
+                            obOfficeDropdown.classList.remove("active");
+                        });
+                        obOfficeDropdown.appendChild(item);
+                    });
+                });
+            }
             populateSiteSelectors();
         })
         .catch(err => {
@@ -533,13 +585,25 @@ function bindUIEvents() {
         }
     });
     
-    // Onboarding Submit - Fix 5: just mark first launch done, GPS city is auto-detected
+    // Onboarding Submit
     document.getElementById("btn-onboarding-submit").addEventListener("click", () => {
-        // Mark onboarding as completed (don't ask again)
-        localStorage.setItem("iec_pref_onboarding_done", "true");
+        const obCity = document.getElementById("onboarding-default-city").value.trim();
+        const obOffice = document.getElementById("onboarding-office-city").value.trim();
+        
+        if (!obCity) {
+            alert("חובה להזין עיר מגורים כדי לחשב זמני נסיעה.");
+            return;
+        }
+        
+        appPreferences.defaultCity = obCity;
+        appPreferences.mainOfficeCity = obOffice;
         appPreferences.gpsUsageApproved = true;
         appPreferences.clockUsageApproved = true;
         saveAppPreferences();
+        
+        // Mark onboarding as completed (don't ask again)
+        localStorage.setItem("iec_pref_onboarding_done", "true");
+        
         document.getElementById("onboarding-screen").classList.remove("active");
         
         // Start GPS now that user approved
@@ -554,10 +618,10 @@ function bindUIEvents() {
             alert("לא ניתן לשנות הגדרות כלליות במהלך משמרת פעילה!");
             return;
         }
-        // Populate city input with saved preference or current GPS city
+        // Populate city input with saved preference
         const cityInput = document.getElementById("settings-default-city");
         if (cityInput) {
-            cityInput.value = appPreferences.defaultCity || currentCityName || "";
+            cityInput.value = appPreferences.defaultCity || "";
         }
         
         const officeInput = document.getElementById("settings-main-office-city");
