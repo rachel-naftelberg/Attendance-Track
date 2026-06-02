@@ -52,7 +52,7 @@
                 </div>
                 <div class="header-titles">
                     <h1>חברת החשמל</h1>
-                    <p>מערך החדשנות • Zero Storage</p>
+                    <p>רחל נפתלברג • Zero Storage</p>
                 </div>
                 <button class="theme-toggle" id="btn-theme-toggle" aria-label="שינוי ערכת נושא">
                     <i class="fa-solid fa-moon"></i>
@@ -89,7 +89,7 @@
                 </button>
                 
                 <div style="margin-top: 15px; font-size: 11px; color: var(--text-muted); opacity: 0.7; text-align: center;">
-                    עודכן לאחרונה: 02/06/2026 17:42
+                    עודכן לאחרונה: 02/06/2026 18:00
                 </div>
             </div>
             
@@ -232,7 +232,7 @@
                             <i class="fa-solid fa-clock" style="font-size:11px; color:var(--text-muted); margin-left:4px;"></i>
                             שעת הגעה בפועל
                         </label>
-                        <input type="time" id="setup-arrival-time" class="editable-input">
+                        <input type="text" id="setup-arrival-time" placeholder="17:55" class="editable-input" style="text-align: center; width: 80px;">
                     </div>
                     
                     <!-- EDITABLE: Arrival site – GPS default + searchable list (2.2) -->
@@ -258,6 +258,7 @@
                         </label>
                         <input type="text" id="setup-arrival-travel" placeholder="00:00" value="00:00" class="editable-input" style="text-align: center;">
                     </div>
+                    <div class="travel-note" id="setup-arrival-travel-note" style="color: #dc3545; font-size: 11px; font-weight: bold; margin-top: -4px; margin-bottom: 8px; text-align: left; display: none; padding-left: 10px;">זמן משוער</div>
                 </div>
                 
                 <!-- Return Settings Section -->
@@ -287,6 +288,7 @@
                         </label>
                         <input type="text" id="setup-return-travel" placeholder="00:00" value="00:00" class="editable-input" style="text-align: center;">
                     </div>
+                    <div class="travel-note" id="setup-return-travel-note" style="color: #dc3545; font-size: 11px; font-weight: bold; margin-top: -4px; margin-bottom: 8px; text-align: left; display: none; padding-left: 10px;">זמן משוער</div>
                 </div>
             </div>
         </div>
@@ -369,13 +371,15 @@
                             </div>
                             
                             <div style="display:flex; justify-content:space-between;">
-                                <div style="flex:1; margin-left: 5px;">
+                                <div style="flex:1; margin-left: 5px; display: flex; flex-direction: column;">
                                     <label style="font-size:11px; color:var(--text-muted);">זמן הלוך</label>
                                     <input type="text" id="settings-travel-arrival" placeholder="00:00" style="width:100%; padding:6px; border-radius:6px; border:1.5px solid var(--border-color); background:rgba(120,120,120,0.06); color:var(--text-main); text-align:center; font-family:var(--font-body);">
+                                    <span id="settings-arrival-travel-note" style="color: #dc3545; font-size: 10px; font-weight: bold; margin-top: 2px; text-align: center; display: none;">זמן משוער</span>
                                 </div>
-                                <div style="flex:1; margin-right: 5px;">
+                                <div style="flex:1; margin-right: 5px; display: flex; flex-direction: column;">
                                     <label style="font-size:11px; color:var(--text-muted);">זמן חזור</label>
                                     <input type="text" id="settings-travel-return" placeholder="00:00" style="width:100%; padding:6px; border-radius:6px; border:1.5px solid var(--border-color); background:rgba(120,120,120,0.06); color:var(--text-main); text-align:center; font-family:var(--font-body);">
+                                    <span id="settings-return-travel-note" style="color: #dc3545; font-size: 10px; font-weight: bold; margin-top: 2px; text-align: center; display: none;">זמן משוער</span>
                                 </div>
                             </div>
                         </div>

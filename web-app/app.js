@@ -62,6 +62,64 @@ let travelDatabaseTimes = {};
 // Version stamp - bump this to force-reset buildingsDatabase to DEFAULT_BUILDINGS
 const DB_VERSION = "v3";
 
+function normalizeHebrewCityName(name) {
+    if (!name) return "";
+    return name
+        .trim()
+        .replace(/[\u0591-\u05C7]/g, "")
+        .replace(/"/g, "")
+        .replace(/'/g, "")
+        .replace(/-/g, " ")
+        .replace(/\s+/g, " ")
+        .replace(/יי/g, "י")
+        .replace(/^זיכרון/, "זכרון")
+        .replace(/^קרית/, "קריית")
+        .replace(/^נהריה/, "נהרייה")
+    ;
+}
+
+function findCanonicalCityName(rawCityName) {
+    if (!rawCityName) return rawCityName;
+    const cleanRaw = normalizeHebrewCityName(rawCityName);
+    
+    for (const city of travelDatabaseSources) {
+        if (normalizeHebrewCityName(city) === cleanRaw) {
+            return city;
+        }
+    }
+    
+    for (const city of travelDatabaseCities) {
+        if (normalizeHebrewCityName(city) === cleanRaw) {
+            return city;
+        }
+    }
+    
+    for (const c of CITIES_COORDINATES) {
+        if (normalizeHebrewCityName(c.name) === cleanRaw) {
+            return c.name;
+        }
+    }
+    
+    return rawCityName;
+}
+
+function setTravelValueWithNote(inputId, noteId, val, destCity) {
+    const inputEl = document.getElementById(inputId);
+    const noteEl = document.getElementById(noteId);
+    if (!inputEl) return;
+    
+    let displayVal = val;
+    const isCustom = appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity];
+    if (!isCustom && displayVal !== "00:00") {
+        if (!displayVal.includes("*")) displayVal += "*";
+        if (noteEl) noteEl.style.display = "block";
+    } else {
+        displayVal = displayVal.replace("*", "");
+        if (noteEl) noteEl.style.display = "none";
+    }
+    inputEl.value = displayVal;
+}
+
 function initDatabases() {
     const savedBuildings = localStorage.getItem("iec_db_buildings");
     const savedVersion  = localStorage.getItem("iec_db_version");
@@ -292,12 +350,12 @@ function renderSetupAutocomplete(searchTerm, type) {
             
             const b = { destinationCity: city };
             const time = type === "arrival" ? lookupArrivalTravelTime(b) : lookupReturnTravelTime(b);
-            document.getElementById(`setup-${type}-travel`).value = formatMinutes(time);
+            setTravelValueWithNote(`setup-${type}-travel`, `setup-${type}-travel-note`, formatMinutes(time), city);
             
             if (type === "arrival") {
                 const returnInput = document.getElementById("setup-return-site");
                 returnInput.value = city;
-                document.getElementById("setup-return-travel").value = formatMinutes(lookupReturnTravelTime(b));
+                setTravelValueWithNote("setup-return-travel", "setup-return-travel-note", formatMinutes(lookupReturnTravelTime(b)), city);
             }
         });
         dropdown.appendChild(item);
@@ -400,16 +458,10 @@ function updateTravelFields(destCity) {
         }
     }
     
-    // Append asterisk for general travel times (non‑custom)
-    if (!(appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity])) {
-        if (arrival !== "00:00") arrival += "*";
-        if (returnTime !== "00:00") returnTime += "*";
-    }
-    
     document.getElementById("settings-travel-distance").value = distance;
     document.getElementById("settings-travel-total").value = totalTime;
-    document.getElementById("settings-travel-arrival").value = arrival;
-    document.getElementById("settings-travel-return").value = returnTime;
+    setTravelValueWithNote("settings-travel-arrival", "settings-arrival-travel-note", arrival, destCity);
+    setTravelValueWithNote("settings-travel-return", "settings-return-travel-note", returnTime, destCity);
 }
 
 
@@ -451,9 +503,9 @@ function bindUIEvents() {
             // Auto update instantly if it matches a city perfectly
             if (travelDatabaseCities && travelDatabaseCities.includes(val)) {
                 const b = { destinationCity: val };
-                document.getElementById("setup-arrival-travel").value = formatMinutes(lookupArrivalTravelTime(b));
+                setTravelValueWithNote("setup-arrival-travel", "setup-arrival-travel-note", formatMinutes(lookupArrivalTravelTime(b)), val);
                 if (returnInput && returnInput.value === val) {
-                    document.getElementById("setup-return-travel").value = formatMinutes(lookupReturnTravelTime(b));
+                    setTravelValueWithNote("setup-return-travel", "setup-return-travel-note", formatMinutes(lookupReturnTravelTime(b)), val);
                 }
             }
         });
@@ -462,10 +514,10 @@ function bindUIEvents() {
                 const city = e.target.value.trim();
                 if (city) {
                     const b = { destinationCity: city };
-                    document.getElementById("setup-arrival-travel").value = formatMinutes(lookupArrivalTravelTime(b));
+                    setTravelValueWithNote("setup-arrival-travel", "setup-arrival-travel-note", formatMinutes(lookupArrivalTravelTime(b)), city);
                     const returnInput = document.getElementById("setup-return-site");
                     if (returnInput && returnInput.value === city) {
-                        document.getElementById("setup-return-travel").value = formatMinutes(lookupReturnTravelTime(b));
+                        setTravelValueWithNote("setup-return-travel", "setup-return-travel-note", formatMinutes(lookupReturnTravelTime(b)), city);
                     }
                 }
             }, 200);
@@ -492,7 +544,7 @@ function bindUIEvents() {
             // Auto update instantly if it matches a city perfectly
             if (travelDatabaseCities && travelDatabaseCities.includes(val)) {
                 const b = { destinationCity: val };
-                document.getElementById("setup-return-travel").value = formatMinutes(lookupReturnTravelTime(b));
+                setTravelValueWithNote("setup-return-travel", "setup-return-travel-note", formatMinutes(lookupReturnTravelTime(b)), val);
             }
         });
         returnInput.addEventListener("blur", (e) => {
@@ -500,7 +552,7 @@ function bindUIEvents() {
                 const city = e.target.value.trim();
                 if (city) {
                     const b = { destinationCity: city };
-                    document.getElementById("setup-return-travel").value = formatMinutes(lookupReturnTravelTime(b));
+                    setTravelValueWithNote("setup-return-travel", "setup-return-travel-note", formatMinutes(lookupReturnTravelTime(b)), city);
                 }
             }, 200);
         });
@@ -729,10 +781,56 @@ function bindUIEvents() {
         document.getElementById("ios-push-banner").classList.remove("active");
     });
     
+    // Strip asterisk and hide red note on manual edit of travel times
+    const setupArrivalTravelInput = document.getElementById("setup-arrival-travel");
+    if (setupArrivalTravelInput) {
+        setupArrivalTravelInput.addEventListener("input", (e) => {
+            if (e.target.value.includes("*")) {
+                e.target.value = e.target.value.replace("*", "");
+            }
+            const note = document.getElementById("setup-arrival-travel-note");
+            if (note) note.style.display = "none";
+        });
+    }
+
+    const setupReturnTravelInput = document.getElementById("setup-return-travel");
+    if (setupReturnTravelInput) {
+        setupReturnTravelInput.addEventListener("input", (e) => {
+            if (e.target.value.includes("*")) {
+                e.target.value = e.target.value.replace("*", "");
+            }
+            const note = document.getElementById("setup-return-travel-note");
+            if (note) note.style.display = "none";
+        });
+    }
+
+    const settingsTravelArrivalInput = document.getElementById("settings-travel-arrival");
+    if (settingsTravelArrivalInput) {
+        settingsTravelArrivalInput.addEventListener("input", (e) => {
+            if (e.target.value.includes("*")) {
+                e.target.value = e.target.value.replace("*", "");
+            }
+            const note = document.getElementById("settings-arrival-travel-note");
+            if (note) note.style.display = "none";
+        });
+    }
+
+    const settingsTravelReturnInput = document.getElementById("settings-travel-return");
+    if (settingsTravelReturnInput) {
+        settingsTravelReturnInput.addEventListener("input", (e) => {
+            if (e.target.value.includes("*")) {
+                e.target.value = e.target.value.replace("*", "");
+            }
+            const note = document.getElementById("settings-return-travel-note");
+            if (note) note.style.display = "none";
+        });
     // GPS Badge Manual Refresh Click
-    document.getElementById("gps-status-badge").addEventListener("click", () => {
-        startRealGPS();
-    });
+    const gpsStatusBadge = document.getElementById("gps-status-badge");
+    if (gpsStatusBadge) {
+        gpsStatusBadge.addEventListener("click", () => {
+            startRealGPS();
+        });
+    }
 }
 
 // ==========================================================================
@@ -763,7 +861,7 @@ function findNearestCityOffline(lat, lng) {
             nearestCity = c.name;
         }
     }
-    return nearestCity;
+    return findCanonicalCityName(nearestCity);
 }
 
 async function fetchOnlineCity(lat, lng) {
@@ -786,7 +884,7 @@ async function fetchOnlineCity(lat, lng) {
                 const addr = data.address;
                 const city = addr.city || addr.town || addr.village || addr.suburb || addr.municipality || addr.city_district || addr.county;
                 if (city) {
-                    currentCityName = city;
+                    currentCityName = findCanonicalCityName(city);
                     updateGPSStatus();
                 }
             }
@@ -1039,22 +1137,23 @@ function openSetupSheet() {
     if (detectedBuilding) {
         arrivalInput.value = detectedBuilding.destinationCity;
         returnInput.value = detectedBuilding.destinationCity;
-        let arrVal = formatMinutes(lookupArrivalTravelTime(detectedBuilding));
-        let retVal = formatMinutes(lookupReturnTravelTime(detectedBuilding));
-        // Append asterisk if not using custom travel times
+        
         const destCity = detectedBuilding.destinationCity;
-        if (!(appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity])) {
-            if (arrVal !== "00:00") arrVal += "*";
-            if (retVal !== "00:00") retVal += "*";
-        }
-        document.getElementById("setup-arrival-travel").value = arrVal;
-        document.getElementById("setup-return-travel").value = retVal;
+        const arrMin = lookupArrivalTravelTime(detectedBuilding);
+        const retMin = lookupReturnTravelTime(detectedBuilding);
+        
+        setTravelValueWithNote("setup-arrival-travel", "setup-arrival-travel-note", formatMinutes(arrMin), destCity);
+        setTravelValueWithNote("setup-return-travel", "setup-return-travel-note", formatMinutes(retMin), destCity);
     } else {
         arrivalInput.value = fallbackDest;
         returnInput.value = fallbackDest;
+        
         const b = { destinationCity: fallbackDest };
-        document.getElementById("setup-arrival-travel").value = formatMinutes(0);
-        document.getElementById("setup-return-travel").value = formatMinutes(0); // fallback no travel time
+        const arrMin = lookupArrivalTravelTime(b);
+        const retMin = lookupReturnTravelTime(b);
+        
+        setTravelValueWithNote("setup-arrival-travel", "setup-arrival-travel-note", formatMinutes(arrMin), fallbackDest);
+        setTravelValueWithNote("setup-return-travel", "setup-return-travel-note", formatMinutes(retMin), fallbackDest);
     }
     
     document.getElementById("setup-sheet").classList.add("active");
@@ -1065,9 +1164,16 @@ function closeSetupSheet() {
 }
 
 function confirmStartShift() {
-    const timeVal = document.getElementById("setup-arrival-time").value;
+    const timeVal = document.getElementById("setup-arrival-time").value.trim();
     if (!timeVal) {
         alert("נא להזין שעת הגעה תקינה.");
+        return;
+    }
+    
+    // Validate time format HH:MM for 24-hour clock
+    const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    if (!timeRegex.test(timeVal)) {
+        alert("נא להזין שעת הגעה בפורמט 24 שעות תקין (HH:MM), למשל 17:55");
         return;
     }
     
@@ -1086,7 +1192,8 @@ function confirmStartShift() {
     
     const parseHHMM = (val) => {
         if (!val) return 0;
-        const p = val.toString().split(":");
+        const cleanVal = val.toString().replace("*", "").trim();
+        const p = cleanVal.split(":");
         if (p.length === 1) return parseInt(p[0]) || 0;
         return parseInt(p[0]||0, 10)*60 + parseInt(p[1]||0, 10);
     };
