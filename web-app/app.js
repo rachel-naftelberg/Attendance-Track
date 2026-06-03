@@ -313,7 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
             travelDatabaseSources = timeKeys.length > 0 ? timeKeys.sort((a,b) => a.localeCompare(b, 'he')) : (data.sources || data.cities || []);
             const destSet = new Set();
             Object.values(travelDatabaseTimes).forEach(dObj => Object.keys(dObj).forEach(d => destSet.add(d)));
-            travelDatabaseCities = destSet.size > 0 ? Array.from(destSet).sort((a,b) => a.localeCompare(b, 'he')) : (data.cities || []);
+            travelDatabaseCities = destSet.size > 0 ? Array.from(destSet).sort((a,b) => a.localeCompare(b, 'he')) : (data.cities && data.cities.length > 0 ? data.cities : data.sources || []);
             renderCityAutocomplete(); // pre-render empty or full list
             renderOfficeAutocomplete();
             renderEditTravelAutocomplete();
