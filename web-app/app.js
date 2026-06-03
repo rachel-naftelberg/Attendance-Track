@@ -308,8 +308,8 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch("travel_db.json")
         .then(res => res.json())
         .then(data => {
-            travelDatabaseSources = data.sources || data.cities || []; // Source settlements
             travelDatabaseTimes = data.times || {};
+            travelDatabaseSources = Object.keys(travelDatabaseTimes).sort((a,b) => a.localeCompare(b, 'he'));
             const destSet = new Set();
             Object.values(travelDatabaseTimes).forEach(dObj => Object.keys(dObj).forEach(d => destSet.add(d)));
             travelDatabaseCities = Array.from(destSet).sort((a,b) => a.localeCompare(b, 'he'));
