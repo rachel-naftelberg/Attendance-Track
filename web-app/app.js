@@ -103,14 +103,60 @@ function findCanonicalCityName(rawCityName) {
     return rawCityName;
 }
 
-function hasOriginalTravelTime(originCity, destCity) {
-    if (!originCity || !destCity) return false;
+function getTravelTimeDetails(isArrival, destCity) {
+    if (!destCity) {
+        return { minutes: 0, showAsterisk: false };
+    }
+    
+    // Rule 2: If main office city == arrival/return site -> 0:00, no asterisk, no note.
+    if (appPreferences.mainOfficeCity && destCity === appPreferences.mainOfficeCity) {
+        return { minutes: 0, showAsterisk: false };
+    }
+    
+    // Check if custom override exists
+    const isCustom = appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity];
+    if (isCustom) {
+        const val = isArrival ? isCustom.arrival : isCustom.return;
+        if (val !== undefined) {
+            return { minutes: val, showAsterisk: false };
+        }
+    }
+    
+    const originCity = appPreferences.defaultCity || currentCityName;
+    if (!originCity) {
+        return { minutes: 0, showAsterisk: false };
+    }
+    
     const times = getTravelTimeFromDB(originCity, destCity);
-    if (!times) return false;
-    const arr = parseInt(times[0]) || 0;
-    const ret = parseInt(times[1]) || 0;
-    const tot = parseInt(times[3]) || 0;
-    return (arr > 0) || (ret > 0) || (tot > 0);
+    if (!times) {
+        return { minutes: 0, showAsterisk: false };
+    }
+    
+    const arrivalDb = parseInt(times[0]) || 0;
+    const returnDb = parseInt(times[1]) || 0;
+    const totalTimeDb = parseInt(times[3]) || 0;
+    
+    const dbVal = isArrival ? arrivalDb : returnDb;
+    
+    // Rule 1: Dedicated arrival/return time > 0 -> use it
+    if (dbVal > 0) {
+        // Rule 3: If calculated travel time is < 30 minutes, display 0:00
+        if (dbVal < 30) {
+            return { minutes: 0, showAsterisk: false };
+        }
+        return { minutes: dbVal, showAsterisk: false };
+    }
+    
+    // Rule 4: If database arrival/return time is 0:00 but general travel time exists
+    if (dbVal === 0 && totalTimeDb > 0) {
+        // Rule 3: If calculated travel time is < 30 minutes, display 0:00
+        if (totalTimeDb < 30) {
+            return { minutes: 0, showAsterisk: false };
+        }
+        return { minutes: totalTimeDb, showAsterisk: true };
+    }
+    
+    return { minutes: 0, showAsterisk: false };
 }
 
 function setTravelValueWithNote(inputId, noteId, val, destCity) {
@@ -119,12 +165,11 @@ function setTravelValueWithNote(inputId, noteId, val, destCity) {
     if (!inputEl) return;
     
     let displayVal = val.toString().replace("*", "").trim();
-    const originCity = appPreferences.defaultCity || currentCityName;
-    const hasOrig = hasOriginalTravelTime(originCity, destCity);
-    const isZero = (displayVal === "00:00" || displayVal === "0:00");
+    const isArrival = inputId.toLowerCase().includes("arrival");
+    const details = getTravelTimeDetails(isArrival, destCity);
     const isCustom = appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity];
     
-    if (!isCustom && isZero && hasOrig) {
+    if (!isCustom && details.showAsterisk) {
         if (!displayVal.includes("*")) displayVal += "*";
         if (noteEl) noteEl.style.display = "block";
     } else {
@@ -424,46 +469,12 @@ function formatMinutes(mins) {
 
 function lookupArrivalTravelTime(building) {
     if (!building || !building.destinationCity) return 0;
-    
-    const destCity = building.destinationCity;
-    if (appPreferences.mainOfficeCity && destCity === appPreferences.mainOfficeCity) {
-        return 0; // overrides completely
-    }
-    
-    if (appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity] && appPreferences.customTravelTimes[destCity].arrival !== undefined) {
-        return appPreferences.customTravelTimes[destCity].arrival;
-    }
-    
-    const originCity = appPreferences.defaultCity || currentCityName;
-    if (!originCity || !destCity) return 0;
-    
-    const times = getTravelTimeFromDB(originCity, destCity);
-    if (times && times.length >= 2) {
-        return times[0]; 
-    }
-    return 0; 
+    return getTravelTimeDetails(true, building.destinationCity).minutes;
 }
 
 function lookupReturnTravelTime(building) {
     if (!building || !building.destinationCity) return 0;
-    
-    const destCity = building.destinationCity;
-    if (appPreferences.mainOfficeCity && destCity === appPreferences.mainOfficeCity) {
-        return 0; // overrides completely
-    }
-    
-    if (appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity] && appPreferences.customTravelTimes[destCity].return !== undefined) {
-        return appPreferences.customTravelTimes[destCity].return;
-    }
-    
-    const originCity = appPreferences.defaultCity || currentCityName;
-    if (!originCity || !destCity) return 0;
-    
-    const times = getTravelTimeFromDB(originCity, destCity);
-    if (times && times.length >= 2) {
-        return times[1]; 
-    }
-    return 0; 
+    return getTravelTimeDetails(false, building.destinationCity).minutes;
 }
 
 function updateTravelFields(destCity) {
@@ -488,27 +499,17 @@ function updateTravelFields(destCity) {
     
     let distance = "--";
     let totalTime = "--";
-    let arrival = "00:00";
-    let returnTime = "00:00";
+    
+    const arrivalDetails = getTravelTimeDetails(true, destCity);
+    const returnDetails = getTravelTimeDetails(false, destCity);
+    
+    const arrival = formatMinutes(arrivalDetails.minutes);
+    const returnTime = formatMinutes(returnDetails.minutes);
     
     const times = getTravelTimeFromDB(originCity, destCity);
     if (times && times.length >= 4) {
-        arrival = formatMinutes(times[0]);
-        returnTime = formatMinutes(times[1]);
         distance = times[2] !== "" ? times[2] : "--";
         totalTime = times[3] !== undefined ? formatMinutes(times[3]) : "--";
-    } else if (times && times.length >= 2) {
-        arrival = formatMinutes(times[0]);
-        returnTime = formatMinutes(times[1]);
-    }
-    
-    if (appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity]) {
-        if (appPreferences.customTravelTimes[destCity].arrival !== undefined) {
-            arrival = formatMinutes(appPreferences.customTravelTimes[destCity].arrival);
-        }
-        if (appPreferences.customTravelTimes[destCity].return !== undefined) {
-            returnTime = formatMinutes(appPreferences.customTravelTimes[destCity].return);
-        }
     }
     
     document.getElementById("settings-travel-distance").value = distance;

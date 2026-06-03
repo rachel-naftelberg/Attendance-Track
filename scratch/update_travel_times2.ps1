@@ -1,4 +1,7 @@
-$excelFile = Get-ChildItem "C:\Users\um624\Downloads" -Filter "*.xlsx" | Sort-Object LastWriteTime -Descending | Select-Object -First 1 | ForEach-Object { $_.FullName }
+$excelFile = Get-ChildItem "C:\Users\um624\Downloads" -Filter "*1 (1).xlsx" | Select-Object -First 1 | ForEach-Object { $_.FullName }
+if (!$excelFile) {
+    $excelFile = "C:\Users\um624\Downloads\חוברת1 (1).xlsx"
+}
 Write-Host "Parsing Excel file: $excelFile"
 
 # Create a temporary directory
@@ -85,14 +88,6 @@ foreach ($r in $records) {
     $totalTime = Get-Minutes $r.F
     $distance = $r.E
     if ($null -eq $distance) { $distance = "" }
-    
-    if ($arrival -eq 0 -and $return -eq 0) {
-        $duration = Get-Minutes $r.F
-        if ($duration -gt 30) {
-            $arrival = $duration
-            $return = $duration
-        }
-    }
     
     if (-not $travelTimes.ContainsKey($city)) {
         $travelTimes[$city] = @{}

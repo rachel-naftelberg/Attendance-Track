@@ -633,13 +633,52 @@ function getTravelTimeFromDB(city, destCity) {
     return travelDatabaseTimes[city]?.[destCity] || null;
 }
 
+function getTravelTimeDetails(isArrival, city, destCity) {
+    if (!city || !destCity || city === "other" || destCity === "other") {
+        return 0;
+    }
+    
+    // Rule 2: Office city override
+    if (appPreferences.mainOfficeCity && destCity === appPreferences.mainOfficeCity) {
+        return 0;
+    }
+    
+    const times = getTravelTimeFromDB(city, destCity);
+    if (!times) return 0;
+    
+    const arrivalDb = parseInt(times[0]) || 0;
+    const returnDb = parseInt(times[1]) || 0;
+    const totalTimeDb = parseInt(times[3]) || 0;
+    
+    const dbVal = isArrival ? arrivalDb : returnDb;
+    
+    // Rule 1: Dedicated arrival/return time > 0
+    if (dbVal > 0) {
+        // Rule 3: If calculated travel time is < 30 minutes, display 0
+        if (dbVal < 30) {
+            return 0;
+        }
+        return dbVal;
+    }
+    
+    // Rule 4: Database arrival/return is 0:00 but general travel time exists
+    if (dbVal === 0 && totalTimeDb > 0) {
+        // Rule 3: If calculated travel time is < 30 minutes, display 0
+        if (totalTimeDb < 30) {
+            return 0;
+        }
+        return totalTimeDb;
+    }
+    
+    return 0;
+}
+
 function lookupArrivalTravelTime(city, siteId) {
     if (city === "other" || siteId === "other") return 0;
     
     const building = buildingsDatabase.find(x => x.id === siteId);
     if (building && building.destinationCity) {
-        const times = getTravelTimeFromDB(city, building.destinationCity);
-        if (times) return times[0];
+        return getTravelTimeDetails(true, city, building.destinationCity);
     }
     
     return 0;
@@ -650,8 +689,7 @@ function lookupReturnTravelTime(city, siteId) {
     
     const building = buildingsDatabase.find(x => x.id === siteId);
     if (building && building.destinationCity) {
-        const times = getTravelTimeFromDB(city, building.destinationCity);
-        if (times) return times[1];
+        return getTravelTimeDetails(false, city, building.destinationCity);
     }
     
     return 0;
