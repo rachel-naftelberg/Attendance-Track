@@ -169,11 +169,18 @@ function setTravelValueWithNote(inputId, noteId, val, destCity) {
     const details = getTravelTimeDetails(isArrival, destCity);
     const isCustom = appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity];
     
+    let asteriskId = inputId + "-asterisk";
+    if (inputId === "settings-travel-arrival") asteriskId = "settings-arrival-travel-asterisk";
+    if (inputId === "settings-travel-return") asteriskId = "settings-return-travel-asterisk";
+    const asteriskEl = document.getElementById(asteriskId);
+    
     if (!isCustom && details.showAsterisk) {
         if (!displayVal.includes("*")) displayVal += "*";
         if (noteEl) noteEl.style.display = "block";
+        if (asteriskEl) asteriskEl.style.display = "inline";
     } else {
         if (noteEl) noteEl.style.display = "none";
+        if (asteriskEl) asteriskEl.style.display = "none";
     }
     inputEl.value = displayVal;
 }
@@ -845,6 +852,8 @@ function bindUIEvents() {
             }
             const note = document.getElementById("setup-arrival-travel-note");
             if (note) note.style.display = "none";
+            const ast = document.getElementById("setup-arrival-travel-asterisk");
+            if (ast) ast.style.display = "none";
         });
     }
 
@@ -856,6 +865,8 @@ function bindUIEvents() {
             }
             const note = document.getElementById("setup-return-travel-note");
             if (note) note.style.display = "none";
+            const ast = document.getElementById("setup-return-travel-asterisk");
+            if (ast) ast.style.display = "none";
         });
     }
 
@@ -867,6 +878,8 @@ function bindUIEvents() {
             }
             const note = document.getElementById("settings-arrival-travel-note");
             if (note) note.style.display = "none";
+            const ast = document.getElementById("settings-arrival-travel-asterisk");
+            if (ast) ast.style.display = "none";
         });
     }
 
@@ -878,6 +891,8 @@ function bindUIEvents() {
             }
             const note = document.getElementById("settings-return-travel-note");
             if (note) note.style.display = "none";
+            const ast = document.getElementById("settings-return-travel-asterisk");
+            if (ast) ast.style.display = "none";
         });
     }
     

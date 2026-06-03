@@ -89,7 +89,7 @@
                 </button>
                 
                 <div style="margin-top: 15px; font-size: 11px; color: var(--text-muted); opacity: 0.7; text-align: center;">
-                    עודכן לאחרונה: 03/06/2026 13:30
+                    עודכן לאחרונה: 03/06/2026 13:45
                 </div>
             </div>
             
@@ -254,7 +254,7 @@
                     <div class="form-row editable-field">
                         <label for="setup-arrival-travel">
                             <i class="fa-solid fa-car-side" style="font-size:11px; color:var(--text-muted); margin-left:4px;"></i>
-                            זמן נסיעה מהבית
+                            זמן נסיעה מהבית <span id="setup-arrival-travel-asterisk" style="color: #dc3545; font-weight: bold; display: none; margin-right: 2px;">*</span>
                         </label>
                         <input type="text" id="setup-arrival-travel" placeholder="00:00" value="00:00" class="editable-input" style="text-align: center;">
                     </div>
@@ -284,7 +284,7 @@
                     <div class="form-row editable-field">
                         <label for="setup-return-travel">
                             <i class="fa-solid fa-car-side" style="font-size:11px; color:var(--text-muted); margin-left:4px;"></i>
-                            זמן נסיעה הביתה
+                            זמן נסיעה הביתה <span id="setup-return-travel-asterisk" style="color: #dc3545; font-weight: bold; display: none; margin-right: 2px;">*</span>
                         </label>
                         <input type="text" id="setup-return-travel" placeholder="00:00" value="00:00" class="editable-input" style="text-align: center;">
                     </div>
@@ -372,12 +372,12 @@
                             
                             <div style="display:flex; justify-content:space-between;">
                                 <div style="flex:1; margin-left: 5px; display: flex; flex-direction: column;">
-                                    <label style="font-size:11px; color:var(--text-muted);">זמן הלוך</label>
+                                    <label style="font-size:11px; color:var(--text-muted);">זמן הלוך <span id="settings-arrival-travel-asterisk" style="color: #dc3545; font-weight: bold; display: none; margin-right: 2px;">*</span></label>
                                     <input type="text" id="settings-travel-arrival" placeholder="00:00" style="width:100%; padding:6px; border-radius:6px; border:1.5px solid var(--border-color); background:rgba(120,120,120,0.06); color:var(--text-main); text-align:center; font-family:var(--font-body);">
                                     <span id="settings-arrival-travel-note" style="color: #dc3545; font-size: 10px; font-weight: bold; margin-top: 2px; text-align: center; display: none;">זמן משוער</span>
                                 </div>
                                 <div style="flex:1; margin-right: 5px; display: flex; flex-direction: column;">
-                                    <label style="font-size:11px; color:var(--text-muted);">זמן חזור</label>
+                                    <label style="font-size:11px; color:var(--text-muted);">זמן חזור <span id="settings-return-travel-asterisk" style="color: #dc3545; font-weight: bold; display: none; margin-right: 2px;">*</span></label>
                                     <input type="text" id="settings-travel-return" placeholder="00:00" style="width:100%; padding:6px; border-radius:6px; border:1.5px solid var(--border-color); background:rgba(120,120,120,0.06); color:var(--text-main); text-align:center; font-family:var(--font-body);">
                                     <span id="settings-return-travel-note" style="color: #dc3545; font-size: 10px; font-weight: bold; margin-top: 2px; text-align: center; display: none;">זמן משוער</span>
                                 </div>
