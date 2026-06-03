@@ -82,8 +82,8 @@ foreach ($r in $records) {
     $city = $r.A.Trim()
     $dest = $r.C.Trim()
     
-    $arrival = Get-Minutes $r.G
-    $return = Get-Minutes $r.H
+    $arrival = 0
+    $return = 0
     $totalTimeStr = $r.F
     $totalTime = Get-Minutes $r.F
     $distance = $r.E
