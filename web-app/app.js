@@ -108,11 +108,6 @@ function getTravelTimeDetails(isArrival, destCity) {
         return { minutes: 0, showAsterisk: false };
     }
     
-    // Rule 2: If main office city == arrival/return site -> 0:00, no asterisk, no note.
-    if (appPreferences.mainOfficeCity && destCity === appPreferences.mainOfficeCity) {
-        return { minutes: 0, showAsterisk: false };
-    }
-    
     // Check if custom override exists
     const isCustom = appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity];
     if (isCustom) {
@@ -128,13 +123,9 @@ function getTravelTimeDetails(isArrival, destCity) {
     }
     
     const times = getTravelTimeFromDB(originCity, destCity);
-    if (!times) {
-        return { minutes: 0, showAsterisk: false };
-    }
-    
-    const arrivalDb = parseInt(times[0]) || 0;
-    const returnDb = parseInt(times[1]) || 0;
-    const totalTimeDb = parseInt(times[3]) || 0;
+    const arrivalDb = times ? parseInt(times[0]) || 0 : 0;
+    const returnDb = times ? parseInt(times[1]) || 0 : 0;
+    const totalTimeDb = times ? parseInt(times[3]) || 0 : 0;
     
     const dbVal = isArrival ? arrivalDb : returnDb;
     
@@ -145,6 +136,11 @@ function getTravelTimeDetails(isArrival, destCity) {
             return { minutes: 0, showAsterisk: false };
         }
         return { minutes: dbVal, showAsterisk: false };
+    }
+
+    // Rule 2: If main office city == arrival/return site -> 0:00, no asterisk, no note.
+    if (appPreferences.mainOfficeCity && destCity === appPreferences.mainOfficeCity) {
+        return { minutes: 0, showAsterisk: false };
     }
     
     // Rule 4: If database arrival/return time is 0:00 but general travel time exists

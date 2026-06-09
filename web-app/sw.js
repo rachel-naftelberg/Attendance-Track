@@ -1,4 +1,4 @@
-const CACHE_NAME = 'iec-attendance-v16';
+const CACHE_NAME = 'iec-attendance-v17';
 const ASSETS = [
   './',
   'index.html',
