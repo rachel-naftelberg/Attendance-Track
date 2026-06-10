@@ -73,7 +73,7 @@ self.addEventListener('message', (event) => {
         fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: tgChatId, text: `${title}\n\n${body}` })
+            body: JSON.stringify({ chat_id: tgChatId, text: title + '\n\n' + body })
         }).catch(err => console.error('[SW] Telegram fetch error:', err));
       } else {
         // Fallback to web notification if telegram not configured
