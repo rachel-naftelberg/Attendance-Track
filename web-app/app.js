@@ -1789,7 +1789,7 @@ async function connectTelegram() {
     let attempts = 0;
     while (!connected && attempts < 60) {
         try {
-            const res = await fetch("https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/getUpdates?allowed_updates=["message"]");
+            const res = await fetch("https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/getUpdates?allowed_updates=[%22message%22]");
             const data = await res.json();
             if (data.ok) {
                 for (let update of data.result) {
