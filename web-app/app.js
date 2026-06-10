@@ -1,3 +1,6 @@
+const TELEGRAM_BOT_TOKEN = "8128864671:AAFEoV6HD1AfaHRSpAAbpz3-DKd5LIVv5f8";
+const TELEGRAM_BOT_USERNAME = "Max12Hours_bot";
+
 // Predefined Default Databases
 const DEFAULT_BUILDINGS = [];
 
@@ -260,7 +263,8 @@ let appPreferences = {
     defaultSnoozeInterval: 30,   // Fix 3: default 30 min
     gpsUsageApproved: true,
     clockUsageApproved: true,
-    customTravelTimes: {}
+    customTravelTimes: {},
+    telegramChatId: null
 };
 
 // Real GPS Variables
@@ -344,7 +348,6 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Register PWA notification permission request if allowed
     if (appPreferences.clockUsageApproved) {
-        requestNotificationPermission();
     }
 });
 
@@ -676,8 +679,6 @@ function bindUIEvents() {
         
         // Start GPS now that user approved
         startRealGPS();
-        // Request notifications permission
-        requestNotificationPermission();
     });
     
     // Settings Button Open (1.1: populate city text input)
@@ -765,8 +766,7 @@ function bindUIEvents() {
         
         // Request notifications if enabled
         if (appPreferences.clockUsageApproved) {
-            requestNotificationPermission();
-        }
+            }
         
         document.getElementById("settings-sheet").classList.remove("active");
     });
@@ -1570,15 +1570,207 @@ function triggerPushNotification(title, text) {
     }, 6000);
     
     // 2. Trigger real OS notification (Works on PWA added to Home Screen)
-    if ('Notification' in window && Notification.permission === 'granted') {
+    if (appPreferences.telegramChatId) {
+        fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: appPreferences.telegramChatId, text: `\\n\\n` })
+        }).catch(console.error);
+    }
+}
+
+// Transition from Active to ResetPending screen
+function transitionToResetPending() {
+    shiftState = "resetPending";
+    saveShiftStateToDisk();
+    renderViewState();
+}
+
+// Confirm Exit and wipe all local storage (Zero Storage compliance)
+function confirmExitAndWipeData() {
+    shiftState = "idle";
+    shiftData = {
+        arrivalDate: null,
+        leaveHomeDate: null,
+        warningDate: null,
+        maxEndDate: null,
+        arrivalBuildingId: "",
+        arrivalBuildingName: "",
+        travelToSiteMinutes: 0,
+        returnBuildingId: "",
+        returnBuildingName: "",
+        travelBackMinutes: 0,
+        snoozeEnabled: true,
+        snoozeIntervalMinutes: 5
+    };
+    
+    // Cancel any scheduled background notification
+    if ('serviceWorker' in navigator) {
         navigator.serviceWorker.ready.then(registration => {
-            registration.showNotification(title, {
-                body: text,
-                icon: 'icon-192.png',
-                badge: 'icon-192.png',
-                vibrate: [200, 100, 200]
-            });
+            if (registration.active) {
+                registration.active.postMessage({ type: 'CANCEL_NOTIFICATION' });
+            }
+        }).catch(() => {});
+    }
+    
+    clearShiftStateFromDisk();
+    renderViewState();
+}
+
+
+// ==========================================================================
+// VIEW SWITCHER STATE MANAGER
+// ==========================================================================
+
+function renderViewState() {
+    // Hide all states
+    document.getElementById("view-idle").classList.remove("active");
+    document.getElementById("view-active").classList.remove("active");
+    document.getElementById("view-reset").classList.remove("active");
+    
+    if (shiftState === "idle") {
+        document.getElementById("view-idle").classList.add("active");
+    } 
+    else if (shiftState === "active") {
+        document.getElementById("view-active").classList.add("active");
+        
+        // Reset warning banner classes to default
+        const banner = document.getElementById("active-warning-banner");
+        banner.className = "warning-banner";
+        document.getElementById("banner-status-title").innerText = "יום עבודה פעיל מנוהל";
+        
+        // Set info values
+        document.getElementById("banner-status-desc").innerText = `זמן התראה (11:50): ${formatIsoDateToHHMM(shiftData.warningDate)}`;
+        document.getElementById("active-val-leave-home").innerText = formatIsoDateToHHMM(shiftData.leaveHomeDate);
+        document.getElementById("active-label-arrival-site").innerText = `אתר עבודה (כניסה: ${formatIsoDateToHHMM(shiftData.arrivalDate)})`;
+        document.getElementById("active-val-arrival-site").innerText = shiftData.arrivalBuildingName;
+        document.getElementById("active-val-travel-times").innerText = `${shiftData.travelToSiteMinutes} + ${shiftData.travelBackMinutes} דק׳`;
+        document.getElementById("active-val-return-site").innerText = shiftData.returnBuildingName;
+        
+        document.getElementById("chk-active-snooze").checked = shiftData.snoozeEnabled;
+        document.getElementById("active-snooze-interval").value = shiftData.snoozeIntervalMinutes || 5;
+        document.getElementById("row-active-snooze-interval").style.display = shiftData.snoozeEnabled ? "flex" : "none";
+    } 
+    else if (shiftState === "resetPending") {
+        document.getElementById("view-reset").classList.add("active");
+    }
+}
+
+function formatIsoDateToHHMM(isoString) {
+    if (!isoString) return "--:--";
+    const d = new Date(isoString);
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    return `${hh}:${mm}`;
+}
+
+// ==========================================================================
+// DISK UTILITIES (ZERO STORAGE VALIDATION)
+// ==========================================================================
+
+function saveShiftStateToDisk() {
+    localStorage.setItem("iec_pwa_shift_state", shiftState);
+    localStorage.setItem("iec_pwa_shift_data", JSON.stringify(shiftData));
+}
+
+function loadShiftState() {
+    const savedState = localStorage.getItem("iec_pwa_shift_state");
+    const savedData = localStorage.getItem("iec_pwa_shift_data");
+    
+    if (savedState && savedData) {
+        shiftState = savedState;
+        shiftData = JSON.parse(savedData);
+        renderViewState();
+    } else {
+        shiftState = "idle";
+        renderViewState();
+    }
+}
+
+function clearShiftStateFromDisk() {
+    localStorage.removeItem("iec_pwa_shift_state");
+    localStorage.removeItem("iec_pwa_shift_data");
+}
+
+function loadAppPreferences() {
+    const city = localStorage.getItem("iec_pref_default_city");
+    const snooze = localStorage.getItem("iec_pref_default_snooze");
+    const snoozeInterval = localStorage.getItem("iec_pref_default_snooze_interval");
+    const gpsApproved = localStorage.getItem("iec_pref_gps_approved");
+    const clockApproved = localStorage.getItem("iec_pref_clock_approved");
+    
+    if (city) {
+        appPreferences.defaultCity = city;
+        appPreferences.defaultSnooze = snooze === null ? true : (snooze === "true");
+        appPreferences.defaultSnoozeInterval = snoozeInterval === null ? 5 : parseInt(snoozeInterval);
+        appPreferences.gpsUsageApproved = gpsApproved === null ? true : (gpsApproved === "true");
+        appPreferences.clockUsageApproved = clockApproved === null ? true : (clockApproved === "true");
+        document.getElementById("onboarding-screen").classList.remove("active");
+    } else {
+        // Fix 5: Check if onboarding was already completed (even if city not set)
+        const onboardingDone = localStorage.getItem("iec_pref_onboarding_done");
+        }
+    }
+}
+
+function requestNotificationPermission() {
+    if (!appPreferences.clockUsageApproved) return;
+    if ('Notification' in window) {
+        Notification.requestPermission().then(permission => {
+            console.log("Notification permission status:", permission);
         });
+    }
+}
+
+// Fix 6: Schedule a notification to fire at targetDate even when app is in background
+// The Service Worker receives the schedule via postMessage and uses setTimeout to fire it.
+function scheduleBackgroundNotification(targetDate, title, body) {
+    if (!appPreferences.clockUsageApproved) return;
+    if (!('serviceWorker' in navigator)) return;
+    
+    const delayMs = targetDate.getTime() - Date.now();
+    if (delayMs <= 0) return; // Already past the time
+    
+    navigator.serviceWorker.ready.then(registration => {
+        // Send message to SW to schedule the notification
+        registration.active.postMessage({
+            type: 'SCHEDULE_NOTIFICATION',
+            title: title,
+            body: body,
+            delayMs: delayMs
+        });
+        console.log(`Scheduled background notification in ${Math.round(delayMs/60000)} minutes`);
+    }).catch(err => {
+        console.error("Could not schedule background notification:", err);
+    });
+}
+
+function triggerPushNotification(title, text) {
+    // 1. Show internal app banner
+    const banner = document.getElementById("ios-push-banner");
+    document.getElementById("push-title").innerText = title;
+    document.getElementById("push-body").innerText = text;
+    
+    // Play alert sound
+    const audio = document.getElementById("alert-sound");
+    audio.currentTime = 0;
+    audio.play().catch(e => console.log("Sound play interaction blocked by browser:", e));
+    
+    // Show banner
+    banner.classList.add("active");
+    
+    // Auto hide after 6 seconds
+    setTimeout(() => {
+        banner.classList.remove("active");
+    }, 6000);
+    
+    // 2. Trigger real OS notification (Works on PWA added to Home Screen)
+    if (appPreferences.telegramChatId) {
+        fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: appPreferences.telegramChatId, text: `\n\n` })
+        }).catch(console.error);
     }
 }
 
@@ -1739,4 +1931,80 @@ function saveAppPreferences() {
 // --------------------------------------------------------------------------
 // Buildings List & Modals
 // --------------------------------------------------------------------------
+
+
+// ==========================================================================
+// TELEGRAM INTEGRATION
+// ==========================================================================
+
+async function connectTelegram() {
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const deepLink = `https://t.me/${TELEGRAM_BOT_USERNAME}?start=${code}`;
+    
+    // Open telegram deep link
+    window.open(deepLink, "_blank");
+    
+    // Show loading spinner
+    const loader = document.getElementById("telegram-polling-loader");
+    if (loader) loader.style.display = "flex";
+    
+    // Poll getUpdates
+    let connected = false;
+    let attempts = 0;
+    while (!connected && attempts < 60) {
+        try {
+            const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates?allowed_updates=["message"]`);
+            const data = await res.json();
+            if (data.ok) {
+                for (let update of data.result) {
+                    if (update.message && update.message.text === `/start ${code}`) {
+                        const chatId = update.message.chat.id;
+                        appPreferences.telegramChatId = chatId;
+                        saveAppPreferences();
+                        updateTelegramUI();
+                        connected = true;
+                        
+                        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates?offset=${update.update_id + 1}`);
+                        
+                        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ chat_id: chatId, text: "האפליקציה חוברה בהצלחה! התראות יישלחו לכאן." })
+                        });
+                        break;
+                    }
+                }
+            }
+        } catch (e) {
+            console.error("Telegram polling error", e);
+        }
+        if (!connected) {
+            attempts++;
+            await new Promise(r => setTimeout(r, 2000));
+        }
+    }
+    
+    if (loader) loader.style.display = "none";
+    if (!connected) {
+        alert("תם הזמן להמתנה לחיבור טלגרם. נסה שוב.");
+    }
+}
+
+function updateTelegramUI() {
+    const statusText = document.getElementById("telegram-status-text");
+    const btn = document.getElementById("btn-connect-telegram");
+    if (appPreferences.telegramChatId) {
+        if(statusText) {
+            statusText.innerText = "׳¡׳˜׳˜׳•׳¡: ׳׳—׳•׳‘׳¨ ׳₪׳¢׳™׳";
+            statusText.style.color = "var(--success-color)";
+        }
+        if(btn) btn.innerHTML = '<i class="fa-brands fa-telegram"></i> ׳©׳ ׳” ׳—׳™׳‘׳•׳¨';
+    } else {
+        if(statusText) {
+            statusText.innerText = "׳¡׳˜׳˜׳•׳¡: ׳׳ ׳׳—׳•׳‘׳¨";
+            statusText.style.color = "var(--text-muted)";
+        }
+        if(btn) btn.innerHTML = '<i class="fa-brands fa-telegram"></i> ׳—׳‘׳¨ ׳˜׳׳’׳¨׳';
+    }
+}
 

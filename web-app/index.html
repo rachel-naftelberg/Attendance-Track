@@ -411,6 +411,25 @@
                 </div>
                 
                 <div class="sheet-section">
+                    <h4>התראות טלגרם</h4>
+                    <div style="background: rgba(120,120,120,0.05); padding: 12px; border-radius: 12px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <div>
+                                <h5 style="margin: 0; font-size: 14px; color: var(--text-main);">חיבור לבוט</h5>
+                                <p id="telegram-status-text" style="margin: 4px 0 0 0; font-size: 11px; color: var(--text-muted);">סטטוס: לא מחובר</p>
+                            </div>
+                            <button id="btn-connect-telegram" class="btn btn-secondary" style="margin: 0; font-size: 12px; padding: 6px 12px; border-radius: 6px;">
+                                <i class="fa-brands fa-telegram"></i> חבר טלגרם
+                            </button>
+                        </div>
+                        <div id="telegram-polling-loader" style="display: none; align-items: center; gap: 8px; font-size: 11px; color: var(--primary-color);">
+                            <i class="fa-solid fa-circle-notch fa-spin"></i>
+                            <span>ממתין שתלחץ Start בטלגרם...</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sheet-section">
                     <h4>אישורי שימוש באפליקציה</h4>
                     <div class="form-row-toggle">
                         <div class="toggle-desc">

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'iec-attendance-v17';
+const CACHE_NAME = 'iec-attendance-v18';
 const ASSETS = [
   './',
   'index.html',
@@ -58,7 +58,7 @@ let scheduledNotificationTimer = null;
 
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SCHEDULE_NOTIFICATION') {
-    const { title, body, delayMs } = event.data;
+    const { title, body, delayMs, tgToken, tgChatId } = event.data;
     
     // Cancel any previously scheduled notification
     if (scheduledNotificationTimer !== null) {
@@ -66,18 +66,29 @@ self.addEventListener('message', (event) => {
       scheduledNotificationTimer = null;
     }
     
-    console.log(`[SW] Scheduling notification in ${Math.round(delayMs / 60000)} minutes`);
+    console.log(`[SW] Scheduling telegram notification in ${Math.round(delayMs / 60000)} minutes`);
     
     scheduledNotificationTimer = setTimeout(() => {
-      self.registration.showNotification(title, {
-        body: body,
-        icon: 'icon-192.png',
-        badge: 'icon-192.png',
-        vibrate: [200, 100, 200, 100, 200],
-        requireInteraction: true,
-        tag: 'iec-shift-warning',
-        renotify: true
-      });
+      if (tgToken && tgChatId) {
+        fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: tgChatId, text: `${title}\n\n${body}` })
+        }).catch(err => console.error('[SW] Telegram fetch error:', err));
+      } else {
+        // Fallback to web notification if telegram not configured
+        if (self.registration && self.registration.showNotification) {
+          self.registration.showNotification(title, {
+            body: body,
+            icon: 'icon-192.png',
+            badge: 'icon-192.png',
+            vibrate: [200, 100, 200, 100, 200],
+            requireInteraction: true,
+            tag: 'iec-shift-warning',
+            renotify: true
+          });
+        }
+      }
       scheduledNotificationTimer = null;
     }, delayMs);
     
