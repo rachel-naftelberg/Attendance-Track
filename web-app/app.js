@@ -1,4 +1,4 @@
-const TELEGRAM_BOT_TOKEN = "8128864671:AAFEoV6HD1AfaHRSpAAbpz3-DKd5LIVv5f8";
+﻿const TELEGRAM_BOT_TOKEN = "8128864671:AAFEoV6HD1AfaHRSpAAbpz3-DKd5LIVv5f8";
 const TELEGRAM_BOT_USERNAME = "Max12Hours_bot";
 
 // Predefined Default Databases
@@ -354,10 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateTelegramUI();
     }
     
-    // Register PWA notification permission request if allowed
-    if (appPreferences.clockUsageApproved) {
-        requestNotificationPermission();
-    }
+    // Web notifications removed
 });
 
 // Populate custom autocomplete dropdown for city setting
@@ -688,8 +685,7 @@ function bindUIEvents() {
         
         // Start GPS now that user approved
         startRealGPS();
-        // Request notifications permission
-        requestNotificationPermission();
+        // Web notifications removed
     });
     
     // Settings Button Open (1.1: populate city text input)
@@ -775,10 +771,7 @@ function bindUIEvents() {
             stopRealGPS();
         }
         
-        // Request notifications if enabled
-        if (appPreferences.clockUsageApproved) {
-            requestNotificationPermission();
-        }
+        // Web notifications removed
         
         document.getElementById("settings-sheet").classList.remove("active");
     });
@@ -1530,14 +1523,7 @@ function checkWorkdayAlertThresholds(now) {
     }
 }
 
-function requestNotificationPermission() {
-    if (!appPreferences.clockUsageApproved) return;
-    if ('Notification' in window) {
-        Notification.requestPermission().then(permission => {
-            console.log("Notification permission status:", permission);
-        });
-    }
-}
+
 
 // Fix 6: Schedule a notification to fire at targetDate even when app is in background
 // The Service Worker receives the schedule via postMessage and uses setTimeout to fire it.
@@ -1590,15 +1576,6 @@ function triggerPushNotification(title, text) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ chat_id: appPreferences.telegramChatId, text: `${title}\n\n${text}` })
         }).catch(console.error);
-    } else if ('Notification' in window && Notification.permission === 'granted') {
-        navigator.serviceWorker.ready.then(registration => {
-            registration.showNotification(title, {
-                body: text,
-                icon: 'icon-192.png',
-                badge: 'icon-192.png',
-                vibrate: [200, 100, 200]
-            });
-        });
     }
 }
 
@@ -1843,3 +1820,4 @@ function updateTelegramUI() {
         if(btn) btn.innerHTML = "<i class='fa-brands fa-telegram'></i> חבר טלגרם";
     }
 }
+

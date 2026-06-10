@@ -1,4 +1,4 @@
-const CACHE_NAME = 'iec-attendance-v18';
+const CACHE_NAME = 'iec-attendance-v19';
 const ASSETS = [
   './',
   'index.html',
@@ -75,19 +75,6 @@ self.addEventListener('message', (event) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ chat_id: tgChatId, text: title + '\n\n' + body })
         }).catch(err => console.error('[SW] Telegram fetch error:', err));
-      } else {
-        // Fallback to web notification if telegram not configured
-        if (self.registration && self.registration.showNotification) {
-          self.registration.showNotification(title, {
-            body: body,
-            icon: 'icon-192.png',
-            badge: 'icon-192.png',
-            vibrate: [200, 100, 200, 100, 200],
-            requireInteraction: true,
-            tag: 'iec-shift-warning',
-            renotify: true
-          });
-        }
       }
       scheduledNotificationTimer = null;
     }, delayMs);
