@@ -1829,7 +1829,7 @@ function updateTelegramUI() {
     }
     
     if (mainContainer) {
-        mainContainer.style.display = isConnected ? "none" : "block";
+        mainContainer.style.display = isConnected ? "none" : "flex";
     }
 }
 
