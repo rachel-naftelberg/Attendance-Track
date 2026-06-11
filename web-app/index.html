@@ -375,15 +375,7 @@
                             <span class="slider"></span>
                         </label>
                     </div>
-                        <div class="form-row-toggle">
-                            <div class="toggle-desc">
-                                <h5>חיבור לבוט</h5>
-                                <p id="telegram-status-text">סטטוס: לא מחובר</p>
-                            </div>
-                            <button id="btn-connect-telegram" class="action-btn" style="background: transparent; border: 1px solid #000; color: #000; padding: 4px 12px; font-size: 11px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; width: auto; min-height: 24px;">
-                                <i class="fa-brands fa-telegram" style="color: #000;"></i> חבר טלגרם
-                            </button>
-                        </div>
+
                     <div class="form-row" id="row-settings-snooze-interval">
                         <label for="settings-default-snooze-interval">מרווח נודניק ברירת מחדל</label>
                         <select id="settings-default-snooze-interval" style="width: 120px;">
@@ -398,20 +390,18 @@
                 
                 <div class="sheet-section">
                     <h4>התראות טלגרם</h4>
-                    <div style="background: rgba(120,120,120,0.05); padding: 12px; border-radius: 12px; margin-bottom: 15px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <div>
-                                <h5 style="margin: 0; font-size: 14px; color: var(--text-main);">חיבור לבוט</h5>
-                                <p id="telegram-status-text" style="margin: 4px 0 0 0; font-size: 11px; color: var(--text-muted);">סטטוס: לא מחובר</p>
-                            </div>
-                            <button id="btn-connect-telegram" class="btn btn-secondary" style="margin: 0; font-size: 12px; padding: 6px 12px; border-radius: 6px;">
-                                <i class="fa-brands fa-telegram"></i> חבר טלגרם
-                            </button>
+                    <div class="form-row-toggle">
+                        <div class="toggle-desc">
+                            <h5>חיבור לבוט טלגרם</h5>
+                            <p id="telegram-status-text" style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">סטטוס: לא מחובר</p>
                         </div>
-                        <div id="telegram-polling-loader" style="display: none; align-items: center; gap: 8px; font-size: 11px; color: var(--primary-color);">
-                            <i class="fa-solid fa-circle-notch fa-spin"></i>
-                            <span>ממתין שתלחץ Start בטלגרם...</span>
-                        </div>
+                        <button id="btn-connect-telegram" class="action-btn" style="background: transparent; border: 1px solid #000; color: #000; padding: 4px 12px; font-size: 11px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; width: auto; min-height: 24px;">
+                            <i class="fa-brands fa-telegram" style="color: #000;"></i> חבר טלגרם
+                        </button>
+                    </div>
+                    <div id="telegram-polling-loader" style="display: none; align-items: center; gap: 8px; font-size: 11px; color: var(--primary-color); padding: 0 16px 12px;">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i>
+                        <span>ממתין שתלחץ Start בטלגרם...</span>
                     </div>
                 </div>
                 
