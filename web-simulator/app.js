@@ -1174,6 +1174,16 @@ function renderBuildingsTable() {
         const nameShort = b.name.replace("חברת החשמל", "").replace("תחנת הכוח", "").trim();
         const starClass = b.isPrimary ? "fa-solid fa-star" : "fa-regular fa-star";
         
+        const destCity = b.destinationCity || "חיפה";
+        const arrDetails = getTravelTimeDetailsForUI(true, destCity);
+        const retDetails = getTravelTimeDetailsForUI(false, destCity);
+        
+        const arrAsterisk = arrDetails.note ? `<span style="color: #dc3545; font-weight: bold; cursor: help; margin-right: 2px;" title="${arrDetails.note}">*</span>` : "";
+        const retAsterisk = retDetails.note ? `<span style="color: #dc3545; font-weight: bold; cursor: help; margin-right: 2px;" title="${retDetails.note}">*</span>` : "";
+        
+        const arrStr = formatMinutes(arrDetails.minutes) + arrAsterisk;
+        const retStr = formatMinutes(retDetails.minutes) + retAsterisk;
+
         tr.innerHTML = `
             <td>
                 <button class="star-toggle" onclick="toggleBuildingPrimary('${b.id}')" style="color: ${b.isPrimary ? '#ffb300' : 'var(--text-muted)'}; font-size: 12px; background: none; border: none; cursor: pointer; padding: 2px;">
@@ -1183,6 +1193,8 @@ function renderBuildingsTable() {
             </td>
             <td>${b.latitude.toFixed(3)}, ${b.longitude.toFixed(3)}</td>
             <td>${b.radius} מ'</td>
+            <td style="direction: ltr; text-align: right;">${arrStr}</td>
+            <td style="direction: ltr; text-align: right;">${retStr}</td>
             <td>
                 <div class="table-actions">
                     <button class="action-icon-btn edit" onclick="openSimBuildingModal('${b.id}')" title="ערוך">
