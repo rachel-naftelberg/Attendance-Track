@@ -119,7 +119,13 @@ function getTravelTimeDetails(isArrival, destCity) {
         }
     }
     
-    const originCity = appPreferences.defaultCity || currentCityName;
+    let originCity = "";
+    const settingsCityInput = document.getElementById("settings-default-city");
+    if (settingsCityInput && settingsCityInput.value.trim()) {
+        originCity = settingsCityInput.value.trim();
+    } else {
+        originCity = appPreferences.defaultCity || currentCityName;
+    }
     if (!originCity) {
         return { minutes: 0, note: "" };
     }
@@ -240,9 +246,10 @@ function initDatabases() {
 
 // App-wide Preferences (Persistent settings, not wiped on shift reset)
 let appPreferences = {
-    defaultCity: "",
+    defaultCity: "\u05e8\u05e2\u05e0\u05e0\u05d4",
+    mainOfficeCity: "\u05d2\u05df \u05e9\u05d5\u05e8\u05e7",
     defaultSnooze: true,
-    defaultSnoozeInterval: 30,   // Fix 3: default 30 min
+    defaultSnoozeInterval: 10,
     gpsUsageApproved: true,
     clockUsageApproved: true,
     customTravelTimes: {},
@@ -462,6 +469,14 @@ function formatMinutes(mins) {
     return `${h}:${m}`;
 }
 
+function parseTimeStr(ts) {
+    if (!ts) return 0;
+    const clean = ts.replace("*", "").trim();
+    if (!clean || !clean.includes(":")) return 0;
+    const p = clean.split(":");
+    return (parseInt(p[0], 10) || 0) * 60 + (parseInt(p[1], 10) || 0);
+}
+
 function lookupArrivalTravelTime(building) {
     if (!building || !building.destinationCity) return 0;
     return getTravelTimeDetails(true, building.destinationCity).minutes;
@@ -544,7 +559,7 @@ function bindUIEvents() {
                 arrival: parseTimeStr(arrStr),
                 return: parseTimeStr(retStr)
             };
-            savePreferences(appPreferences);
+            saveAppPreferences();
             updateTravelFields(destCity);
         }
         document.getElementById("edit-travel-sheet").classList.remove("active");
@@ -1708,41 +1723,37 @@ function clearShiftStateFromDisk() {
 
 function loadAppPreferences() {
     const city = localStorage.getItem("iec_pref_default_city");
+    const mainOffice = localStorage.getItem("iec_pref_main_office_city");
     const snooze = localStorage.getItem("iec_pref_default_snooze");
     const snoozeInterval = localStorage.getItem("iec_pref_default_snooze_interval");
     const gpsApproved = localStorage.getItem("iec_pref_gps_approved");
     const clockApproved = localStorage.getItem("iec_pref_clock_approved");
+    
+    // Set fallback defaults if not found in localStorage
+    appPreferences.defaultCity = city !== null ? city : "\u05e8\u05e2\u05e0\u05e0\u05d4";
+    appPreferences.mainOfficeCity = mainOffice !== null ? mainOffice : "\u05d2\u05df \u05e9\u05d5\u05e8\u05e7";
+    appPreferences.defaultSnooze = snooze === null ? true : (snooze === "true");
+    appPreferences.defaultSnoozeInterval = snoozeInterval === null ? 10 : parseInt(snoozeInterval);
+    appPreferences.gpsUsageApproved = gpsApproved === null ? true : (gpsApproved === "true");
+    appPreferences.clockUsageApproved = clockApproved === null ? true : (clockApproved === "true");
     
     const tgChatId = localStorage.getItem("iec_pref_tg_chat_id");
     if (tgChatId) {
         appPreferences.telegramChatId = tgChatId;
     }
     
-    if (city) {
-        appPreferences.defaultCity = city;
-        appPreferences.defaultSnooze = snooze === null ? true : (snooze === "true");
-        appPreferences.defaultSnoozeInterval = snoozeInterval === null ? 10 : parseInt(snoozeInterval);
-        appPreferences.gpsUsageApproved = gpsApproved === null ? true : (gpsApproved === "true");
-        appPreferences.clockUsageApproved = clockApproved === null ? true : (clockApproved === "true");
+    // If onboarding is not done, show it, otherwise hide it
+    const onboardingDone = localStorage.getItem("iec_pref_onboarding_done");
+    if (onboardingDone === "true" || city !== null) {
         document.getElementById("onboarding-screen").classList.remove("active");
     } else {
-        // Fix 5: Check if onboarding was already completed (even if city not set)
-        const onboardingDone = localStorage.getItem("iec_pref_onboarding_done");
-        if (onboardingDone === "true") {
-            // Already did onboarding, just hide the screen
-            document.getElementById("onboarding-screen").classList.remove("active");
-        } else {
-            // First launch - show onboarding
-            document.getElementById("onboarding-screen").classList.add("active");
-        }
+        document.getElementById("onboarding-screen").classList.add("active");
     }
 }
 
 function saveAppPreferences() {
     localStorage.setItem("iec_pref_default_city", appPreferences.defaultCity);
-    if (appPreferences.mainOfficeCity) {
-        localStorage.setItem("iec_pref_main_office_city", appPreferences.mainOfficeCity);
-    }
+    localStorage.setItem("iec_pref_main_office_city", appPreferences.mainOfficeCity || "");
     localStorage.setItem("iec_pref_default_snooze", appPreferences.defaultSnooze.toString());
     localStorage.setItem("iec_pref_default_snooze_interval", appPreferences.defaultSnoozeInterval.toString());
     localStorage.setItem("iec_pref_gps_approved", appPreferences.gpsUsageApproved.toString());
@@ -1750,7 +1761,6 @@ function saveAppPreferences() {
     if (appPreferences.telegramChatId) {
         localStorage.setItem("iec_pref_tg_chat_id", appPreferences.telegramChatId);
     }
-}
 }
 
 // ==========================================================================

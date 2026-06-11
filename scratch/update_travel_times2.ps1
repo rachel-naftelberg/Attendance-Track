@@ -95,6 +95,16 @@ foreach ($r in $records) {
     $travelTimes[$city][$dest] = @($arrival, $return, $distance, $totalTime)
 }
 
+# Custom override for Raanana to Tel Aviv
+if ($travelTimes.ContainsKey("רעננה")) {
+    if ($travelTimes["רעננה"].ContainsKey("תל אביב - יפו")) {
+        $travelTimes["רעננה"]["תל אביב - יפו"] = @(40, 40, $travelTimes["רעננה"]["תל אביב - יפו"][2], $travelTimes["רעננה"]["תל אביב - יפו"][3])
+    } else {
+        $travelTimes["רעננה"]["תל אביב - יפו"] = @(40, 40, "24", 30)
+    }
+}
+
+
 Write-Host "Parsed travel times for $($travelTimes.Keys.Count) source cities."
 
 Add-Type -AssemblyName System.Web.Extensions
