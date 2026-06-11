@@ -1,4 +1,4 @@
-﻿const TELEGRAM_BOT_TOKEN = "8128864671:AAFEoV6HD1AfaHRSpAAbpz3-DKd5LIVv5f8";
+const TELEGRAM_BOT_TOKEN = "8128864671:AAFEoV6HD1AfaHRSpAAbpz3-DKd5LIVv5f8";
 const TELEGRAM_BOT_USERNAME = "Max12Hours_bot";
 
 // Predefined Default Databases
@@ -105,10 +105,9 @@ function findCanonicalCityName(rawCityName) {
     
     return rawCityName;
 }
-
 function getTravelTimeDetails(isArrival, destCity) {
     if (!destCity) {
-        return { minutes: 0, showAsterisk: false };
+        return { minutes: 0, note: "" };
     }
     
     // Check if custom override exists
@@ -116,46 +115,26 @@ function getTravelTimeDetails(isArrival, destCity) {
     if (isCustom) {
         const val = isArrival ? isCustom.arrival : isCustom.return;
         if (val !== undefined) {
-            return { minutes: val, showAsterisk: false };
+            return { minutes: val, note: "" };
         }
     }
     
     const originCity = appPreferences.defaultCity || currentCityName;
     if (!originCity) {
-        return { minutes: 0, showAsterisk: false };
+        return { minutes: 0, note: "" };
     }
     
     const times = getTravelTimeFromDB(originCity, destCity);
     const arrivalDb = times ? parseInt(times[0]) || 0 : 0;
     const returnDb = times ? parseInt(times[1]) || 0 : 0;
-    const totalTimeDb = times ? parseInt(times[3]) || 0 : 0;
+    
+    const arrivalNote = times && times.length > 4 ? times[4] : "";
+    const returnNote = times && times.length > 5 ? times[5] : "";
     
     const dbVal = isArrival ? arrivalDb : returnDb;
+    const dbNote = isArrival ? arrivalNote : returnNote;
     
-    // Rule 1: Dedicated arrival/return time > 0 -> use it
-    if (dbVal > 0) {
-        // Rule 3: If calculated travel time is < 30 minutes, display 0:00
-        if (dbVal < 30) {
-            return { minutes: 0, showAsterisk: false };
-        }
-        return { minutes: dbVal, showAsterisk: false };
-    }
-
-    // Rule 2: If main office city == arrival/return site -> 0:00, no asterisk, no note.
-    if (appPreferences.mainOfficeCity && destCity === appPreferences.mainOfficeCity) {
-        return { minutes: 0, showAsterisk: false };
-    }
-    
-    // Rule 4: If database arrival/return time is 0:00 but general travel time exists
-    if (dbVal === 0 && totalTimeDb > 0) {
-        // Rule 3: If calculated travel time is < 30 minutes, display 0:00
-        if (totalTimeDb < 30) {
-            return { minutes: 0, showAsterisk: false };
-        }
-        return { minutes: totalTimeDb, showAsterisk: true };
-    }
-    
-    return { minutes: 0, showAsterisk: false };
+    return { minutes: dbVal, note: dbNote };
 }
 
 function setTravelValueWithNote(inputId, noteId, val, destCity) {
@@ -173,9 +152,12 @@ function setTravelValueWithNote(inputId, noteId, val, destCity) {
     if (inputId === "settings-travel-return") asteriskId = "settings-return-travel-asterisk";
     const asteriskEl = document.getElementById(asteriskId);
     
-    if (!isCustom && details.showAsterisk) {
+    if (!isCustom && details.note) {
         if (!displayVal.includes("*")) displayVal += "*";
-        if (noteEl) noteEl.style.display = "block";
+        if (noteEl) {
+            noteEl.style.display = "block";
+            noteEl.innerText = details.note;
+        }
         if (asteriskEl) asteriskEl.style.display = "inline";
     } else {
         if (noteEl) noteEl.style.display = "none";
@@ -537,6 +519,34 @@ function populateSiteSelectors() {
 }
 
 function bindUIEvents() {
+        document.getElementById("btn-open-edit-travel")?.addEventListener("click", () => {
+        document.getElementById("settings-sheet").classList.remove("active");
+        document.getElementById("edit-travel-sheet").classList.add("active");
+    });
+    
+    document.getElementById("btn-edit-travel-cancel")?.addEventListener("click", () => {
+        document.getElementById("edit-travel-sheet").classList.remove("active");
+        document.getElementById("settings-sheet").classList.add("active");
+    });
+    
+    document.getElementById("btn-edit-travel-save")?.addEventListener("click", () => {
+        const destCity = document.getElementById("settings-edit-travel-dest").value.trim();
+        if (destCity && document.getElementById("settings-edit-travel-fields").style.display === "block") {
+            const arrStr = document.getElementById("settings-travel-arrival").value;
+            const retStr = document.getElementById("settings-travel-return").value;
+            if (!appPreferences.customTravelTimes) appPreferences.customTravelTimes = {};
+            
+            appPreferences.customTravelTimes[destCity] = {
+                arrival: parseTimeStr(arrStr),
+                return: parseTimeStr(retStr)
+            };
+            savePreferences(appPreferences);
+            updateTravelFields(destCity);
+        }
+        document.getElementById("edit-travel-sheet").classList.remove("active");
+        document.getElementById("settings-sheet").classList.add("active");
+    });
+    
     // Start Setup Button
     document.getElementById("btn-start-setup").addEventListener("click", () => {
         openSetupSheet();
