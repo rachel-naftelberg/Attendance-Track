@@ -350,9 +350,17 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-    const btnMainConnectTelegram = document.getElementById("btn-main-connect-telegram");
-    if (btnMainConnectTelegram) {
-        btnMainConnectTelegram.addEventListener("click", connectTelegram);
+    const mainTelegramToggle = document.getElementById("main-telegram-toggle");
+    if (mainTelegramToggle) {
+        mainTelegramToggle.addEventListener("change", (e) => {
+            if (e.target.checked) {
+                connectTelegram();
+            } else {
+                appPreferences.telegramChatId = null;
+                saveAppPreferences();
+                if (typeof updateTelegramUI === 'function') updateTelegramUI();
+            }
+        });
     }
     if (typeof updateTelegramUI === 'function') {
         updateTelegramUI();
@@ -1801,10 +1809,12 @@ async function connectTelegram() {
 function updateTelegramUI() {
     const statusText = document.getElementById("telegram-status-text");
     const toggle = document.getElementById("settings-telegram-toggle");
+    const mainToggle = document.getElementById("main-telegram-toggle");
     const mainContainer = document.getElementById("main-telegram-connect-container");
     const isConnected = !!appPreferences.telegramChatId;
 
     if (toggle) toggle.checked = isConnected;
+    if (mainToggle) mainToggle.checked = isConnected;
 
     if (isConnected) {
         if(statusText) {
