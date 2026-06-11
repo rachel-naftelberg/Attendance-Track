@@ -340,11 +340,12 @@
                                     </div>
                                     
                                     <div class="form-row" id="row-custom-arrival-travel" style="flex-direction: column; align-items: stretch; gap: 6px;">
-                                        <label for="setup-arrival-travel">
-                                            זמן נסיעה מהבית <span id="setup-arrival-travel-asterisk" style="color: #dc3545; font-weight: bold; display: none; margin-right: 2px;">*</span>
-                                        </label>
-                                        <input type="text" id="setup-arrival-travel" placeholder="00:00" value="00:00" style="text-align: center;">
-                                        <div class="travel-note" id="setup-arrival-travel-note" style="color: #dc3545; font-size: 11px; font-weight: bold; margin-top: 2px; text-align: right; display: none;">זמן משוער</div>
+                                        <label for="setup-arrival-travel">זמן נסיעה מהבית</label>
+                                        <div style="position: relative; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                            <input type="text" id="setup-arrival-travel" placeholder="00:00" value="00:00" style="text-align: center; width: 80px;">
+                                            <span id="setup-arrival-travel-asterisk" style="color: #dc3545; font-weight: bold; display: none; font-size: 16px;">*</span>
+                                        </div>
+                                        <div class="travel-note" id="setup-arrival-travel-note" style="color: #dc3545; font-size: 11px; font-weight: bold; margin-top: 2px; text-align: center; display: none;">זמן משוער</div>
                                     </div>
                                 </div>
                                 
@@ -360,11 +361,12 @@
                                     </div>
                                     
                                     <div class="form-row" id="row-custom-return-travel" style="flex-direction: column; align-items: stretch; gap: 6px;">
-                                        <label for="setup-return-travel">
-                                            זמן נסיעה הביתה <span id="setup-return-travel-asterisk" style="color: #dc3545; font-weight: bold; display: none; margin-right: 2px;">*</span>
-                                        </label>
-                                        <input type="text" id="setup-return-travel" placeholder="00:00" value="00:00" style="text-align: center;">
-                                        <div class="travel-note" id="setup-return-travel-note" style="color: #dc3545; font-size: 11px; font-weight: bold; margin-top: 2px; text-align: right; display: none;">זמן משוער</div>
+                                        <label for="setup-return-travel">זמן נסיעה הביתה</label>
+                                        <div style="position: relative; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                            <input type="text" id="setup-return-travel" placeholder="00:00" value="00:00" style="text-align: center; width: 80px;">
+                                            <span id="setup-return-travel-asterisk" style="color: #dc3545; font-weight: bold; display: none; font-size: 16px;">*</span>
+                                        </div>
+                                        <div class="travel-note" id="setup-return-travel-note" style="color: #dc3545; font-size: 11px; font-weight: bold; margin-top: 2px; text-align: center; display: none;">זמן משוער</div>
                                     </div>
                                 </div>
                             </div>
@@ -419,10 +421,10 @@
                                     </div>
                                 </div>
                                 
-                                <div class="sheet-section">
+                                <div class="sheet-section" style="text-align: right;">
                                     <h4>עריכת זמני נסיעה</h4>
-                                    <button type="button" id="btn-open-edit-travel" class="action-btn secondary ripple" style="width: auto; padding: 8px 16px; margin: 4px 0; font-size: 13px; display: inline-flex; justify-content: center; align-items: center; gap: 8px;">
-                                        <i class="fa-solid fa-route"></i> ערוך זמני נסיעה מותאמים
+                                    <button type="button" id="btn-open-edit-travel" class="action-btn primary ripple" style="width: 25%; padding: 8px 16px; margin: 4px 0; font-size: 13px; display: inline-flex; justify-content: center; align-items: center; gap: 8px;">
+                                        <i class="fa-solid fa-route"></i> ערוך
                                     </button>
                                 </div>
                                 

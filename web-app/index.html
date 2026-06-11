@@ -89,7 +89,7 @@
                 </button>
                 
                 <div style="margin-top: 15px; font-size: 11px; color: var(--text-muted); opacity: 0.7; text-align: center;">
-                    עודכן לאחרונה: 11/06/2026 14:15
+                    עודכן לאחרונה: 11/06/2026 14:26
                 </div>
             </div>
             
@@ -254,9 +254,12 @@
                     <div class="form-row editable-field">
                         <label for="setup-arrival-travel">
                             <i class="fa-solid fa-car-side" style="font-size:11px; color:var(--text-muted); margin-left:4px;"></i>
-                            זמן נסיעה מהבית <span id="setup-arrival-travel-asterisk" style="color: #dc3545; font-weight: bold; display: none; margin-right: 2px;">*</span>
+                            זמן נסיעה מהבית
                         </label>
-                        <input type="text" id="setup-arrival-travel" placeholder="00:00" value="00:00" class="editable-input" style="text-align: center;">
+                        <div style="position: relative; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                            <input type="text" id="setup-arrival-travel" placeholder="00:00" value="00:00" class="editable-input" style="text-align: center; width: 60px;">
+                            <span id="setup-arrival-travel-asterisk" style="color: #dc3545; font-weight: bold; display: none; font-size: 16px;">*</span>
+                        </div>
                     </div>
                     <div class="travel-note" id="setup-arrival-travel-note" style="color: #dc3545; font-size: 11px; font-weight: bold; margin-top: -4px; margin-bottom: 8px; text-align: left; display: none; padding-left: 10px;">זמן משוער</div>
                 </div>
@@ -284,9 +287,12 @@
                     <div class="form-row editable-field">
                         <label for="setup-return-travel">
                             <i class="fa-solid fa-car-side" style="font-size:11px; color:var(--text-muted); margin-left:4px;"></i>
-                            זמן נסיעה הביתה <span id="setup-return-travel-asterisk" style="color: #dc3545; font-weight: bold; display: none; margin-right: 2px;">*</span>
+                            זמן נסיעה הביתה
                         </label>
-                        <input type="text" id="setup-return-travel" placeholder="00:00" value="00:00" class="editable-input" style="text-align: center;">
+                        <div style="position: relative; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                            <input type="text" id="setup-return-travel" placeholder="00:00" value="00:00" class="editable-input" style="text-align: center; width: 60px;">
+                            <span id="setup-return-travel-asterisk" style="color: #dc3545; font-weight: bold; display: none; font-size: 16px;">*</span>
+                        </div>
                     </div>
                     <div class="travel-note" id="setup-return-travel-note" style="color: #dc3545; font-size: 11px; font-weight: bold; margin-top: -4px; margin-bottom: 8px; text-align: left; display: none; padding-left: 10px;">זמן משוער</div>
                 </div>
@@ -344,10 +350,10 @@
                     </div>
                 </div>
                 
-                <div class="sheet-section">
+                <div class="sheet-section" style="text-align: right;">
                     <h4>עריכת זמני נסיעה</h4>
-                    <button type="button" id="btn-open-edit-travel" class="action-btn secondary ripple" style="width: auto; padding: 8px 16px; margin: 4px 0; font-size: 13px; display: inline-flex; justify-content: center; align-items: center; gap: 8px;">
-                        <i class="fa-solid fa-route"></i> ערוך זמני נסיעה מותאמים
+                    <button type="button" id="btn-open-edit-travel" class="action-btn primary ripple" style="width: 25%; padding: 8px 16px; margin: 4px 0; font-size: 13px; display: inline-flex; justify-content: center; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-route"></i> ערוך
                     </button>
                 </div>
                 
@@ -439,16 +445,28 @@
                 <div style="background: rgba(255,255,255,0.1); border-radius: 14px; padding: 16px; margin: 20px 0; width: 100%; box-sizing: border-box; text-align: right;">
                     <div style="display:flex; align-items:center; gap:10px; margin-bottom: 10px;">
                         <i class="fa-solid fa-location-dot" style="color:#7ee8fa; font-size:18px;"></i>
-                        <div>
-                            <div style="font-weight:700; font-size:14px;">זיהוי מיקום GPS</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight:700; font-size:14px; display:flex; justify-content:space-between; align-items:center;">
+                                זיהוי מיקום GPS
+                                <label class="toggle-switch" style="transform: scale(0.7); margin: 0;">
+                                    <input type="checkbox" id="onboarding-gps-toggle" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
                             <div style="font-size:12px; opacity:0.8;">לזיהוי אוטומטי של האתר ומרחקי נסיעה</div>
                         </div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <i class="fa-solid fa-bell" style="color:#ffd700; font-size:18px;"></i>
-                        <div>
-                            <div style="font-weight:700; font-size:14px;">התראות</div>
-                            <div style="font-size:12px; opacity:0.8;">לקבלת תזכורות בשעת ה-11:50</div>
+                    <div style="display:flex; align-items:center; gap:10px; cursor:pointer;" id="btn-telegram-connect">
+                        <i class="fa-brands fa-telegram" style="color:#0088cc; font-size:18px;"></i>
+                        <div style="flex: 1;">
+                            <div style="font-weight:700; font-size:14px; display:flex; justify-content:space-between; align-items:center;">
+                                חיבור לבוט טלגרם
+                                <label class="toggle-switch" style="transform: scale(0.7); margin: 0;">
+                                    <input type="checkbox" id="onboarding-telegram-toggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div style="font-size:12px; opacity:0.8;">לקבלת תזכורות לנייד ב-11:50</div>
                         </div>
                     </div>
                 </div>

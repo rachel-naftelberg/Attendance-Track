@@ -1560,49 +1560,19 @@ function checkWorkdayAlertThresholds(now) {
 // Fix 6: Schedule a notification to fire at targetDate even when app is in background
 // The Service Worker receives the schedule via postMessage and uses setTimeout to fire it.
 function scheduleBackgroundNotification(targetDate, title, body) {
-    if (!appPreferences.clockUsageApproved) return;
-    if (!('serviceWorker' in navigator)) return;
-    
-    const delayMs = targetDate.getTime() - Date.now();
-    if (delayMs <= 0) return; // Already past the time
-    
-    navigator.serviceWorker.ready.then(registration => {
-        // Send message to SW to schedule the notification
-        registration.active.postMessage({
-            type: 'SCHEDULE_NOTIFICATION',
-            title: title,
-            body: body,
-            delayMs: delayMs,
-            tgToken: TELEGRAM_BOT_TOKEN,
-            tgChatId: appPreferences.telegramChatId
-        });
-        console.log(`Scheduled background notification in ${Math.round(delayMs/60000)} minutes`);
-    }).catch(err => {
-        console.error("Could not schedule background notification:", err);
-    });
+    // Web notifications removed, relying on Telegram bot
 }
 
 function triggerPushNotification(title, text) {
-    // 1. Show internal app banner
-    const banner = document.getElementById("ios-push-banner");
-    document.getElementById("push-title").innerText = title;
-    document.getElementById("push-body").innerText = text;
-    
-    // Play alert sound
+    // 1. Play alert sound
     const audio = document.getElementById("alert-sound");
-    audio.currentTime = 0;
-    audio.play().catch(e => console.log("Sound play interaction blocked by browser:", e));
-    
-    // Show banner
-    banner.classList.add("active");
-    
-    // Auto hide after 6 seconds
-    setTimeout(() => {
-        banner.classList.remove("active");
-    }, 6000);
-    
-    // 2. Trigger notification
-    if (appPreferences.telegramChatId) {
+    if (audio) {
+        audio.currentTime = 0;
+        audio.play().catch(e => console.log("Sound play interaction blocked by browser:", e));
+    }
+
+    // 2. Send Telegram Notification
+    if (appPreferences.telegramChatId && TELEGRAM_BOT_TOKEN) {
         fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
