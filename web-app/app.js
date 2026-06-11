@@ -942,21 +942,7 @@ function bindUIEvents() {
         });
     }
 
-    // Smart Time Picker bindings
-    const timeInput = document.getElementById("setup-arrival-time");
-    if (timeInput) {
-        timeInput.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            openSmartTimePicker();
-        });
-        timeInput.addEventListener("focus", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            openSmartTimePicker();
-            timeInput.blur();
-        });
-    }
+    // Native time picker will handle input interactions
 
     const closeSmartPicker = () => {
         const modal = document.getElementById("smart-time-picker-modal");
