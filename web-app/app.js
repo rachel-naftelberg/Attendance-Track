@@ -943,9 +943,9 @@ function bindUIEvents() {
     }
 
     // Smart Time Picker bindings
-    const btnSmartPicker = document.getElementById("btn-open-smart-picker");
-    if (btnSmartPicker) {
-        btnSmartPicker.addEventListener("click", (e) => {
+    const timeInput = document.getElementById("setup-arrival-time");
+    if (timeInput) {
+        timeInput.addEventListener("click", (e) => {
             e.preventDefault();
             e.stopPropagation();
             openSmartTimePicker();
