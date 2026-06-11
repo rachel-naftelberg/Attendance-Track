@@ -77,15 +77,15 @@
                     <p>האפליקציה תזהה אוטומטית את האתר שבו אתה נמצא ותחשב את זמני הנסיעה הלוך וחזור.</p>
                 </div>
                 
-                <div class="gps-badge" id="gps-status-badge" style="cursor: pointer;" title="לחץ לריענון מיקום">
+                <div class="gps-badge" id="gps-status-badge" style="cursor: pointer; width: 260px; justify-content: center; box-sizing: border-box;" title="לחץ לריענון מיקום">
                     <span class="badge-dot orange"></span>
                     <span class="badge-text" id="gps-status-text">מזהה מיקום GPS...</span>
                     <i class="fa-solid fa-arrows-rotate" id="gps-refresh-icon" style="margin-right: 6px; font-size: 11px; opacity: 0.7;"></i>
                 </div>
                 
-                <div id="main-telegram-connect-container" style="display: none; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 12px 16px; background: rgba(0,0,0,0.03); border-radius: 12px; border: 1px solid var(--border-color);">
-                    <div style="font-size: 13px; font-weight: 600; color: var(--text-main);">חיבור לבוט טלגרם</div>
-                    <label class="toggle-switch">
+                <div class="gps-badge" id="main-telegram-connect-container" style="display: none; width: 260px; justify-content: space-between; margin-top: 12px; margin-bottom: 15px; box-sizing: border-box;">
+                    <span class="badge-text" style="color: var(--text-main); margin-right: 8px;">חיבור לבוט טלגרם</span>
+                    <label class="toggle-switch" style="transform: scale(0.85); transform-origin: left center; margin: 0;">
                         <input type="checkbox" id="main-telegram-toggle">
                         <span class="slider"></span>
                     </label>
