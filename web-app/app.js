@@ -338,9 +338,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialize select dropdown options
     populateSiteSelectors();
     
-    const btnConnectTelegram = document.getElementById("btn-connect-telegram");
-    if (btnConnectTelegram) {
-        btnConnectTelegram.addEventListener("click", connectTelegram);
+    const telegramToggle = document.getElementById("settings-telegram-toggle");
+    if (telegramToggle) {
+        telegramToggle.addEventListener("change", (e) => {
+            if (e.target.checked) {
+                connectTelegram();
+            } else {
+                appPreferences.telegramChatId = null;
+                saveAppPreferences();
+                if (typeof updateTelegramUI === 'function') updateTelegramUI();
+            }
+        });
     }
     const btnMainConnectTelegram = document.getElementById("btn-main-connect-telegram");
     if (btnMainConnectTelegram) {
@@ -1792,19 +1800,26 @@ async function connectTelegram() {
 
 function updateTelegramUI() {
     const statusText = document.getElementById("telegram-status-text");
-    const btn = document.getElementById("btn-connect-telegram");
-    if (appPreferences.telegramChatId) {
+    const toggle = document.getElementById("settings-telegram-toggle");
+    const mainContainer = document.getElementById("main-telegram-connect-container");
+    const isConnected = !!appPreferences.telegramChatId;
+
+    if (toggle) toggle.checked = isConnected;
+
+    if (isConnected) {
         if(statusText) {
             statusText.innerText = "סטטוס: מחובר פעיל";
             statusText.style.color = "var(--success-color)";
         }
-        if(btn) btn.innerHTML = "<i class='fa-brands fa-telegram'></i> שנה חיבור";
     } else {
         if(statusText) {
             statusText.innerText = "סטטוס: לא מחובר";
             statusText.style.color = "var(--text-muted)";
         }
-        if(btn) btn.innerHTML = "<i class='fa-brands fa-telegram'></i> חבר טלגרם";
+    }
+    
+    if (mainContainer) {
+        mainContainer.style.display = isConnected ? "none" : "block";
     }
 }
 

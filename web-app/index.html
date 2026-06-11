@@ -395,9 +395,10 @@
                             <h5>חיבור לבוט טלגרם</h5>
                             <p id="telegram-status-text" style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">סטטוס: לא מחובר</p>
                         </div>
-                        <button id="btn-connect-telegram" class="action-btn" style="background: transparent; border: 1px solid #000; color: #000; padding: 4px 12px; font-size: 11px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; width: auto; min-height: 24px;">
-                            <i class="fa-brands fa-telegram" style="color: #000;"></i> חבר טלגרם
-                        </button>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="settings-telegram-toggle">
+                            <span class="slider"></span>
+                        </label>
                     </div>
                     <div id="telegram-polling-loader" style="display: none; align-items: center; gap: 8px; font-size: 11px; color: var(--primary-color); padding: 0 16px 12px;">
                         <i class="fa-solid fa-circle-notch fa-spin"></i>
