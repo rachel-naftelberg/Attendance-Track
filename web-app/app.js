@@ -153,7 +153,7 @@ function setTravelValueWithNote(inputId, noteId, val, destCity) {
     const asteriskEl = document.getElementById(asteriskId);
     
     if (!isCustom && details.note) {
-        if (!displayVal.includes("*")) displayVal += "*";
+        
         if (noteEl) {
             noteEl.style.display = "block";
             noteEl.innerText = details.note;
@@ -522,6 +522,10 @@ function bindUIEvents() {
         document.getElementById("btn-open-edit-travel")?.addEventListener("click", () => {
         document.getElementById("settings-sheet").classList.remove("active");
         document.getElementById("edit-travel-sheet").classList.add("active");
+        const destCity = document.getElementById("settings-edit-travel-dest").value.trim();
+        if (destCity) {
+            updateTravelFields(destCity);
+        }
     });
     
     document.getElementById("btn-edit-travel-cancel")?.addEventListener("click", () => {
@@ -1717,7 +1721,7 @@ function loadAppPreferences() {
     if (city) {
         appPreferences.defaultCity = city;
         appPreferences.defaultSnooze = snooze === null ? true : (snooze === "true");
-        appPreferences.defaultSnoozeInterval = snoozeInterval === null ? 5 : parseInt(snoozeInterval);
+        appPreferences.defaultSnoozeInterval = snoozeInterval === null ? 10 : parseInt(snoozeInterval);
         appPreferences.gpsUsageApproved = gpsApproved === null ? true : (gpsApproved === "true");
         appPreferences.clockUsageApproved = clockApproved === null ? true : (clockApproved === "true");
         document.getElementById("onboarding-screen").classList.remove("active");
