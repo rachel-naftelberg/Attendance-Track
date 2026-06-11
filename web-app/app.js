@@ -342,6 +342,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btnConnectTelegram) {
         btnConnectTelegram.addEventListener("click", connectTelegram);
     }
+    const btnMainConnectTelegram = document.getElementById("btn-main-connect-telegram");
+    if (btnMainConnectTelegram) {
+        btnMainConnectTelegram.addEventListener("click", connectTelegram);
+    }
     if (typeof updateTelegramUI === 'function') {
         updateTelegramUI();
     }
@@ -703,23 +707,8 @@ function bindUIEvents() {
             icon.className = "fa-solid fa-moon";
         }
     });
-    
-    // Onboarding Submit
-    document.getElementById("btn-onboarding-submit").addEventListener("click", () => {
-        appPreferences.gpsUsageApproved = true;
-        appPreferences.clockUsageApproved = true;
-        saveAppPreferences();
-        
-        // Mark onboarding as completed (don't ask again)
-        localStorage.setItem("iec_pref_onboarding_done", "true");
-        
-        document.getElementById("onboarding-screen").classList.remove("active");
-        
-        // Start GPS now that user approved
-        startRealGPS();
-        // Web notifications removed
-    });
-    
+    // Start GPS immediately since we don't have onboarding anymore
+    startRealGPS();
     // Settings Button Open (1.1: populate city text input)
     document.getElementById("btn-settings-toggle").addEventListener("click", () => {
         if (shiftState !== "idle") {
@@ -1306,11 +1295,14 @@ function updateGPSStatus() {
 // ==========================================================================
 
 function openSetupSheet() {
-    const now = new Date();
-    const hh = String(now.getHours()).padStart(2, '0');
-    const mm = String(now.getMinutes()).padStart(2, '0');
-    
-    document.getElementById("setup-arrival-time").value = `${hh}:${mm}`;
+    if (!appPreferences.clockUsageApproved) {
+        document.getElementById("setup-arrival-time").value = "08:00";
+    } else {
+        const now = new Date();
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById("setup-arrival-time").value = `${hh}:${mm}`;
+    }
 
     // Populate read-only profile city fields
     const homeCityInput = document.getElementById("setup-user-home-city");
@@ -1715,13 +1707,7 @@ function loadAppPreferences() {
         appPreferences.telegramChatId = tgChatId;
     }
     
-    // If onboarding is not done, show it, otherwise hide it
-    const onboardingDone = localStorage.getItem("iec_pref_onboarding_done");
-    if (onboardingDone === "true" || city !== null) {
-        document.getElementById("onboarding-screen").classList.remove("active");
-    } else {
-        document.getElementById("onboarding-screen").classList.add("active");
-    }
+    // Onboarding was removed, so we do nothing here.
 }
 
 function saveAppPreferences() {
