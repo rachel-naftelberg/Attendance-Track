@@ -1740,6 +1740,9 @@ function loadAppPreferences() {
 
 function saveAppPreferences() {
     localStorage.setItem("iec_pref_default_city", appPreferences.defaultCity);
+    if (appPreferences.mainOfficeCity) {
+        localStorage.setItem("iec_pref_main_office_city", appPreferences.mainOfficeCity);
+    }
     localStorage.setItem("iec_pref_default_snooze", appPreferences.defaultSnooze.toString());
     localStorage.setItem("iec_pref_default_snooze_interval", appPreferences.defaultSnoozeInterval.toString());
     localStorage.setItem("iec_pref_gps_approved", appPreferences.gpsUsageApproved.toString());
@@ -1747,6 +1750,7 @@ function saveAppPreferences() {
     if (appPreferences.telegramChatId) {
         localStorage.setItem("iec_pref_tg_chat_id", appPreferences.telegramChatId);
     }
+}
 }
 
 // ==========================================================================
