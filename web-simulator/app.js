@@ -65,6 +65,7 @@ const DEFAULT_BUILDINGS = [
 let buildingsDatabase = [];
 let travelDatabaseCities = [];
 let travelDatabaseTimes = {};
+let travelDatabaseSources = [];
 
 function initDatabases() {
     const savedBuildings = localStorage.getItem("iec_db_buildings");
@@ -99,11 +100,13 @@ function initDatabases() {
 
 // App-wide Preferences (Persistent settings, not wiped on shift reset)
 let appPreferences = {
-    defaultCity: "",
+    defaultCity: "\u05e8\u05e2\u05e0\u05e0\u05d4",
+    mainOfficeCity: "\u05d2\u05df \u05e9\u05d5\u05e8\u05e7",
     defaultSnooze: true,
-    defaultSnoozeInterval: 5,
+    defaultSnoozeInterval: 10,
     gpsUsageApproved: true,
-    clockUsageApproved: true
+    clockUsageApproved: true,
+    customTravelTimes: {}
 };
 
 // Simulator State Machine Variables
@@ -129,7 +132,7 @@ let shiftData = {
     returnBuildingName: "",
     travelBackMinutes: 0,
     snoozeEnabled: true,
-    snoozeIntervalMinutes: 5
+    snoozeIntervalMinutes: 10
 };
 
 // Snooze Loop Parameters
@@ -149,13 +152,22 @@ document.addEventListener("DOMContentLoaded", () => {
     // Load preferences (Persistent onboarding/snooze settings)
     loadAppPreferences();
     
-    // Load travel database
+    // Load travel database (new format with separate sources/cities)
     fetch("travel_db.json")
         .then(res => res.json())
         .then(data => {
-            travelDatabaseCities = data.cities;
-            travelDatabaseTimes = data.times;
-            populateCitySelectors();
+            travelDatabaseTimes = data.times || {};
+            const timeKeys = Object.keys(travelDatabaseTimes);
+            travelDatabaseSources = (timeKeys.length > 0 ? timeKeys.sort((a,b) => a.localeCompare(b, 'he')) : (data.sources || data.cities || []))
+                .filter(x => x && x !== "#N/A" && x.trim() !== "");
+            const destSet = new Set();
+            Object.values(travelDatabaseTimes).forEach(dObj => Object.keys(dObj).forEach(d => {
+                if (d && d !== "#N/A" && d.trim() !== "") destSet.add(d);
+            }));
+            travelDatabaseCities = destSet.size > 0 ? Array.from(destSet).sort((a,b) => a.localeCompare(b, 'he')) : (data.cities && data.cities.length > 0 ? data.cities.filter(x => x && x !== "#N/A" && x.trim() !== "") : data.sources || []);
+            renderCityAutocomplete(); // pre-render empty or full list
+            renderOfficeAutocomplete();
+            renderEditTravelAutocomplete();
             populateSiteSelectors();
         })
         .catch(err => {
@@ -225,20 +237,27 @@ function bindUIEvents() {
         const val = e.target.value;
         const city = appPreferences.defaultCity || "חיפה";
         
-        document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(city, val);
+        const arrMin = lookupArrivalTravelTime(city, val);
+        document.getElementById("setup-arrival-travel").value = formatMinutes(arrMin);
         
         // Align return building selection by default
         const returnSelect = document.getElementById("setup-return-site");
         returnSelect.value = val;
         
-        document.getElementById("setup-return-travel").value = lookupReturnTravelTime(city, val);
+        const retMin = lookupReturnTravelTime(city, val);
+        document.getElementById("setup-return-travel").value = formatMinutes(retMin);
+        
+        updateSetupTravelNotes();
     });
     
     document.getElementById("setup-return-site").addEventListener("change", (e) => {
         const val = e.target.value;
         const city = appPreferences.defaultCity || "חיפה";
         
-        document.getElementById("setup-return-travel").value = lookupReturnTravelTime(city, val);
+        const retMin = lookupReturnTravelTime(city, val);
+        document.getElementById("setup-return-travel").value = formatMinutes(retMin);
+        
+        updateSetupTravelNotes();
     });
     
     // Live Snooze Toggle
@@ -251,7 +270,7 @@ function bindUIEvents() {
     
     // Live Snooze Interval Change
     document.getElementById("active-snooze-interval").addEventListener("change", (e) => {
-        shiftData.snoozeIntervalMinutes = parseInt(e.target.value) || 5;
+        shiftData.snoozeIntervalMinutes = parseInt(e.target.value) || 10;
         saveShiftStateToDisk();
         updateStorageInspector();
     });
@@ -332,9 +351,12 @@ function bindUIEvents() {
     
     // Onboarding Submit
     document.getElementById("btn-onboarding-submit").addEventListener("click", () => {
-        const city = document.getElementById("onboarding-city").value;
-        appPreferences.defaultCity = city;
+        appPreferences.gpsUsageApproved = true;
+        appPreferences.clockUsageApproved = true;
         saveAppPreferences();
+        
+        // Mark onboarding as completed
+        localStorage.setItem("iec_pref_onboarding_done", "true");
         document.getElementById("onboarding-screen").classList.remove("active");
         updateStorageInspector();
     });
@@ -345,9 +367,10 @@ function bindUIEvents() {
             alert("לא ניתן לשנות הגדרות כלליות במהלך משמרת פעילה!");
             return;
         }
-        document.getElementById("settings-default-city").value = appPreferences.defaultCity;
+        document.getElementById("settings-default-city").value = appPreferences.defaultCity || "";
+        document.getElementById("settings-main-office-city").value = appPreferences.mainOfficeCity || "";
         document.getElementById("settings-default-snooze").checked = appPreferences.defaultSnooze;
-        document.getElementById("settings-default-snooze-interval").value = appPreferences.defaultSnoozeInterval || 5;
+        document.getElementById("settings-default-snooze-interval").value = appPreferences.defaultSnoozeInterval || 10;
         document.getElementById("row-settings-snooze-interval").style.display = appPreferences.defaultSnooze ? "flex" : "none";
         
         // Populate approvals
@@ -369,9 +392,10 @@ function bindUIEvents() {
     
     // Settings Save
     document.getElementById("btn-settings-save").addEventListener("click", () => {
-        appPreferences.defaultCity = document.getElementById("settings-default-city").value;
+        appPreferences.defaultCity = document.getElementById("settings-default-city").value.trim();
+        appPreferences.mainOfficeCity = document.getElementById("settings-main-office-city").value.trim();
         appPreferences.defaultSnooze = document.getElementById("settings-default-snooze").checked;
-        appPreferences.defaultSnoozeInterval = parseInt(document.getElementById("settings-default-snooze-interval").value) || 5;
+        appPreferences.defaultSnoozeInterval = parseInt(document.getElementById("settings-default-snooze-interval").value) || 10;
         
         // Save approvals
         appPreferences.gpsUsageApproved = document.getElementById("settings-gps-approved").checked;
@@ -381,6 +405,96 @@ function bindUIEvents() {
         updateGPSStatus(); // Update badge status immediately based on preference change!
         
         document.getElementById("settings-sheet").classList.remove("active");
+    });
+
+    // Custom city autocomplete logic
+    const cityInput = document.getElementById("settings-default-city");
+    const cityDropdown = document.getElementById("settings-city-dropdown");
+    if (cityInput && cityDropdown) {
+        cityInput.addEventListener("input", (e) => {
+            cityDropdown.classList.add("active");
+            renderCityAutocomplete(e.target.value.trim());
+        });
+        cityInput.addEventListener("focus", (e) => {
+            cityDropdown.classList.add("active");
+            renderCityAutocomplete(e.target.value.trim());
+        });
+        document.addEventListener("click", (e) => {
+            if (!cityInput.contains(e.target) && !cityDropdown.contains(e.target)) {
+                cityDropdown.classList.remove("active");
+            }
+        });
+    }
+
+    // Custom office autocomplete logic
+    const officeInput = document.getElementById("settings-main-office-city");
+    const officeDropdown = document.getElementById("settings-office-dropdown");
+    if (officeInput && officeDropdown) {
+        officeInput.addEventListener("input", (e) => {
+            officeDropdown.classList.add("active");
+            renderOfficeAutocomplete(e.target.value.trim());
+        });
+        officeInput.addEventListener("focus", (e) => {
+            officeDropdown.classList.add("active");
+            renderOfficeAutocomplete(e.target.value.trim());
+        });
+        document.addEventListener("click", (e) => {
+            if (!officeInput.contains(e.target) && !officeDropdown.contains(e.target)) {
+                officeDropdown.classList.remove("active");
+            }
+        });
+    }
+
+    // Custom edit travel autocomplete logic
+    const editTravelInput = document.getElementById("settings-edit-travel-dest");
+    const editTravelDropdown = document.getElementById("settings-edit-travel-dropdown");
+    if (editTravelInput && editTravelDropdown) {
+        editTravelInput.addEventListener("input", (e) => {
+            editTravelDropdown.classList.add("active");
+            renderEditTravelAutocomplete(e.target.value.trim());
+        });
+        editTravelInput.addEventListener("focus", (e) => {
+            editTravelDropdown.classList.add("active");
+            renderEditTravelAutocomplete(e.target.value.trim());
+        });
+        document.addEventListener("click", (e) => {
+            if (!editTravelInput.contains(e.target) && !editTravelDropdown.contains(e.target)) {
+                editTravelDropdown.classList.remove("active");
+            }
+        });
+    }
+
+    // Edit travel sheets buttons logic
+    document.getElementById("btn-open-edit-travel")?.addEventListener("click", () => {
+        document.getElementById("settings-sheet").classList.remove("active");
+        document.getElementById("edit-travel-sheet").classList.add("active");
+        const destCity = document.getElementById("settings-edit-travel-dest").value.trim();
+        if (destCity) {
+            updateTravelFields(destCity);
+        }
+    });
+    
+    document.getElementById("btn-edit-travel-cancel")?.addEventListener("click", () => {
+        document.getElementById("edit-travel-sheet").classList.remove("active");
+        document.getElementById("settings-sheet").classList.add("active");
+    });
+    
+    document.getElementById("btn-edit-travel-save")?.addEventListener("click", () => {
+        const destCity = document.getElementById("settings-edit-travel-dest").value.trim();
+        if (destCity && document.getElementById("settings-edit-travel-fields").style.display === "block") {
+            const arrStr = document.getElementById("settings-travel-arrival").value;
+            const retStr = document.getElementById("settings-travel-return").value;
+            if (!appPreferences.customTravelTimes) appPreferences.customTravelTimes = {};
+            
+            appPreferences.customTravelTimes[destCity] = {
+                arrival: parseTimeStr(arrStr),
+                return: parseTimeStr(retStr)
+            };
+            saveAppPreferences();
+            updateTravelFields(destCity);
+        }
+        document.getElementById("edit-travel-sheet").classList.remove("active");
+        document.getElementById("settings-sheet").classList.add("active");
     });
 
 
@@ -540,16 +654,19 @@ function openSetupSheet() {
         arrivalSelect.value = detectedBuilding.id;
         returnSelect.value = detectedBuilding.id;
         
-        document.getElementById("setup-arrival-travel").value = lookupArrivalTravelTime(defCity, detectedBuilding.id);
-        document.getElementById("setup-return-travel").value = lookupReturnTravelTime(defCity, detectedBuilding.id);
+        const arrMin = lookupArrivalTravelTime(defCity, detectedBuilding.id);
+        const retMin = lookupReturnTravelTime(defCity, detectedBuilding.id);
+        document.getElementById("setup-arrival-travel").value = formatMinutes(arrMin);
+        document.getElementById("setup-return-travel").value = formatMinutes(retMin);
     } else {
         arrivalSelect.value = "other";
         returnSelect.value = "other";
         
-        document.getElementById("setup-arrival-travel").value = 30;
-        document.getElementById("setup-return-travel").value = 30;
+        document.getElementById("setup-arrival-travel").value = "00:30";
+        document.getElementById("setup-return-travel").value = "00:30";
     }
     
+    updateSetupTravelNotes();
     document.getElementById("setup-sheet").classList.add("active");
 }
 
@@ -575,11 +692,11 @@ function confirmStartShift() {
     const arrivalSiteId = document.getElementById("setup-arrival-site").value;
     const returnSiteId = document.getElementById("setup-return-site").value;
     
-    const travelToVal = parseInt(document.getElementById("setup-arrival-travel").value) || 0;
-    const travelBackVal = parseInt(document.getElementById("setup-return-travel").value) || 0;
+    const travelToVal = parseTimeStr(document.getElementById("setup-arrival-travel").value) || 0;
+    const travelBackVal = parseTimeStr(document.getElementById("setup-return-travel").value) || 0;
     
     const snoozeVal = appPreferences.defaultSnooze;
-    const snoozeIntervalVal = appPreferences.defaultSnoozeInterval || 5;
+    const snoozeIntervalVal = appPreferences.defaultSnoozeInterval || 10;
     
     // Calculate leave home date = arrival date - travel to minutes
     const leaveHomeDateObj = new Date(arrivalDateObj.getTime() - (travelToVal * 60 * 1000));
@@ -837,7 +954,7 @@ function confirmExitAndWipeData() {
         returnBuildingName: "",
         travelBackMinutes: 0,
         snoozeEnabled: true,
-        snoozeIntervalMinutes: 5
+        snoozeIntervalMinutes: 10
     };
     
     // Wipe local storage completely
@@ -877,7 +994,7 @@ function renderViewState() {
         document.getElementById("active-val-return-site").innerText = shiftData.returnBuildingName;
         
         document.getElementById("chk-active-snooze").checked = shiftData.snoozeEnabled;
-        document.getElementById("active-snooze-interval").value = shiftData.snoozeIntervalMinutes || 5;
+        document.getElementById("active-snooze-interval").value = shiftData.snoozeIntervalMinutes || 10;
         document.getElementById("row-active-snooze-interval").style.display = shiftData.snoozeEnabled ? "flex" : "none";
     } 
     else if (shiftState === "resetPending") {
@@ -923,30 +1040,48 @@ function clearShiftStateFromDisk() {
 
 function loadAppPreferences() {
     const city = localStorage.getItem("iec_pref_default_city");
+    const mainOffice = localStorage.getItem("iec_pref_main_office_city");
     const snooze = localStorage.getItem("iec_pref_default_snooze");
     const snoozeInterval = localStorage.getItem("iec_pref_default_snooze_interval");
     const gpsApproved = localStorage.getItem("iec_pref_gps_approved");
     const clockApproved = localStorage.getItem("iec_pref_clock_approved");
     
-    if (city) {
-        appPreferences.defaultCity = city;
-        appPreferences.defaultSnooze = snooze === null ? true : (snooze === "true");
-        appPreferences.defaultSnoozeInterval = snoozeInterval === null ? 5 : parseInt(snoozeInterval);
-        appPreferences.gpsUsageApproved = gpsApproved === null ? true : (gpsApproved === "true");
-        appPreferences.clockUsageApproved = clockApproved === null ? true : (clockApproved === "true");
+    // Set fallback defaults if not found in localStorage or if empty string
+    appPreferences.defaultCity = (city && city.trim()) ? city : "\u05e8\u05e2\u05e0\u05e0\u05d4";
+    appPreferences.mainOfficeCity = (mainOffice && mainOffice.trim()) ? mainOffice : "\u05d2\u05df \u05e9\u05d5\u05e8\u05e7";
+    appPreferences.defaultSnooze = snooze === null ? true : (snooze === "true");
+    appPreferences.defaultSnoozeInterval = snoozeInterval === null ? 10 : parseInt(snoozeInterval);
+    appPreferences.gpsUsageApproved = gpsApproved === null ? true : (gpsApproved === "true");
+    appPreferences.clockUsageApproved = clockApproved === null ? true : (clockApproved === "true");
+    
+    const customTimes = localStorage.getItem("iec_pref_custom_travel_times");
+    if (customTimes) {
+        try {
+            appPreferences.customTravelTimes = JSON.parse(customTimes);
+        } catch(e) {
+            appPreferences.customTravelTimes = {};
+        }
+    } else {
+        appPreferences.customTravelTimes = {};
+    }
+    
+    // If onboarding is not done, show it, otherwise hide it
+    const onboardingDone = localStorage.getItem("iec_pref_onboarding_done");
+    if (onboardingDone === "true" || city !== null) {
         document.getElementById("onboarding-screen").classList.remove("active");
     } else {
-        // Show onboarding
         document.getElementById("onboarding-screen").classList.add("active");
     }
 }
 
 function saveAppPreferences() {
     localStorage.setItem("iec_pref_default_city", appPreferences.defaultCity);
+    localStorage.setItem("iec_pref_main_office_city", appPreferences.mainOfficeCity || "");
     localStorage.setItem("iec_pref_default_snooze", appPreferences.defaultSnooze.toString());
     localStorage.setItem("iec_pref_default_snooze_interval", appPreferences.defaultSnoozeInterval.toString());
     localStorage.setItem("iec_pref_gps_approved", appPreferences.gpsUsageApproved.toString());
     localStorage.setItem("iec_pref_clock_approved", appPreferences.clockUsageApproved.toString());
+    localStorage.setItem("iec_pref_custom_travel_times", JSON.stringify(appPreferences.customTravelTimes || {}));
 }
 
 function updateStorageInspector() {
@@ -1170,10 +1305,6 @@ window.deleteSimBuilding = function(buildingId) {
     const b = buildingsDatabase.find(x => x.id === buildingId);
     if (!b) return;
     
-window.deleteSimBuilding = function(buildingId) {
-    const b = buildingsDatabase.find(x => x.id === buildingId);
-    if (!b) return;
-    
     if (confirm(`האם אתה בטוח שברצונך למחוק את האתר "${b.name}"?`)) {
         // Delete building
         const bIndex = buildingsDatabase.findIndex(x => x.id === buildingId);
@@ -1252,4 +1383,239 @@ function saveSimBuilding() {
     renderBuildingsTable();
     renderAppBuildingsList();
     populateSiteSelectors();
+}
+
+function formatMinutes(mins) {
+    if (isNaN(mins) || mins === null) return "00:00";
+    const h = Math.floor(mins / 60).toString().padStart(2, '0');
+    const m = (mins % 60).toString().padStart(2, '0');
+    return `${h}:${m}`;
+}
+
+function parseTimeStr(ts) {
+    if (!ts) return 0;
+    const clean = ts.replace("*", "").trim();
+    if (!clean || !clean.includes(":")) return 0;
+    const p = clean.split(":");
+    return (parseInt(p[0], 10) || 0) * 60 + (parseInt(p[1], 10) || 0);
+}
+
+function getTravelTimeDetailsForUI(isArrival, destCity) {
+    if (!destCity) {
+        return { minutes: 0, note: "" };
+    }
+    
+    const isCustom = appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity];
+    if (isCustom) {
+        const val = isArrival ? isCustom.arrival : isCustom.return;
+        if (val !== undefined) {
+            return { minutes: val, note: "" };
+        }
+    }
+    
+    let originCity = "";
+    const settingsCityInput = document.getElementById("settings-default-city");
+    if (settingsCityInput && settingsCityInput.value.trim()) {
+        originCity = settingsCityInput.value.trim();
+    } else {
+        originCity = appPreferences.defaultCity || "חיפה";
+    }
+    if (!originCity) {
+        return { minutes: 0, note: "" };
+    }
+    
+    if (appPreferences.mainOfficeCity && destCity === appPreferences.mainOfficeCity) {
+        return { minutes: 0, note: "" };
+    }
+    
+    const times = getTravelTimeFromDB(originCity, destCity);
+    const arrivalDb = times ? parseInt(times[0]) || 0 : 0;
+    const returnDb = times ? parseInt(times[1]) || 0 : 0;
+    
+    const arrivalNote = times && times.length > 4 ? times[4] : "";
+    const returnNote = times && times.length > 5 ? times[5] : "";
+    
+    let dbVal = isArrival ? arrivalDb : returnDb;
+    let dbNote = isArrival ? arrivalNote : returnNote;
+    
+    if (dbVal > 0 && dbVal < 30) {
+        dbVal = 0;
+    }
+    
+    if (dbVal === 0 && times && parseInt(times[3]) > 0) {
+        const totalTimeDb = parseInt(times[3]);
+        if (totalTimeDb >= 30) {
+            dbVal = totalTimeDb;
+        }
+    }
+    
+    return { minutes: dbVal, note: dbNote };
+}
+
+function setTravelValueWithNote(inputId, noteId, val, destCity) {
+    const inputEl = document.getElementById(inputId);
+    const noteEl = document.getElementById(noteId);
+    if (!inputEl) return;
+    
+    let displayVal = val.toString().replace("*", "").trim();
+    const isArrival = inputId.toLowerCase().includes("arrival");
+    const details = getTravelTimeDetailsForUI(isArrival, destCity);
+    const isCustom = appPreferences.customTravelTimes && appPreferences.customTravelTimes[destCity];
+    
+    let asteriskId = inputId + "-asterisk";
+    if (inputId === "settings-travel-arrival") asteriskId = "settings-arrival-travel-asterisk";
+    if (inputId === "settings-travel-return") asteriskId = "settings-return-travel-asterisk";
+    if (inputId === "setup-arrival-travel") asteriskId = "setup-arrival-travel-asterisk";
+    if (inputId === "setup-return-travel") asteriskId = "setup-return-travel-asterisk";
+    const asteriskEl = document.getElementById(asteriskId);
+    
+    if (!isCustom && details.note) {
+        if (noteEl) {
+            noteEl.style.display = "block";
+            noteEl.innerText = details.note;
+        }
+        if (asteriskEl) asteriskEl.style.display = "inline";
+    } else {
+        if (noteEl) noteEl.style.display = "none";
+        if (asteriskEl) asteriskEl.style.display = "none";
+    }
+    inputEl.value = displayVal;
+}
+
+function updateSetupTravelNotes() {
+    const arrivalSelect = document.getElementById("setup-arrival-site");
+    const returnSelect = document.getElementById("setup-return-site");
+    
+    const arrivalSiteId = arrivalSelect ? arrivalSelect.value : "";
+    const returnSiteId = returnSelect ? returnSelect.value : "";
+    
+    const arrivalBuilding = buildingsDatabase.find(x => x.id === arrivalSiteId);
+    const returnBuilding = buildingsDatabase.find(x => x.id === returnSiteId);
+    
+    const arrDestCity = arrivalBuilding ? arrivalBuilding.destinationCity : "";
+    const retDestCity = returnBuilding ? returnBuilding.destinationCity : "";
+    
+    const arrVal = document.getElementById("setup-arrival-travel").value;
+    const retVal = document.getElementById("setup-return-travel").value;
+    
+    setTravelValueWithNote("setup-arrival-travel", "setup-arrival-travel-note", arrVal, arrDestCity);
+    setTravelValueWithNote("setup-return-travel", "setup-return-travel-note", retVal, retDestCity);
+}
+
+function renderCityAutocomplete(searchTerm = "") {
+    const dropdown = document.getElementById("settings-city-dropdown");
+    if (!dropdown || !travelDatabaseSources) return;
+    
+    dropdown.innerHTML = "";
+    
+    const filtered = travelDatabaseSources.filter(c => c.includes(searchTerm));
+    
+    if (filtered.length === 0) {
+        dropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">לא נמצאו יישובים</div>`;
+        return;
+    }
+    
+    const limit = 50; 
+    filtered.slice(0, limit).forEach(city => {
+        const item = document.createElement("div");
+        item.className = "autocomplete-item";
+        item.textContent = city;
+        item.addEventListener("click", () => {
+            document.getElementById("settings-default-city").value = city;
+            dropdown.classList.remove("active");
+        });
+        dropdown.appendChild(item);
+    });
+}
+
+function renderOfficeAutocomplete(searchTerm = "") {
+    const dropdown = document.getElementById("settings-office-dropdown");
+    if (!dropdown || !travelDatabaseSources) return;
+    
+    dropdown.innerHTML = "";
+    
+    const filtered = travelDatabaseSources.filter(c => c.includes(searchTerm));
+    
+    if (filtered.length === 0) {
+        dropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">לא נמצאו יישובים</div>`;
+        return;
+    }
+    
+    const limit = 50; 
+    filtered.slice(0, limit).forEach(city => {
+        const item = document.createElement("div");
+        item.className = "autocomplete-item";
+        item.textContent = city;
+        item.addEventListener("click", () => {
+            document.getElementById("settings-main-office-city").value = city;
+            dropdown.classList.remove("active");
+        });
+        dropdown.appendChild(item);
+    });
+}
+
+function renderEditTravelAutocomplete(searchTerm = "") {
+    const dropdown = document.getElementById("settings-edit-travel-dropdown");
+    if (!dropdown || !travelDatabaseCities) return;
+    
+    dropdown.innerHTML = "";
+    
+    const filtered = travelDatabaseCities.filter(c => c.includes(searchTerm));
+    
+    if (filtered.length === 0) {
+        dropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">לא נמצאו יישובים</div>`;
+        return;
+    }
+    
+    const limit = 50; 
+    filtered.slice(0, limit).forEach(city => {
+        const item = document.createElement("div");
+        item.className = "autocomplete-item";
+        item.textContent = city;
+        item.addEventListener("click", () => {
+            document.getElementById("settings-edit-travel-dest").value = city;
+            dropdown.classList.remove("active");
+            updateTravelFields(city);
+        });
+        dropdown.appendChild(item);
+    });
+}
+
+function updateTravelFields(destCity) {
+    let originCity = "";
+    const settingsCityInput = document.getElementById("settings-default-city");
+    if (settingsCityInput && settingsCityInput.value.trim()) {
+        originCity = settingsCityInput.value.trim();
+    } else {
+        originCity = appPreferences.defaultCity || "חיפה";
+    }
+    
+    const fieldsContainer = document.getElementById("settings-edit-travel-fields");
+    
+    if (!originCity || !destCity || !travelDatabaseCities.includes(destCity)) {
+        fieldsContainer.style.display = "none";
+        return;
+    }
+    
+    fieldsContainer.style.display = "block";
+    
+    let distance = "--";
+    let totalTime = "--";
+    
+    const arrivalDetails = getTravelTimeDetailsForUI(true, destCity);
+    const returnDetails = getTravelTimeDetailsForUI(false, destCity);
+    
+    const arrival = formatMinutes(arrivalDetails.minutes);
+    const returnTime = formatMinutes(returnDetails.minutes);
+    
+    const times = getTravelTimeFromDB(originCity, destCity);
+    if (times && times.length >= 4) {
+        distance = times[2] !== "" ? times[2] : "--";
+        totalTime = times[3] !== undefined ? formatMinutes(times[3]) : "--";
+    }
+    
+    document.getElementById("settings-travel-distance").value = distance;
+    document.getElementById("settings-travel-total").value = totalTime;
+    setTravelValueWithNote("settings-travel-arrival", "settings-arrival-travel-note", arrival, destCity);
+    setTravelValueWithNote("settings-travel-return", "settings-return-travel-note", returnTime, destCity);
 }

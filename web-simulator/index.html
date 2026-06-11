@@ -337,9 +337,12 @@
                                         </select>
                                     </div>
                                     
-                                    <div class="form-row" id="row-custom-arrival-travel">
-                                        <label for="setup-arrival-travel">זמן נסיעה מהבית (דקות)</label>
-                                        <input type="number" id="setup-arrival-travel" min="0" max="240" value="30">
+                                    <div class="form-row" id="row-custom-arrival-travel" style="flex-direction: column; align-items: stretch; gap: 6px;">
+                                        <label for="setup-arrival-travel">
+                                            זמן נסיעה מהבית <span id="setup-arrival-travel-asterisk" style="color: #dc3545; font-weight: bold; display: none; margin-right: 2px;">*</span>
+                                        </label>
+                                        <input type="text" id="setup-arrival-travel" placeholder="00:00" value="00:00" style="text-align: center;">
+                                        <div class="travel-note" id="setup-arrival-travel-note" style="color: #dc3545; font-size: 11px; font-weight: bold; margin-top: 2px; text-align: right; display: none;">זמן משוער</div>
                                     </div>
                                 </div>
                                 
@@ -354,9 +357,12 @@
                                         </select>
                                     </div>
                                     
-                                    <div class="form-row" id="row-custom-return-travel">
-                                        <label for="setup-return-travel">זמן נסיעה הביתה (דקות)</label>
-                                        <input type="number" id="setup-return-travel" min="0" max="240" value="30">
+                                    <div class="form-row" id="row-custom-return-travel" style="flex-direction: column; align-items: stretch; gap: 6px;">
+                                        <label for="setup-return-travel">
+                                            זמן נסיעה הביתה <span id="setup-return-travel-asterisk" style="color: #dc3545; font-weight: bold; display: none; margin-right: 2px;">*</span>
+                                        </label>
+                                        <input type="text" id="setup-return-travel" placeholder="00:00" value="00:00" style="text-align: center;">
+                                        <div class="travel-note" id="setup-return-travel-note" style="color: #dc3545; font-size: 11px; font-weight: bold; margin-top: 2px; text-align: right; display: none;">זמן משוער</div>
                                     </div>
                                 </div>
                             </div>
@@ -372,18 +378,50 @@
                             
                             <div class="sheet-content">
                                 <div class="sheet-section">
-                                    <h4>הגדרות עיר מגורים</h4>
-                                    <div class="form-row">
-                                        <label for="settings-default-city">עיר מגורים קבועה</label>
-                                        <select id="settings-default-city">
-                                            <option value="חיפה">חיפה</option>
-                                            <option value="תל אביב">תל אביב</option>
-                                            <option value="חדרה">חדרה</option>
-                                            <option value="אשדוד">אשדוד</option>
-                                            <option value="אשקלון">אשקלון</option>
-                                            <option value="other">אחר (הזנה ידנית)</option>
-                                        </select>
+                                    <h4>עיר מגורים</h4>
+                                    <div style="display:flex; flex-direction:column; gap:6px;">
+                                        <label style="font-size:12px; color:var(--text-muted);">בחר מהרשימה או הקלד שם יישוב</label>
+                                        <div style="position:relative;">
+                                            <input type="text"
+                                                id="settings-default-city"
+                                                placeholder="הקלד שם יישוב..."
+                                                autocomplete="off"
+                                                style="width:100%; padding:9px 36px 9px 12px; border-radius:10px; border:1.5px solid var(--border-color); background:rgba(120,120,120,0.06); color:var(--text-main); font-size:14px; font-family:var(--font-body); outline:none; text-align:right;">
+                                            <i class="fa-solid fa-location-dot" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--secondary-color); pointer-events:none;"></i>
+                                            <div id="settings-city-dropdown" class="custom-autocomplete-dropdown"></div>
+                                        </div>
+                                        <p style="font-size:11px; color:var(--text-muted); margin:0;">
+                                            <i class="fa-solid fa-circle-info" style="margin-left:3px;"></i>
+                                            עיר זו משמשת לחישוב זמני נסיעה לאתרים
+                                        </p>
                                     </div>
+                                </div>
+                                
+                                <div class="sheet-section">
+                                    <h4>עיר משרד ראשי</h4>
+                                    <div style="display:flex; flex-direction:column; gap:6px;">
+                                        <label style="font-size:12px; color:var(--text-muted);">בחר מהרשימה או הקלד שם יישוב</label>
+                                        <div style="position:relative;">
+                                            <input type="text"
+                                                id="settings-main-office-city"
+                                                placeholder="הקלד שם יישוב..."
+                                                autocomplete="off"
+                                                style="width:100%; padding:9px 36px 9px 12px; border-radius:10px; border:1.5px solid var(--border-color); background:rgba(120,120,120,0.06); color:var(--text-main); font-size:14px; font-family:var(--font-body); outline:none; text-align:right;">
+                                            <i class="fa-solid fa-building" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--secondary-color); pointer-events:none;"></i>
+                                            <div id="settings-office-dropdown" class="custom-autocomplete-dropdown"></div>
+                                        </div>
+                                        <p style="font-size:11px; color:var(--text-muted); margin:0;">
+                                            <i class="fa-solid fa-circle-info" style="margin-left:3px;"></i>
+                                            נסיעות לאתר זה יחושבו כ-0 דקות
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="sheet-section">
+                                    <h4>עריכת זמני נסיעה</h4>
+                                    <button type="button" id="btn-open-edit-travel" style="width:100%; padding:10px; border-radius:8px; border:none; background:var(--primary-color); color:#fff; font-weight:bold; cursor:pointer;">
+                                        <i class="fa-solid fa-route"></i> ערוך זמני נסיעה מותאמים
+                                    </button>
                                 </div>
                                 
                                 <div class="sheet-section">
@@ -402,8 +440,8 @@
                                         <label for="settings-default-snooze-interval">מרווח נודניק ברירת מחדל</label>
                                         <select id="settings-default-snooze-interval" style="width: 120px;">
                                             <option value="2">2 דקות</option>
-                                            <option value="5" selected>5 דקות</option>
-                                            <option value="10">10 דקות</option>
+                                            <option value="5">5 דקות</option>
+                                            <option value="10" selected>10 דקות</option>
                                             <option value="15">15 דקות</option>
                                             <option value="30">30 דקות</option>
                                         </select>
@@ -474,29 +512,35 @@
                             </div>
                         </div>
 
-                        <!-- Onboarding Screen Overlay -->
+                        <!-- Onboarding Screen -->
                         <div class="onboarding-screen" id="onboarding-screen">
                             <div class="onboarding-content">
                                 <div class="onboarding-logo">
                                     <i class="fa-solid fa-bolt"></i>
                                 </div>
                                 <h2>ברוך הבא!</h2>
-                                <p>לפני שנתחיל, נא הגדר את עיר המגורים הקבועה שלך. הגדרה זו תסייע לנו לחשב אוטומטית את זמני הנסיעה שלך לאתרים מרוחקים.</p>
+                                <p>האפליקציה תזהה אוטומטית את מיקומך ותחשב זמני נסיעה. אנא אשר את הרשאות המיקום וההתראות כדי להמשיך.</p>
                                 
-                                <div class="form-row" style="margin: 20px 0; width: 100%;">
-                                    <label for="onboarding-city" style="font-weight: bold; color: #fff;">עיר מגורים:</label>
-                                    <select id="onboarding-city" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; padding: 10px; border-radius: 12px; width: 180px;">
-                                        <option value="חיפה">חיפה</option>
-                                        <option value="תל אביב">תל אביב</option>
-                                        <option value="חדרה">חדרה</option>
-                                        <option value="אשדוד">אשדוד</option>
-                                        <option value="אשקלון">אשקלון</option>
-                                        <option value="other">אחר (הזנה ידנית)</option>
-                                    </select>
+                                <div style="background: rgba(255,255,255,0.1); border-radius: 14px; padding: 16px; margin: 20px 0; width: 100%; box-sizing: border-box; text-align: right; color:#fff;">
+                                    <div style="display:flex; align-items:center; gap:10px; margin-bottom: 10px;">
+                                        <i class="fa-solid fa-location-dot" style="color:#7ee8fa; font-size:18px;"></i>
+                                        <div>
+                                            <div style="font-weight:700; font-size:14px; color:#fff;">זיהוי מיקום GPS</div>
+                                            <div style="font-size:12px; opacity:0.8; color:#eee;">לזיהוי אוטומטי של האתר ומרחקי נסיעה</div>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:10px;">
+                                        <i class="fa-solid fa-bell" style="color:#ffd700; font-size:18px;"></i>
+                                        <div>
+                                            <div style="font-weight:700; font-size:14px; color:#fff;">התראות</div>
+                                            <div style="font-size:12px; opacity:0.8; color:#eee;">לקבלת תזכורות בשעת ה-11:50</div>
+                                        </div>
+                                    </div>
                                 </div>
                                 
                                 <button class="action-btn primary ripple" id="btn-onboarding-submit" style="margin-top: 10px;">
-                                    המשך לאפליקציה
+                                    <i class="fa-solid fa-check"></i>
+                                    אישור והמשך
                                 </button>
                             </div>
                         </div>
@@ -586,9 +630,97 @@
         </div>
     </div>
 
+    <!-- Edit Travel Times Bottom Sheet -->
+    <div class="setup-sheet" id="edit-travel-sheet">
+        <div class="sheet-header">
+            <button class="sheet-btn cancel" id="btn-edit-travel-cancel">ביטול</button>
+            <h3>עריכת זמני נסיעה</h3>
+            <button class="sheet-btn confirm" id="btn-edit-travel-save">שמור</button>
+        </div>
+        
+        <div class="sheet-content">
+            <div class="sheet-section">
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                    <label style="font-size:12px; color:var(--text-muted);">בחר יישוב יעד לעריכה (הלוך וחזור)</label>
+                    <div style="position:relative;">
+                        <input type="text"
+                            id="settings-edit-travel-dest"
+                            placeholder="הקלד שם יישוב יעד..."
+                            autocomplete="off"
+                            style="width:100%; padding:9px 36px 9px 12px; border-radius:10px; border:1.5px solid var(--border-color); background:rgba(120,120,120,0.06); color:var(--text-main); font-size:14px; font-family:var(--font-body); outline:none; text-align:right;">
+                        <i class="fa-solid fa-map-pin" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--secondary-color); pointer-events:none;"></i>
+                        <div id="settings-edit-travel-dropdown" class="custom-autocomplete-dropdown"></div>
+                    </div>
+                    
+                    <div id="settings-edit-travel-fields" style="display:none; margin-top: 10px; padding: 10px; background: rgba(120,120,120,0.05); border-radius: 8px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+                            <div style="flex:1; margin-left: 5px;">
+                                <label style="font-size:11px; color:var(--text-muted);">אורך נסיעה</label>
+                                <input type="text" id="settings-travel-distance" disabled style="width:100%; padding:6px; border-radius:6px; border:1px solid var(--border-color); background:transparent; color:var(--text-main); text-align:center;">
+                            </div>
+                            <div style="flex:1; margin-right: 5px;">
+                                <label style="font-size:11px; color:var(--text-muted);">זמן נסיעה</label>
+                                <input type="text" id="settings-travel-total" disabled style="width:100%; padding:6px; border-radius:6px; border:1px solid var(--border-color); background:transparent; color:var(--text-main); text-align:center;">
+                            </div>
+                        </div>
+                        
+                        <div style="display:flex; justify-content:space-between;">
+                            <div style="flex:1; margin-left: 5px; display: flex; flex-direction: column;">
+                                <label style="font-size:11px; color:var(--text-muted);">זמן הלוך <span id="settings-arrival-travel-asterisk" style="color: #dc3545; font-weight: bold; display: none; margin-right: 2px;">*</span></label>
+                                <input type="text" id="settings-travel-arrival" placeholder="00:00" style="width:100%; padding:6px; border-radius:6px; border:1.5px solid var(--border-color); background:rgba(120,120,120,0.06); color:var(--text-main); text-align:center; font-family:var(--font-body);">
+                                <span id="settings-arrival-travel-note" style="color: #dc3545; font-size: 10px; font-weight: bold; margin-top: 2px; text-align: center; display: none;"></span>
+                            </div>
+                            <div style="flex:1; margin-right: 5px; display: flex; flex-direction: column;">
+                                <label style="font-size:11px; color:var(--text-muted);">זמן חזור <span id="settings-return-travel-asterisk" style="color: #dc3545; font-weight: bold; display: none; margin-right: 2px;">*</span></label>
+                                <input type="text" id="settings-travel-return" placeholder="00:00" style="width:100%; padding:6px; border-radius:6px; border:1.5px solid var(--border-color); background:rgba(120,120,120,0.06); color:var(--text-main); text-align:center; font-family:var(--font-body);">
+                                <span id="settings-return-travel-note" style="color: #dc3545; font-size: 10px; font-weight: bold; margin-top: 2px; text-align: center; display: none;"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Audio Element for Alert sounds -->
     <audio id="alert-sound" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-84.wav" preload="auto"></audio>
     
     <script src="app.js"></script>
+
+    <style>
+    /* Custom Autocomplete Dropdown */
+    .custom-autocomplete-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #f8f9fa;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin-top: 4px;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .custom-autocomplete-dropdown.active {
+        display: block;
+    }
+    .autocomplete-item {
+        padding: 10px 12px;
+        font-size: 14px;
+        color: var(--text-main);
+        cursor: pointer;
+        border-bottom: 1px solid var(--border-color);
+        text-align: right;
+    }
+    .autocomplete-item:last-child {
+        border-bottom: none;
+    }
+    .autocomplete-item:hover, .autocomplete-item:active {
+        background: rgba(0,0,0,0.05);
+    }
+    </style>
 </body>
 </html>

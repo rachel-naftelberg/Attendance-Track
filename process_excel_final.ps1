@@ -1,5 +1,6 @@
 $jsonPath = "C:\Users\um624\.gemini\antigravity\scratch\iec-attendance-app\temp_excel_data.json"
-$data = Get-Content $jsonPath -Raw -Encoding UTF8 | ConvertFrom-Json
+$content = [System.IO.File]::ReadAllText($jsonPath, [System.Text.Encoding]::UTF8)
+$data = $content | ConvertFrom-Json
 
 function Get-Minutes-From-Fraction($val) {
     if (!$val -or $val -eq "0" -or $val -eq "0:00" -or $val -eq 0 -or $val -eq "99:99") {
@@ -84,5 +85,12 @@ $outputObj = @{
 
 $newJson = ConvertTo-Json -InputObject $outputObj -Depth 5 -Compress
 $utf8NoBom = New-Object System.Text.UTF8Encoding $false
-[System.IO.File]::WriteAllText("C:\Users\um624\.gemini\antigravity\scratch\iec-attendance-app\web-app\travel_db.json", $newJson, $utf8NoBom)
+
+# Write to both web-app and web-simulator
+$path1 = "C:\Users\um624\.gemini\antigravity\scratch\iec-attendance-app\web-app\travel_db.json"
+$path2 = "C:\Users\um624\.gemini\antigravity\scratch\iec-attendance-app\web-simulator\travel_db.json"
+
+[System.IO.File]::WriteAllText($path1, $newJson, $utf8NoBom)
+[System.IO.File]::WriteAllText($path2, $newJson, $utf8NoBom)
+
 Write-Output "Processed JSON successfully. Sources: $($sortedCities.Length), Destinations: $($sortedDests.Length)"

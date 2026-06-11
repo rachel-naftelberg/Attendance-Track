@@ -39,3 +39,19 @@ Thumbs.db
 .env.test.local
 .env.production.local
 *.env
+
+# Local scratch and temporary files
+scratch/
+*.xlsx
+*.exe
+*.txt
+temp_excel*
+headers.json
+check_db.*
+check_haifa.ps1
+patch_*
+parse_excel*
+zero_travel*
+process_excel2.ps1
+process_excel4.ps1
+process_excel6.ps1

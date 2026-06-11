@@ -280,7 +280,7 @@ let shiftData = {
     returnBuildingName: "",
     travelBackMinutes: 0,
     snoozeEnabled: true,
-    snoozeIntervalMinutes: 5
+    snoozeIntervalMinutes: 10
 };
 
 // Snooze Loop Parameters
@@ -306,10 +306,13 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(data => {
             travelDatabaseTimes = data.times || {};
             const timeKeys = Object.keys(travelDatabaseTimes);
-            travelDatabaseSources = timeKeys.length > 0 ? timeKeys.sort((a,b) => a.localeCompare(b, 'he')) : (data.sources || data.cities || []);
+            travelDatabaseSources = (timeKeys.length > 0 ? timeKeys.sort((a,b) => a.localeCompare(b, 'he')) : (data.sources || data.cities || []))
+                .filter(x => x && x !== "#N/A" && x.trim() !== "");
             const destSet = new Set();
-            Object.values(travelDatabaseTimes).forEach(dObj => Object.keys(dObj).forEach(d => destSet.add(d)));
-            travelDatabaseCities = destSet.size > 0 ? Array.from(destSet).sort((a,b) => a.localeCompare(b, 'he')) : (data.cities && data.cities.length > 0 ? data.cities : data.sources || []);
+            Object.values(travelDatabaseTimes).forEach(dObj => Object.keys(dObj).forEach(d => {
+                if (d && d !== "#N/A" && d.trim() !== "") destSet.add(d);
+            }));
+            travelDatabaseCities = destSet.size > 0 ? Array.from(destSet).sort((a,b) => a.localeCompare(b, 'he')) : (data.cities && data.cities.length > 0 ? data.cities.filter(x => x && x !== "#N/A" && x.trim() !== "") : data.sources || []);
             renderCityAutocomplete(); // pre-render empty or full list
             renderOfficeAutocomplete();
             renderEditTravelAutocomplete();
@@ -672,7 +675,7 @@ function bindUIEvents() {
     
     // Live Snooze Interval Change
     document.getElementById("active-snooze-interval").addEventListener("change", (e) => {
-        shiftData.snoozeIntervalMinutes = parseInt(e.target.value) || 5;
+        shiftData.snoozeIntervalMinutes = parseInt(e.target.value) || 10;
         saveShiftStateToDisk();
     });
     
@@ -735,7 +738,7 @@ function bindUIEvents() {
         }
         
         document.getElementById("settings-default-snooze").checked = appPreferences.defaultSnooze;
-        document.getElementById("settings-default-snooze-interval").value = appPreferences.defaultSnoozeInterval || 30;
+        document.getElementById("settings-default-snooze-interval").value = appPreferences.defaultSnoozeInterval || 10;
         document.getElementById("row-settings-snooze-interval").style.display = appPreferences.defaultSnooze ? "flex" : "none";
         
         document.getElementById("settings-gps-approved").checked = appPreferences.gpsUsageApproved;
@@ -763,7 +766,7 @@ function bindUIEvents() {
         appPreferences.mainOfficeCity = officeVal;
         
         appPreferences.defaultSnooze = document.getElementById("settings-default-snooze").checked;
-        appPreferences.defaultSnoozeInterval = parseInt(document.getElementById("settings-default-snooze-interval").value) || 30;
+        appPreferences.defaultSnoozeInterval = parseInt(document.getElementById("settings-default-snooze-interval").value) || 10;
         
         // Save approvals
         const prevGpsApproved = appPreferences.gpsUsageApproved;
@@ -1402,7 +1405,7 @@ function confirmStartShift() {
     const travelBackVal = parseHHMM(document.getElementById("setup-return-travel").value);
     
     const snoozeVal         = appPreferences.defaultSnooze;
-    const snoozeIntervalVal = appPreferences.defaultSnoozeInterval || 30;
+    const snoozeIntervalVal = appPreferences.defaultSnoozeInterval || 10;
     
     // Calculate leave home date = arrival date - travel to minutes
     const leaveHomeDateObj = new Date(arrivalDateObj.getTime() - (travelToVal * 60 * 1000));
@@ -1630,7 +1633,7 @@ function confirmExitAndWipeData() {
         returnBuildingName: "",
         travelBackMinutes: 0,
         snoozeEnabled: true,
-        snoozeIntervalMinutes: 5
+        snoozeIntervalMinutes: 10
     };
     
     // Cancel any scheduled background notification
@@ -1677,7 +1680,7 @@ function renderViewState() {
         document.getElementById("active-val-return-site").innerText = shiftData.returnBuildingName;
         
         document.getElementById("chk-active-snooze").checked = shiftData.snoozeEnabled;
-        document.getElementById("active-snooze-interval").value = shiftData.snoozeIntervalMinutes || 5;
+        document.getElementById("active-snooze-interval").value = shiftData.snoozeIntervalMinutes || 10;
         document.getElementById("row-active-snooze-interval").style.display = shiftData.snoozeEnabled ? "flex" : "none";
     } 
     else if (shiftState === "resetPending") {
@@ -1729,9 +1732,9 @@ function loadAppPreferences() {
     const gpsApproved = localStorage.getItem("iec_pref_gps_approved");
     const clockApproved = localStorage.getItem("iec_pref_clock_approved");
     
-    // Set fallback defaults if not found in localStorage
-    appPreferences.defaultCity = city !== null ? city : "\u05e8\u05e2\u05e0\u05e0\u05d4";
-    appPreferences.mainOfficeCity = mainOffice !== null ? mainOffice : "\u05d2\u05df \u05e9\u05d5\u05e8\u05e7";
+    // Set fallback defaults if not found in localStorage or if empty string
+    appPreferences.defaultCity = (city && city.trim()) ? city : "\u05e8\u05e2\u05e0\u05e0\u05d4";
+    appPreferences.mainOfficeCity = (mainOffice && mainOffice.trim()) ? mainOffice : "\u05d2\u05df \u05e9\u05d5\u05e8\u05e7";
     appPreferences.defaultSnooze = snooze === null ? true : (snooze === "true");
     appPreferences.defaultSnoozeInterval = snoozeInterval === null ? 10 : parseInt(snoozeInterval);
     appPreferences.gpsUsageApproved = gpsApproved === null ? true : (gpsApproved === "true");
