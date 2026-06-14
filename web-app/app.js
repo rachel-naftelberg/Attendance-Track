@@ -1593,9 +1593,9 @@ function transitionToResetPending() {
 async function notifyPipedream(action) {
     if (!appPreferences.telegramChatId) return; // Only if Telegram is connected
 
-    const PIPEDREAM_START_URL = "YOUR_START_PIPEDREAM_URL"; // REPLACE THIS
-    const PIPEDREAM_UPDATE_URL = "YOUR_UPDATE_PIPEDREAM_URL"; // REPLACE THIS
-    const PIPEDREAM_CANCEL_URL = "YOUR_CANCEL_PIPEDREAM_URL"; // REPLACE THIS
+    const PIPEDREAM_START_URL = "https://eoy3w3qc9wt6foq.m.pipedream.net";
+    const PIPEDREAM_UPDATE_URL = "https://eoy3w3qc9wt6foq.m.pipedream.net";
+    const PIPEDREAM_CANCEL_URL = "https://eoy3w3qc9wt6foq.m.pipedream.net";
 
     let url = "";
     let payload = {
