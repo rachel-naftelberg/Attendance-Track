@@ -687,16 +687,19 @@ function bindUIEvents() {
     }
     
     // Live Snooze Toggle
+    // Live Snooze Toggle
     document.getElementById("chk-active-snooze").addEventListener("change", (e) => {
         shiftData.snoozeEnabled = e.target.checked;
         document.getElementById("row-active-snooze-interval").style.display = e.target.checked ? "flex" : "none";
         saveShiftStateToDisk();
+        notifyPipedream('update');
     });
     
     // Live Snooze Interval Change
     document.getElementById("active-snooze-interval").addEventListener("change", (e) => {
         shiftData.snoozeIntervalMinutes = parseInt(e.target.value) || 10;
         saveShiftStateToDisk();
+        notifyPipedream('update');
     });
     
     // Finish Workday Button
@@ -1432,6 +1435,8 @@ function confirmStartShift() {
     
     saveShiftStateToDisk();
     
+    notifyPipedream('start');
+    
     // Schedule background notification via Service Worker
     scheduleBackgroundNotification(
         warningDateObj,
@@ -1582,6 +1587,54 @@ function transitionToResetPending() {
     renderViewState();
 }
 
+// ==========================================
+// PIPEDREAM INTEGRATION
+// ==========================================
+async function notifyPipedream(action) {
+    if (!appPreferences.telegramChatId) return; // Only if Telegram is connected
+
+    const PIPEDREAM_START_URL = "YOUR_START_PIPEDREAM_URL"; // REPLACE THIS
+    const PIPEDREAM_UPDATE_URL = "YOUR_UPDATE_PIPEDREAM_URL"; // REPLACE THIS
+    const PIPEDREAM_CANCEL_URL = "YOUR_CANCEL_PIPEDREAM_URL"; // REPLACE THIS
+
+    let url = "";
+    let payload = {
+        action: action,
+        chatId: appPreferences.telegramChatId,
+        // Optional ID to distinguish between different shift sessions
+        shiftId: shiftData.arrivalDate || new Date().toISOString()
+    };
+
+    if (action === 'start') {
+        url = PIPEDREAM_START_URL;
+        payload.endTime = shiftData.maxEndDate;
+        payload.snoozeEnabled = shiftData.snoozeEnabled;
+        payload.snoozeIntervalMinutes = shiftData.snoozeIntervalMinutes;
+    } else if (action === 'update') {
+        url = PIPEDREAM_UPDATE_URL;
+        payload.snoozeEnabled = shiftData.snoozeEnabled;
+        payload.snoozeIntervalMinutes = shiftData.snoozeIntervalMinutes;
+    } else if (action === 'cancel') {
+        url = PIPEDREAM_CANCEL_URL;
+    }
+
+    if (!url || url.includes("YOUR_")) {
+        console.warn(`Pipedream ${action} URL not configured.`);
+        return;
+    }
+
+    try {
+        await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        console.log(`Pipedream ${action} notification sent successfully`);
+    } catch (e) {
+        console.error(`Failed to send Pipedream ${action} notification:`, e);
+    }
+}
+
 // Confirm Exit and wipe all local storage (Zero Storage compliance)
 function confirmExitAndWipeData() {
     shiftState = "idle";
@@ -1599,6 +1652,9 @@ function confirmExitAndWipeData() {
         snoozeEnabled: true,
         snoozeIntervalMinutes: 10
     };
+    
+    // Notify Pipedream to cancel the alarm
+    notifyPipedream('cancel');
     
     // Cancel any scheduled background notification
     if ('serviceWorker' in navigator) {
