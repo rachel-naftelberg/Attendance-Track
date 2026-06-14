@@ -701,9 +701,7 @@ function bindUIEvents() {
     
     // Finish Workday Button
     document.getElementById("btn-finish-workday").addEventListener("click", () => {
-        if (confirm("האם אתה בטוח שברצונך לסיים את יום העבודה? כל הנתונים יימחקו.")) {
-            confirmExitAndWipeData();
-        }
+        confirmExitAndWipeData();
     });
     
     // Confirm Exit Button (Wipes storage - Zero Storage)
