@@ -1605,7 +1605,8 @@ async function notifyPipedream(action) {
         action: action,
         chatId: appPreferences.telegramChatId,
         // Optional ID to distinguish between different shift sessions
-        shiftId: shiftData.arrivalDate || new Date().toISOString()
+        shiftId: shiftData.arrivalDate || new Date().toISOString(),
+        startTime: shiftData.arrivalDate // used to calculate elapsed time in bot
     };
 
     if (action === 'start') {
