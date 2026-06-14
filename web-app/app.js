@@ -1607,7 +1607,7 @@ async function notifyPipedream(action) {
 
     if (action === 'start') {
         url = PIPEDREAM_START_URL;
-        payload.endTime = shiftData.maxEndDate;
+        payload.endTime = shiftData.warningDate;
         payload.snoozeEnabled = shiftData.snoozeEnabled;
         payload.snoozeIntervalMinutes = shiftData.snoozeIntervalMinutes;
     } else if (action === 'update') {
