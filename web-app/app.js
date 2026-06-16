@@ -1594,12 +1594,19 @@ async function notifyPipedream(action) {
     const PIPEDREAM_CANCEL_URL = "https://eoy3w3qc9wt6foq.m.pipedream.net";
 
     let url = "";
+    let virtualStartTime = shiftData.arrivalDate || new Date().toISOString();
+    if (shiftData.leaveHomeDate) {
+        const leaveHomeTime = new Date(shiftData.leaveHomeDate).getTime();
+        const travelBackMs = (shiftData.travelBackMinutes || 0) * 60000;
+        virtualStartTime = new Date(leaveHomeTime - travelBackMs).toISOString();
+    }
+
     let payload = {
         action: action,
         chatId: appPreferences.telegramChatId,
         // Optional ID to distinguish between different shift sessions
         shiftId: shiftData.arrivalDate || new Date().toISOString(),
-        startTime: shiftData.arrivalDate // used to calculate elapsed time in bot
+        startTime: virtualStartTime // Virtual start time for bot to calculate total duration including both travels
     };
 
     if (action === 'start') {
