@@ -1570,14 +1570,7 @@ function triggerPushNotification(title, text) {
         audio.play().catch(e => console.log("Sound play interaction blocked by browser:", e));
     }
 
-    // 2. Send Telegram Notification
-    if (appPreferences.telegramChatId && TELEGRAM_BOT_TOKEN) {
-        fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: appPreferences.telegramChatId, text: `${title}\n\n${text}` })
-        }).catch(console.error);
-    }
+    // 2. Local fallback notifications removed, relying purely on Pipedream.
 }
 
 // Transition from Active to ResetPending screen
