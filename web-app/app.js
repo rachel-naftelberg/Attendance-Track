@@ -1630,10 +1630,11 @@ async function notifyPipedream(action) {
     try {
         await fetch(url, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify(payload)
         });
-        console.log(`Pipedream ${action} notification sent successfully`);
+        console.log(`Webhook ${action} notification sent successfully`);
     } catch (e) {
         console.error(`Failed to send Pipedream ${action} notification:`, e);
     }
