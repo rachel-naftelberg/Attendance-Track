@@ -1589,9 +1589,9 @@ async function notifyPipedream(action) {
         return; // Only if Telegram is connected
     }
 
-    const PIPEDREAM_START_URL = "https://eoy3w3qc9wt6foq.m.pipedream.net";
-    const PIPEDREAM_UPDATE_URL = "https://eoy3w3qc9wt6foq.m.pipedream.net";
-    const PIPEDREAM_CANCEL_URL = "https://eoy3w3qc9wt6foq.m.pipedream.net";
+    const PIPEDREAM_START_URL = "https://script.google.com/macros/s/AKfycbxDGNy94zFBhArTrB3TpOmbxHQAxf-jj9-u1m-5gvbYqAFI1rrhIH5i5F3hz3TBZd7www/exec";
+    const PIPEDREAM_UPDATE_URL = "https://script.google.com/macros/s/AKfycbxDGNy94zFBhArTrB3TpOmbxHQAxf-jj9-u1m-5gvbYqAFI1rrhIH5i5F3hz3TBZd7www/exec";
+    const PIPEDREAM_CANCEL_URL = "https://script.google.com/macros/s/AKfycbxDGNy94zFBhArTrB3TpOmbxHQAxf-jj9-u1m-5gvbYqAFI1rrhIH5i5F3hz3TBZd7www/exec";
 
     let url = "";
     let virtualStartTime = shiftData.arrivalDate || new Date().toISOString();
