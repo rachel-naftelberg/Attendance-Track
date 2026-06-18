@@ -732,7 +732,7 @@ function bindUIEvents() {
     // Settings Button Open (1.1: populate city text input)
     document.getElementById("btn-settings-toggle").addEventListener("click", () => {
         if (shiftState !== "idle") {
-            alert("לא ניתן לשנות הגדרות כלליות במהלך משמרת פעילה!");
+            alert("לא ניתן לשנות הגדרות כלליות במהלך יום עבודה פעיל!");
             return;
         }
         // Populate city input with saved preference
@@ -1555,7 +1555,7 @@ function checkWorkdayAlertThresholds(now) {
         } else if (shiftData.snoozeEnabled) {
             const snoozeIntervalMs = shiftData.snoozeIntervalMinutes * 60 * 1000;
             if (now.getTime() - lastSnoozeAlertTime >= snoozeIntervalMs) {
-                triggerPushNotification("תזכורת נודניק נוכחות", `חלפו ${shiftData.snoozeIntervalMinutes} דקות נוספות משעת היעד! נא אשר סיום משמרת.`);
+                triggerPushNotification("תזכורת נודניק נוכחות", `חלפו ${shiftData.snoozeIntervalMinutes} דקות נוספות משעת היעד! נא אשר סיום יום עבודה.`);
                 lastSnoozeAlertTime = now.getTime();
             }
         }
