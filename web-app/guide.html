@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>מדריך למשתמש - החתמה מרחוק</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #080d1a;
+            --surface-color: #111827;
+            --primary-color: #3b82f6;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Rubik', sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--surface-color);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            font-family: 'Outfit', sans-serif;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #60a5fa;
+            border-bottom: 1px solid #374151;
+            padding-bottom: 8px;
+            margin-top: 30px;
+        }
+        ul, ol {
+            padding-right: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        strong {
+            color: #fff;
+        }
+        .back-btn {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--primary-color);
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border: 1px solid rgba(59, 130, 246, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">➔ חזרה לאפליקציה</a>
+        
+        <h1>מדריך למשתמש - החתמה מרחוק</h1>
+        
+        <p>ברוכים הבאים לאפליקציית "החתמה מרחוק"! האפליקציה נועדה לעזור לכם לעקוב אחרי זמני הנוכחות שלכם בצורה חכמה ומדויקת, ולדאוג שתקבלו תזכורת לסיום המשמרת – גם אם יצאתם לשטח וגם אם עבדתם ממתקנים שונים.</p>
+
+        <h2>1. התקנת האפליקציה (הוספה למסך הבית)</h2>
+        <ol>
+            <li>פתחו את הקישור של האפליקציה בדפדפן בטלפון (Safari באייפון או Chrome באנדרואיד).</li>
+            <li>באייפון: לחצו על כפתור השיתוף (מרובע עם חץ למעלה) בתחתית המסך. באנדרואיד: לחצו על 3 הנקודות למעלה.</li>
+            <li>בחרו באפשרות <strong>"הוסף למסך הבית" (Add to Home Screen)</strong>.</li>
+            <li>אשרו את ההוספה. כעת תראו את סמל האפליקציה על מסך הבית שלכם!</li>
+        </ol>
+
+        <h2>2. הגדרות ראשוניות</h2>
+        <ul>
+            <li><strong>יעד שעות עבודה:</strong> הזינו את שעות התקן שעליכם להשלים במשמרת. (ברירת המחדל היא 9:00 שעות).</li>
+            <li><strong>אתר רגיל ואתר נוכחי:</strong> חפשו ברשימת המתקנים את המתקן שבו אתם עובדים בדרך כלל, ומתקנים נוספים, כדי שהמערכת תדע לחשב אוטומטית זמני נסיעה.</li>
+        </ul>
+
+        <h2>3. חיבור לטלגרם (לקבלת התראות)</h2>
+        <ol>
+            <li>ודאו שאפליקציית Telegram מותקנת אצלכם בטלפון.</li>
+            <li>במסך ההגדרות, לחצו על הכפתור "התחברות לטלגרם".</li>
+            <li>ייפתח חלון של הבוט בטלגרם. לחצו על "Start" או כתבו <code>/start</code>.</li>
+            <li>הבוט יחזיר לכם "קוד זיהוי אישי" (מספר ארוך).</li>
+            <li>חזרו לאפליקציה, הזינו את קוד הזיהוי בתיבה המתאימה ולחצו "שמירה וחיבור".</li>
+            <li>תקבלו מיד הודעת אישור בטלגרם שהחיבור בוצע בהצלחה.</li>
+        </ol>
+
+        <h2>4. שימוש ביום-יום: פתיחת משמרת</h2>
+        <ol>
+            <li>סמנו את השעה המדויקת שבה <strong>יצאתם מהבית</strong>.</li>
+            <li>סמנו את השעה שבה <strong>הגעתם לאתר העבודה</strong>.</li>
+            <li>(אם עברתם לאתר אחר - עדכנו את אתר ההגעה בהגדרות).</li>
+            <li>האפליקציה תחשב באופן אוטומטי כמה "שעות נסיעה עודפות" מגיעות לכם.</li>
+            <li>לחצו על הכפתור הירוק <strong>"התחל משמרת"</strong>. המערכת מחשבת מתי עליכם לסיים ומכוונת "שעון מעורר" בענן.</li>
+        </ol>
+
+        <h2>5. קבלת התראות ושימוש בנודניק</h2>
+        <ul>
+            <li>כאשר תגיעו לשעת הסיום המחושבת, תקבלו התראה בטלגרם.</li>
+            <li>כברירת מחדל, קיים "נודניק" שמכוון ל-10 דקות (וניתן לשינוי דרך ההגדרות באפליקציה).</li>
+            <li>אם לא תסמנו סיום באפליקציה, הבוט ימשיך "לנדנד" לכם כדי להזכיר לכם!</li>
+        </ul>
+
+        <h2>6. סיום משמרת</h2>
+        <ol>
+            <li>בסיום יום העבודה, היכנסו לאפליקציה.</li>
+            <li>לחצו על הכפתור האדום <strong>"סיים משמרת"</strong>.</li>
+            <li>השעון המעורר בענן יבוטל, והמשמרת שלכם תישמר ביומן האישי.</li>
+        </ol>
+
+        <h2>7. פרטיות המידע (Zero Storage)</h2>
+        <p>האפליקציה נבנתה תחת עיקרון פרטיות מחמיר: שום מידע על שעות העבודה, המיקומים או יומן המשמרות שלכם לא נשמר על שום שרת חיצוני. הכל נשמר באופן מקומי לחלוטין על המכשיר האישי שלכם. השרת החיצוני היחיד שמעורב הוא שרת של גוגל שמשמש כ"שעון דופק" נטול זהות לצורך שליחת התראת הטלגרם.</p>
+    </div>
+</body>
+</html>

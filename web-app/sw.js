@@ -1,6 +1,7 @@
 const CACHE_NAME = 'iec-attendance-v26';
 const ASSETS = [
   './',
+  './guide.html',
   'index.html',
   'styles.css',
   'app.js',
