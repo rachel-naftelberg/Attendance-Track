@@ -1589,9 +1589,9 @@ async function notifyPipedream(action) {
         return; // Only if Telegram is connected
     }
 
-    const PIPEDREAM_START_URL = "https://script.google.com/macros/s/AKfycbxDGNy94zFBhArTrB3TpOmbxHQAxf-jj9-u1m-5gvbYqAFI1rrhIH5i5F3hz3TBZd7www/exec";
-    const PIPEDREAM_UPDATE_URL = "https://script.google.com/macros/s/AKfycbxDGNy94zFBhArTrB3TpOmbxHQAxf-jj9-u1m-5gvbYqAFI1rrhIH5i5F3hz3TBZd7www/exec";
-    const PIPEDREAM_CANCEL_URL = "https://script.google.com/macros/s/AKfycbxDGNy94zFBhArTrB3TpOmbxHQAxf-jj9-u1m-5gvbYqAFI1rrhIH5i5F3hz3TBZd7www/exec";
+    const PIPEDREAM_START_URL = "https://eoy3w3qc9wt6foq.m.pipedream.net";
+    const PIPEDREAM_UPDATE_URL = "https://eoy3w3qc9wt6foq.m.pipedream.net";
+    const PIPEDREAM_CANCEL_URL = "https://eoy3w3qc9wt6foq.m.pipedream.net";
 
     let url = "";
     let virtualStartTime = shiftData.arrivalDate || new Date().toISOString();
@@ -1630,11 +1630,10 @@ async function notifyPipedream(action) {
     try {
         await fetch(url, {
             method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        console.log(`Webhook ${action} notification sent successfully`);
+        console.log(`Pipedream ${action} notification sent successfully`);
     } catch (e) {
         console.error(`Failed to send Pipedream ${action} notification:`, e);
     }
