@@ -158,7 +158,7 @@
                             <span class="toggle-icon"><i class="fa-solid fa-bell"></i></span>
                             <div class="toggle-text">
                                 <h4 id="active-snooze-title-text">התראות נודניק</h4>
-                                <p>התראה חוזרת במידה וחרגת מ-11:50</p>
+                                <p>התראה חוזרת במידה וחרגת מזמן היעד</p>
                             </div>
                         </div>
                         <label class="toggle-switch">
@@ -384,11 +384,24 @@
                     <div class="form-row" id="row-settings-snooze-interval">
                         <label for="settings-default-snooze-interval">מרווח נודניק ברירת מחדל</label>
                         <select id="settings-default-snooze-interval" style="width: 120px;">
+                            <option value="2">2 דקות</option>
                             <option value="5">5 דקות</option>
                             <option value="10" selected>10 דקות</option>
                             <option value="15">15 דקות</option>
                             <option value="30">30 דקות</option>
                             <option value="60">60 דקות</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row" id="row-settings-warning-minutes" style="margin-top: 10px;">
+                        <label for="settings-warning-minutes">זמן התראה לפני סיום המשמרת</label>
+                        <select id="settings-warning-minutes" style="width: 120px;">
+                            <option value="0">בזמן היעד בדיוק</option>
+                            <option value="2">2 דקות לפני</option>
+                            <option value="5">5 דקות לפני</option>
+                            <option value="10" selected>10 דקות לפני</option>
+                            <option value="15">15 דקות לפני</option>
+                            <option value="30">30 דקות לפני</option>
                         </select>
                     </div>
                 </div>

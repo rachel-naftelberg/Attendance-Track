@@ -6,55 +6,55 @@ const DEFAULT_BUILDINGS = [];
 
 // Database of major Israeli cities for offline reverse geocoding fallback
 const CITIES_COORDINATES = [
-  { name: "חיפה", lat: 32.7940, lng: 34.9896 },
-  { name: "תל אביב-יפו", lat: 32.0853, lng: 34.7818 },
-  { name: "ירושלים", lat: 31.7683, lng: 35.2137 },
-  { name: "באר שבע", lat: 31.2529, lng: 34.7972 },
-  { name: "ראשון לציון", lat: 31.9730, lng: 34.7925 },
-  { name: "פתח תקווה", lat: 32.0840, lng: 34.8878 },
-  { name: "אשדוד", lat: 31.8044, lng: 34.6553 },
-  { name: "נתניה", lat: 32.3215, lng: 34.8532 },
-  { name: "חולון", lat: 32.0161, lng: 34.7731 },
-  { name: "בני ברק", lat: 32.0837, lng: 34.8314 },
-  { name: "רמת גן", lat: 32.0823, lng: 34.8106 },
-  { name: "רחובות", lat: 31.8928, lng: 34.8113 },
-  { name: "אשקלון", lat: 31.6688, lng: 34.5743 },
-  { name: "בת ים", lat: 32.0167, lng: 34.7431 },
-  { name: "בית שמש", lat: 31.7438, lng: 34.9875 },
-  { name: "כפר סבא", lat: 32.1750, lng: 34.9064 },
-  { name: "הרצליה", lat: 32.1624, lng: 34.8447 },
-  { name: "חדרה", lat: 32.4340, lng: 34.9197 },
-  { name: "מודיעין-מכבים-רעות", lat: 31.9077, lng: 35.0076 },
-  { name: "רעננה", lat: 32.1848, lng: 34.8713 },
-  { name: "רמלה", lat: 31.9272, lng: 34.8622 },
-  { name: "לוד", lat: 31.9513, lng: 34.8878 },
-  { name: "גבעתיים", lat: 32.0722, lng: 34.8106 },
-  { name: "הוד השרון", lat: 32.1550, lng: 34.8931 },
-  { name: "ראש העין", lat: 32.0956, lng: 34.9575 },
-  { name: "נהרייה", lat: 33.0036, lng: 35.0939 },
-  { name: "קריית גת", lat: 31.6033, lng: 34.7639 },
-  { name: "אילת", lat: 29.5577, lng: 34.9519 },
-  { name: "כרמיאל", lat: 32.9136, lng: 35.2961 },
-  { name: "עכו", lat: 32.9278, lng: 35.0817 },
-  { name: "נצרת", lat: 32.6996, lng: 35.3035 },
-  { name: "עפולה", lat: 32.6062, lng: 35.2891 },
-  { name: "טבריה", lat: 32.7922, lng: 35.5312 },
-  { name: "קרית שמונה", lat: 33.2078, lng: 35.5696 },
-  { name: "קריית מוצקין", lat: 32.8392, lng: 35.0767 },
-  { name: "קריית ביאליק", lat: 32.8336, lng: 35.0864 },
-  { name: "קריית ים", lat: 32.8456, lng: 35.0725 },
-  { name: "נשר", lat: 32.7628, lng: 35.0381 },
-  { name: "טירת כרמל", lat: 32.7633, lng: 34.9700 },
-  { name: "זיכרון יעקב", lat: 32.5736, lng: 34.9525 },
-  { name: "קיסריה", lat: 32.5186, lng: 34.9039 },
-  { name: "בנימינה-גבעת עדה", lat: 32.5158, lng: 34.9497 },
-  { name: "פרדס חנה-כרכור", lat: 32.4756, lng: 34.9817 },
-  { name: "אור עקיבא", lat: 32.5028, lng: 34.9197 },
-  { name: "יקנעם עילית", lat: 32.6642, lng: 35.1097 },
-  { name: "קריית מלאכי", lat: 31.7275, lng: 34.7431 },
-  { name: "דימונה", lat: 31.0694, lng: 35.0322 },
-  { name: "ערד", lat: 31.2606, lng: 35.2153 },
-  { name: "מצפה רמון", lat: 30.6128, lng: 34.8028 }
+  { name: "׳—׳™׳₪׳”", lat: 32.7940, lng: 34.9896 },
+  { name: "׳×׳ ׳׳‘׳™׳‘-׳™׳₪׳•", lat: 32.0853, lng: 34.7818 },
+  { name: "׳™׳¨׳•׳©׳׳™׳", lat: 31.7683, lng: 35.2137 },
+  { name: "׳‘׳׳¨ ׳©׳‘׳¢", lat: 31.2529, lng: 34.7972 },
+  { name: "׳¨׳׳©׳•׳ ׳׳¦׳™׳•׳", lat: 31.9730, lng: 34.7925 },
+  { name: "׳₪׳×׳— ׳×׳§׳•׳•׳”", lat: 32.0840, lng: 34.8878 },
+  { name: "׳׳©׳“׳•׳“", lat: 31.8044, lng: 34.6553 },
+  { name: "׳ ׳×׳ ׳™׳”", lat: 32.3215, lng: 34.8532 },
+  { name: "׳—׳•׳׳•׳", lat: 32.0161, lng: 34.7731 },
+  { name: "׳‘׳ ׳™ ׳‘׳¨׳§", lat: 32.0837, lng: 34.8314 },
+  { name: "׳¨׳׳× ׳’׳", lat: 32.0823, lng: 34.8106 },
+  { name: "׳¨׳—׳•׳‘׳•׳×", lat: 31.8928, lng: 34.8113 },
+  { name: "׳׳©׳§׳׳•׳", lat: 31.6688, lng: 34.5743 },
+  { name: "׳‘׳× ׳™׳", lat: 32.0167, lng: 34.7431 },
+  { name: "׳‘׳™׳× ׳©׳׳©", lat: 31.7438, lng: 34.9875 },
+  { name: "׳›׳₪׳¨ ׳¡׳‘׳", lat: 32.1750, lng: 34.9064 },
+  { name: "׳”׳¨׳¦׳׳™׳”", lat: 32.1624, lng: 34.8447 },
+  { name: "׳—׳“׳¨׳”", lat: 32.4340, lng: 34.9197 },
+  { name: "׳׳•׳“׳™׳¢׳™׳-׳׳›׳‘׳™׳-׳¨׳¢׳•׳×", lat: 31.9077, lng: 35.0076 },
+  { name: "׳¨׳¢׳ ׳ ׳”", lat: 32.1848, lng: 34.8713 },
+  { name: "׳¨׳׳׳”", lat: 31.9272, lng: 34.8622 },
+  { name: "׳׳•׳“", lat: 31.9513, lng: 34.8878 },
+  { name: "׳’׳‘׳¢׳×׳™׳™׳", lat: 32.0722, lng: 34.8106 },
+  { name: "׳”׳•׳“ ׳”׳©׳¨׳•׳", lat: 32.1550, lng: 34.8931 },
+  { name: "׳¨׳׳© ׳”׳¢׳™׳", lat: 32.0956, lng: 34.9575 },
+  { name: "׳ ׳”׳¨׳™׳™׳”", lat: 33.0036, lng: 35.0939 },
+  { name: "׳§׳¨׳™׳™׳× ׳’׳×", lat: 31.6033, lng: 34.7639 },
+  { name: "׳׳™׳׳×", lat: 29.5577, lng: 34.9519 },
+  { name: "׳›׳¨׳׳™׳׳", lat: 32.9136, lng: 35.2961 },
+  { name: "׳¢׳›׳•", lat: 32.9278, lng: 35.0817 },
+  { name: "׳ ׳¦׳¨׳×", lat: 32.6996, lng: 35.3035 },
+  { name: "׳¢׳₪׳•׳׳”", lat: 32.6062, lng: 35.2891 },
+  { name: "׳˜׳‘׳¨׳™׳”", lat: 32.7922, lng: 35.5312 },
+  { name: "׳§׳¨׳™׳× ׳©׳׳•׳ ׳”", lat: 33.2078, lng: 35.5696 },
+  { name: "׳§׳¨׳™׳™׳× ׳׳•׳¦׳§׳™׳", lat: 32.8392, lng: 35.0767 },
+  { name: "׳§׳¨׳™׳™׳× ׳‘׳™׳׳׳™׳§", lat: 32.8336, lng: 35.0864 },
+  { name: "׳§׳¨׳™׳™׳× ׳™׳", lat: 32.8456, lng: 35.0725 },
+  { name: "׳ ׳©׳¨", lat: 32.7628, lng: 35.0381 },
+  { name: "׳˜׳™׳¨׳× ׳›׳¨׳׳", lat: 32.7633, lng: 34.9700 },
+  { name: "׳–׳™׳›׳¨׳•׳ ׳™׳¢׳§׳‘", lat: 32.5736, lng: 34.9525 },
+  { name: "׳§׳™׳¡׳¨׳™׳”", lat: 32.5186, lng: 34.9039 },
+  { name: "׳‘׳ ׳™׳׳™׳ ׳”-׳’׳‘׳¢׳× ׳¢׳“׳”", lat: 32.5158, lng: 34.9497 },
+  { name: "׳₪׳¨׳“׳¡ ׳—׳ ׳”-׳›׳¨׳›׳•׳¨", lat: 32.4756, lng: 34.9817 },
+  { name: "׳׳•׳¨ ׳¢׳§׳™׳‘׳", lat: 32.5028, lng: 34.9197 },
+  { name: "׳™׳§׳ ׳¢׳ ׳¢׳™׳׳™׳×", lat: 32.6642, lng: 35.1097 },
+  { name: "׳§׳¨׳™׳™׳× ׳׳׳׳›׳™", lat: 31.7275, lng: 34.7431 },
+  { name: "׳“׳™׳׳•׳ ׳”", lat: 31.0694, lng: 35.0322 },
+  { name: "׳¢׳¨׳“", lat: 31.2606, lng: 35.2153 },
+  { name: "׳׳¦׳₪׳” ׳¨׳׳•׳", lat: 30.6128, lng: 34.8028 }
 ];
 
 let buildingsDatabase = [];
@@ -74,10 +74,10 @@ function normalizeHebrewCityName(name) {
         .replace(/'/g, "")
         .replace(/-/g, " ")
         .replace(/\s+/g, " ")
-        .replace(/יי/g, "י")
-        .replace(/^זיכרון/, "זכרון")
-        .replace(/^קרית/, "קריית")
-        .replace(/^נהריה/, "נהרייה")
+        .replace(/׳™׳™/g, "׳™")
+        .replace(/^׳–׳™׳›׳¨׳•׳/, "׳–׳›׳¨׳•׳")
+        .replace(/^׳§׳¨׳™׳×/, "׳§׳¨׳™׳™׳×")
+        .replace(/^׳ ׳”׳¨׳™׳”/, "׳ ׳”׳¨׳™׳™׳”")
     ;
 }
 
@@ -216,7 +216,7 @@ function initDatabases() {
     const savedBuildings = localStorage.getItem("iec_db_buildings");
     const savedVersion  = localStorage.getItem("iec_db_version");
     
-    // Force reset to defaults if version mismatch (ensures מחוז דן + מטה are present)
+    // Force reset to defaults if version mismatch (ensures ׳׳—׳•׳– ׳“׳ + ׳׳˜׳” are present)
     if (!savedBuildings || savedVersion !== DB_VERSION) {
         buildingsDatabase = JSON.parse(JSON.stringify(DEFAULT_BUILDINGS));
         localStorage.setItem("iec_db_buildings", JSON.stringify(buildingsDatabase));
@@ -234,8 +234,8 @@ function initDatabases() {
             updated = true;
         }
         if (!b.destinationCity) {
-            const map = { haifa_headquarters: "חיפה", orot_rabin: "חדרה", rotenberg: "אשקלון", eshkol: "אשדוד", gezer: "רמלה", dan_district: "תל אביב - יפו" };
-            b.destinationCity = map[b.id] || "חיפה";
+            const map = { haifa_headquarters: "׳—׳™׳₪׳”", orot_rabin: "׳—׳“׳¨׳”", rotenberg: "׳׳©׳§׳׳•׳", eshkol: "׳׳©׳“׳•׳“", gezer: "׳¨׳׳׳”", dan_district: "׳×׳ ׳׳‘׳™׳‘ - ׳™׳₪׳•" };
+            b.destinationCity = map[b.id] || "׳—׳™׳₪׳”";
             updated = true;
         }
     });
@@ -250,6 +250,7 @@ let appPreferences = {
     mainOfficeCity: "\u05d2\u05df \u05e9\u05d5\u05e8\u05e7",
     defaultSnooze: true,
     defaultSnoozeInterval: 10,
+    warningMinutesBeforeEnd: 10,
     gpsUsageApproved: true,
     clockUsageApproved: true,
     customTravelTimes: {},
@@ -380,7 +381,7 @@ function renderCityAutocomplete(searchTerm = "") {
     const filtered = travelDatabaseSources.filter(c => c.includes(searchTerm));
     
     if (filtered.length === 0) {
-        dropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">לא נמצאו יישובים</div>`;
+        dropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">׳׳ ׳ ׳׳¦׳׳• ׳™׳™׳©׳•׳‘׳™׳</div>`;
         return;
     }
     
@@ -409,7 +410,7 @@ function renderOfficeAutocomplete(searchTerm = "") {
     const filtered = travelDatabaseCities.filter(c => c.includes(searchTerm));
     
     if (filtered.length === 0) {
-        dropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">לא נמצאו יישובים</div>`;
+        dropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">׳׳ ׳ ׳׳¦׳׳• ׳™׳™׳©׳•׳‘׳™׳</div>`;
         return;
     }
     
@@ -434,7 +435,7 @@ function renderEditTravelAutocomplete(searchTerm = "") {
     const filtered = travelDatabaseCities.filter(c => c.includes(searchTerm));
     
     if (filtered.length === 0) {
-        dropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">לא נמצאו יישובים</div>`;
+        dropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">׳׳ ׳ ׳׳¦׳׳• ׳™׳™׳©׳•׳‘׳™׳</div>`;
         return;
     }
     
@@ -459,7 +460,7 @@ function renderSetupAutocomplete(searchTerm, type) {
     const filtered = travelDatabaseCities.filter(c => c.includes(searchTerm));
     
     if (filtered.length === 0) {
-        dropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">לא נמצאו יישובים</div>`;
+        dropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">׳׳ ׳ ׳׳¦׳׳• ׳™׳™׳©׳•׳‘׳™׳</div>`;
         return;
     }
     
@@ -514,7 +515,7 @@ function updateTravelFields(destCity) {
     const originCity = document.getElementById("settings-default-city").value.trim() || appPreferences.defaultCity;
     // If the origin city (GPS or user selected) is not present in the travel database, default to 0 minutes
     if (!travelDatabaseSources.includes(originCity)) {
-        // No travel data available – keep zeros and hide extra fields
+        // No travel data available ג€“ keep zeros and hide extra fields
         document.getElementById("settings-travel-distance").value = "--";
         document.getElementById("settings-travel-total").value = "--";
         document.getElementById("settings-travel-arrival").value = "00:00";
@@ -731,7 +732,7 @@ function bindUIEvents() {
     // Settings Button Open (1.1: populate city text input)
     document.getElementById("btn-settings-toggle").addEventListener("click", () => {
         if (shiftState !== "idle") {
-            alert("לא ניתן לשנות הגדרות כלליות במהלך משמרת פעילה!");
+            alert("׳׳ ׳ ׳™׳×׳ ׳׳©׳ ׳•׳× ׳”׳’׳“׳¨׳•׳× ׳›׳׳׳™׳•׳× ׳‘׳׳”׳׳ ׳׳©׳׳¨׳× ׳₪׳¢׳™׳׳”!");
             return;
         }
         // Populate city input with saved preference
@@ -747,6 +748,9 @@ function bindUIEvents() {
         
         document.getElementById("settings-default-snooze").checked = appPreferences.defaultSnooze;
         document.getElementById("settings-default-snooze-interval").value = appPreferences.defaultSnoozeInterval || 10;
+        
+        const warnSelect = document.getElementById("settings-warning-minutes");
+        if (warnSelect) warnSelect.value = appPreferences.warningMinutesBeforeEnd;
         document.getElementById("row-settings-snooze-interval").style.display = appPreferences.defaultSnooze ? "flex" : "none";
         
         document.getElementById("settings-gps-approved").checked = appPreferences.gpsUsageApproved;
@@ -775,6 +779,7 @@ function bindUIEvents() {
         
         appPreferences.defaultSnooze = document.getElementById("settings-default-snooze").checked;
         appPreferences.defaultSnoozeInterval = parseInt(document.getElementById("settings-default-snooze-interval").value) || 10;
+        appPreferences.warningMinutesBeforeEnd = parseInt(document.getElementById("settings-warning-minutes").value) || 0; if(document.getElementById("settings-warning-minutes").value==="0") appPreferences.warningMinutesBeforeEnd=0;
         
         // Save approvals
         const prevGpsApproved = appPreferences.gpsUsageApproved;
@@ -1049,7 +1054,7 @@ function appTick() {
 // ==========================================================================
 
 function findNearestCityOffline(lat, lng) {
-    let nearestCity = "שטח כללי";
+    let nearestCity = "׳©׳˜׳— ׳›׳׳׳™";
     let minDistance = Infinity;
     for (const c of CITIES_COORDINATES) {
         const dist = calculateDistance(lat, lng, c.lat, c.lng);
@@ -1113,7 +1118,7 @@ function startRealGPS(highAccuracy = true) {
     if (navigator.geolocation) {
         if (currentLat === null || currentLng === null) {
             if (dot) dot.className = "badge-dot orange";
-            if (text) text.innerText = highAccuracy ? "מזהה מיקום GPS..." : "מזהה מיקום GPS (דיוק בסיסי)...";
+            if (text) text.innerText = highAccuracy ? "׳׳–׳”׳” ׳׳™׳§׳•׳ GPS..." : "׳׳–׳”׳” ׳׳™׳§׳•׳ GPS (׳“׳™׳•׳§ ׳‘׳¡׳™׳¡׳™)...";
         }
         
         // Fetch current position immediately
@@ -1193,7 +1198,7 @@ function startRealGPS(highAccuracy = true) {
             }
         );
     } else {
-        gpsErrorStatus = { code: 0, message: "הדפדפן אינו תומך ב-GPS" };
+        gpsErrorStatus = { code: 0, message: "׳”׳“׳₪׳“׳₪׳ ׳׳™׳ ׳• ׳×׳•׳׳ ׳‘-GPS" };
         detectedBuilding = null;
         updateGPSStatus();
         if (refreshIcon) {
@@ -1252,7 +1257,7 @@ function updateGPSStatus() {
     if (!appPreferences.gpsUsageApproved) {
         detectedBuilding = null;
         dot.className = "badge-dot red";
-        text.innerText = "שימוש ב-GPS לא מאושר בהגדרות";
+        text.innerText = "׳©׳™׳׳•׳© ׳‘-GPS ׳׳ ׳׳׳•׳©׳¨ ׳‘׳”׳’׳“׳¨׳•׳×";
         return;
     }
     
@@ -1261,16 +1266,16 @@ function updateGPSStatus() {
         dot.className = "badge-dot red";
         switch (gpsErrorStatus.code) {
             case 1: // PERMISSION_DENIED
-                text.innerText = "שגיאה: הרשאת מיקום נחסמה במכשיר/דפדפן. יש לאשר בהגדרות.";
+                text.innerText = "׳©׳’׳™׳׳”: ׳”׳¨׳©׳׳× ׳׳™׳§׳•׳ ׳ ׳—׳¡׳׳” ׳‘׳׳›׳©׳™׳¨/׳“׳₪׳“׳₪׳. ׳™׳© ׳׳׳©׳¨ ׳‘׳”׳’׳“׳¨׳•׳×.";
                 break;
             case 2: // POSITION_UNAVAILABLE
-                text.innerText = "שגיאה: אות ה-GPS אינו זמין (נסה לעבור למקום פתוח).";
+                text.innerText = "׳©׳’׳™׳׳”: ׳׳•׳× ׳”-GPS ׳׳™׳ ׳• ׳–׳׳™׳ (׳ ׳¡׳” ׳׳¢׳‘׳•׳¨ ׳׳׳§׳•׳ ׳₪׳×׳•׳—).";
                 break;
             case 3: // TIMEOUT
-                text.innerText = "שגיאה: פג זמן ההמתנה לקבלת מיקום מהלוויין.";
+                text.innerText = "׳©׳’׳™׳׳”: ׳₪׳’ ׳–׳׳ ׳”׳”׳׳×׳ ׳” ׳׳§׳‘׳׳× ׳׳™׳§׳•׳ ׳׳”׳׳•׳•׳™׳™׳.";
                 break;
             default:
-                text.innerText = `שגיאת מיקום: ${gpsErrorStatus.message || 'לא ידועה'}`;
+                text.innerText = `׳©׳’׳™׳׳× ׳׳™׳§׳•׳: ${gpsErrorStatus.message || '׳׳ ׳™׳“׳•׳¢׳”'}`;
                 break;
         }
         return;
@@ -1279,7 +1284,7 @@ function updateGPSStatus() {
     if (currentLat === null || currentLng === null) {
         detectedBuilding = null;
         dot.className = "badge-dot orange";
-        text.innerText = "מחפש אות GPS...";
+        text.innerText = "׳׳—׳₪׳© ׳׳•׳× GPS...";
         return;
     }
     
@@ -1287,11 +1292,11 @@ function updateGPSStatus() {
     
     if (detectedBuilding) {
         dot.className = "badge-dot green";
-        text.innerText = `אתר מזוהה: ${detectedBuilding.name}`;
+        text.innerText = `׳׳×׳¨ ׳׳–׳•׳”׳”: ${detectedBuilding.name}`;
     } else {
         dot.className = "badge-dot green";
-        const cityDisplay = currentCityName ? `עיר: ${currentCityName}` : "שטח / אתר אחר";
-        text.innerText = `שטח / אתר אחר (${cityDisplay})`;
+        const cityDisplay = currentCityName ? `׳¢׳™׳¨: ${currentCityName}` : "׳©׳˜׳— / ׳׳×׳¨ ׳׳—׳¨";
+        text.innerText = `׳©׳˜׳— / ׳׳×׳¨ ׳׳—׳¨ (${cityDisplay})`;
     }
 }
 
@@ -1312,11 +1317,11 @@ function openSetupSheet() {
     // Populate read-only profile city fields
     const homeCityInput = document.getElementById("setup-user-home-city");
     if (homeCityInput) {
-        homeCityInput.value = appPreferences.defaultCity || "לא הוגדרה";
+        homeCityInput.value = appPreferences.defaultCity || "׳׳ ׳”׳•׳’׳“׳¨׳”";
     }
     const officeCityInput = document.getElementById("setup-user-office-city");
     if (officeCityInput) {
-        officeCityInput.value = appPreferences.mainOfficeCity || "לא הוגדרה";
+        officeCityInput.value = appPreferences.mainOfficeCity || "׳׳ ׳”׳•׳’׳“׳¨׳”";
     }
     
     const arrivalInput = document.getElementById("setup-arrival-site");
@@ -1327,12 +1332,12 @@ function openSetupSheet() {
     const arrivalLabelSpan = document.getElementById("setup-arrival-site-label");
     if (arrivalLabelSpan) {
         arrivalLabelSpan.textContent = cityLabel
-            ? `אתר הגעה (GPS: ${cityLabel})`
-            : "אתר הגעה";
+            ? `׳׳×׳¨ ׳”׳’׳¢׳” (GPS: ${cityLabel})`
+            : "׳׳×׳¨ ׳”׳’׳¢׳”";
     }
     
     // If no building detected, fallback to GPS city, then default city, then main office, then Haifa
-    const fallbackDest = currentCityName || appPreferences.defaultCity || appPreferences.mainOfficeCity || "חיפה";
+    const fallbackDest = currentCityName || appPreferences.defaultCity || appPreferences.mainOfficeCity || "׳—׳™׳₪׳”";
 
     if (detectedBuilding) {
         arrivalInput.value = detectedBuilding.destinationCity;
@@ -1366,14 +1371,14 @@ function closeSetupSheet() {
 function confirmStartShift() {
     const timeVal = document.getElementById("setup-arrival-time").value.trim();
     if (!timeVal) {
-        alert("נא להזין שעת הגעה תקינה.");
+        alert("׳ ׳ ׳׳”׳–׳™׳ ׳©׳¢׳× ׳”׳’׳¢׳” ׳×׳§׳™׳ ׳”.");
         return;
     }
     
     // Validate time format HH:MM for 24-hour clock
     const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
     if (!timeRegex.test(timeVal)) {
-        alert("נא להזין שעת הגעה בפורמט 24 שעות תקין (HH:MM), למשל 17:55");
+        alert("׳ ׳ ׳׳”׳–׳™׳ ׳©׳¢׳× ׳”׳’׳¢׳” ׳‘׳₪׳•׳¨׳׳˜ 24 ׳©׳¢׳•׳× ׳×׳§׳™׳ (HH:MM), ׳׳׳©׳ 17:55");
         return;
     }
     
@@ -1385,8 +1390,8 @@ function confirmStartShift() {
     arrivalDateObj.setSeconds(0);
     arrivalDateObj.setMilliseconds(0);
     
-    const arrivalName = document.getElementById("setup-arrival-site").value.trim() || "אתר הגעה";
-    const returnName = document.getElementById("setup-return-site").value.trim() || "אתר חזרה";
+    const arrivalName = document.getElementById("setup-arrival-site").value.trim() || "׳׳×׳¨ ׳”׳’׳¢׳”";
+    const returnName = document.getElementById("setup-return-site").value.trim() || "׳׳×׳¨ ׳—׳–׳¨׳”";
     const arrivalSiteId = "other";
     const returnSiteId = "other";
     
@@ -1408,7 +1413,7 @@ function confirmStartShift() {
     const leaveHomeDateObj = new Date(arrivalDateObj.getTime() - (travelToVal * 60 * 1000));
     
     // Calculate warning date = leave home date + 11 hours 50 minutes - travel back minutes
-    const warningDurationOffset = ((11 * 60) + 50 - travelBackVal) * 60 * 1000;
+    const warningDurationOffset = ((12 * 60) - appPreferences.warningMinutesBeforeEnd - travelBackVal) * 60 * 1000;
     const warningDateObj = new Date(leaveHomeDateObj.getTime() + warningDurationOffset);
     
     // Calculate max end date = leave home date + 12 hours - travel back minutes
@@ -1440,8 +1445,8 @@ function confirmStartShift() {
     // Schedule background notification via Service Worker
     scheduleBackgroundNotification(
         warningDateObj,
-        "עליך לסיים את היום!",
-        "הגעת ל-11:50 שעות נוכחות כולל נסיעות. נא סמן סיום."
+        "׳¢׳׳™׳ ׳׳¡׳™׳™׳ ׳׳× ׳”׳™׳•׳!",
+        "׳”׳’׳¢׳× ׳-11:50 ׳©׳¢׳•׳× ׳ ׳•׳›׳—׳•׳× ׳›׳•׳׳ ׳ ׳¡׳™׳¢׳•׳×. ׳ ׳ ׳¡׳׳ ׳¡׳™׳•׳."
     );
     
     closeSetupSheet();
@@ -1449,9 +1454,9 @@ function confirmStartShift() {
 }
 
 function getBuildingName(id) {
-    if (id === "other") return "אחר (אתר מרוחק)";
+    if (id === "other") return "׳׳—׳¨ (׳׳×׳¨ ׳׳¨׳•׳—׳§)";
     const b = buildingsDatabase.find(x => x.id === id);
-    return b ? b.name : "עבודה מהבית / שטח";
+    return b ? b.name : "׳¢׳‘׳•׳“׳” ׳׳”׳‘׳™׳× / ׳©׳˜׳—";
 }
 
 function getTravelTimeFromDB(sourceCity, destCity) {
@@ -1482,18 +1487,18 @@ function updateActiveCounters() {
     
     document.getElementById("active-presence-time").innerText = `${presHours}:${presMins}:${presSecs}`;
     
-    // 2. Countdown to Warning Alert (11:50 limit)
+    // 2. Countdown to Warning Alert (Warning limit)
     const warnDiff = warn.getTime() - now.getTime();
     const label = document.getElementById("active-countdown-label");
     const countVal = document.getElementById("active-countdown-time");
     
     if (warnDiff <= 0) {
-        label.innerText = "חרגת מזמן הנוכחות!";
+        label.innerText = "׳—׳¨׳’׳× ׳׳–׳׳ ׳”׳ ׳•׳›׳—׳•׳×!";
         label.style.color = "var(--danger-red)";
         countVal.innerText = "00:00:00";
         countVal.style.color = "var(--danger-red)";
     } else {
-        label.innerText = "נותר להתראה";
+        label.innerText = "׳ ׳•׳×׳¨ ׳׳”׳×׳¨׳׳”";
         label.style.color = "var(--text-muted)";
         countVal.style.color = "var(--secondary-color)";
         
@@ -1537,17 +1542,17 @@ function checkWorkdayAlertThresholds(now) {
         const banner = document.getElementById("active-warning-banner");
         banner.className = "warning-banner alert-active";
         
-        document.getElementById("banner-status-title").innerText = "עליך לסיים את יום העבודה!";
-        document.getElementById("banner-status-desc").innerText = "חרגת מתקרת ה-11:50 כולל נסיעות.";
+        document.getElementById("banner-status-title").innerText = "׳¢׳׳™׳ ׳׳¡׳™׳™׳ ׳׳× ׳™׳•׳ ׳”׳¢׳‘׳•׳“׳”!";
+        document.getElementById("banner-status-desc").innerText = "׳—׳¨׳’׳× ׳׳×׳§׳¨׳× ׳”-11:50 ׳›׳•׳׳ ׳ ׳¡׳™׳¢׳•׳×.";
         
         // Push notification logic
         if (lastSnoozeAlertTime === null) {
-            triggerPushNotification("עליך לסיים את היום!", "הגעת ל-11:50 שעות נוכחות כולל נסיעות. נא סמן סיום.");
+            triggerPushNotification("׳¢׳׳™׳ ׳׳¡׳™׳™׳ ׳׳× ׳”׳™׳•׳!", "׳”׳’׳¢׳× ׳-11:50 ׳©׳¢׳•׳× ׳ ׳•׳›׳—׳•׳× ׳›׳•׳׳ ׳ ׳¡׳™׳¢׳•׳×. ׳ ׳ ׳¡׳׳ ׳¡׳™׳•׳.");
             lastSnoozeAlertTime = now.getTime();
         } else if (shiftData.snoozeEnabled) {
             const snoozeIntervalMs = shiftData.snoozeIntervalMinutes * 60 * 1000;
             if (now.getTime() - lastSnoozeAlertTime >= snoozeIntervalMs) {
-                triggerPushNotification("תזכורת נודניק נוכחות", `חלפו ${shiftData.snoozeIntervalMinutes} דקות נוספות משעת היעד! נא אשר סיום משמרת.`);
+                triggerPushNotification("׳×׳–׳›׳•׳¨׳× ׳ ׳•׳“׳ ׳™׳§ ׳ ׳•׳›׳—׳•׳×", `׳—׳׳₪׳• ${shiftData.snoozeIntervalMinutes} ׳“׳§׳•׳× ׳ ׳•׳¡׳₪׳•׳× ׳׳©׳¢׳× ׳”׳™׳¢׳“! ׳ ׳ ׳׳©׳¨ ׳¡׳™׳•׳ ׳׳©׳׳¨׳×.`);
                 lastSnoozeAlertTime = now.getTime();
             }
         }
@@ -1585,7 +1590,7 @@ function transitionToResetPending() {
 // ==========================================
 async function notifyPipedream(action) {
     if (!appPreferences.telegramChatId) {
-        alert("שגיאה במערכת: חסר זיהוי טלגרם, הנתונים לא נשלחו לשרת.");
+        alert("׳©׳’׳™׳׳” ׳‘׳׳¢׳¨׳›׳×: ׳—׳¡׳¨ ׳–׳™׳”׳•׳™ ׳˜׳׳’׳¨׳, ׳”׳ ׳×׳•׳ ׳™׳ ׳׳ ׳ ׳©׳׳—׳• ׳׳©׳¨׳×.");
         return; // Only if Telegram is connected
     }
 
@@ -1695,14 +1700,14 @@ function renderViewState() {
         // Reset warning banner classes to default
         const banner = document.getElementById("active-warning-banner");
         banner.className = "warning-banner";
-        document.getElementById("banner-status-title").innerText = "יום עבודה פעיל מנוהל";
+        document.getElementById("banner-status-title").innerText = "׳™׳•׳ ׳¢׳‘׳•׳“׳” ׳₪׳¢׳™׳ ׳׳ ׳•׳”׳";
         
         // Set info values
-        document.getElementById("banner-status-desc").innerText = `זמן התראה (11:50): ${formatIsoDateToHHMM(shiftData.warningDate)}`;
+        document.getElementById("banner-status-desc").innerText = `׳–׳׳ ׳”׳×׳¨׳׳” (11:50): ${formatIsoDateToHHMM(shiftData.warningDate)}`;
         document.getElementById("active-val-leave-home").innerText = formatIsoDateToHHMM(shiftData.leaveHomeDate);
-        document.getElementById("active-label-arrival-site").innerText = `אתר עבודה (כניסה: ${formatIsoDateToHHMM(shiftData.arrivalDate)})`;
+        document.getElementById("active-label-arrival-site").innerText = `׳׳×׳¨ ׳¢׳‘׳•׳“׳” (׳›׳ ׳™׳¡׳”: ${formatIsoDateToHHMM(shiftData.arrivalDate)})`;
         document.getElementById("active-val-arrival-site").innerText = shiftData.arrivalBuildingName;
-        document.getElementById("active-val-travel-times").innerText = `${shiftData.travelToSiteMinutes} + ${shiftData.travelBackMinutes} דק׳`;
+        document.getElementById("active-val-travel-times").innerText = `${shiftData.travelToSiteMinutes} + ${shiftData.travelBackMinutes} ׳“׳§׳³`;
         document.getElementById("active-val-return-site").innerText = shiftData.returnBuildingName;
         
         document.getElementById("chk-active-snooze").checked = shiftData.snoozeEnabled;
@@ -1765,6 +1770,9 @@ function loadAppPreferences() {
     appPreferences.defaultSnoozeInterval = snoozeInterval === null ? 10 : parseInt(snoozeInterval);
     appPreferences.gpsUsageApproved = gpsApproved === null ? true : (gpsApproved === "true");
     appPreferences.clockUsageApproved = clockApproved === null ? true : (clockApproved === "true");
+
+    const warningMinutes = localStorage.getItem("iec_pref_warning_minutes");
+    appPreferences.warningMinutesBeforeEnd = warningMinutes === null ? 10 : parseInt(warningMinutes);
     
     const tgChatId = localStorage.getItem("iec_pref_tg_chat_id");
     if (tgChatId) {
@@ -1781,6 +1789,7 @@ function saveAppPreferences() {
     localStorage.setItem("iec_pref_default_snooze_interval", appPreferences.defaultSnoozeInterval.toString());
     localStorage.setItem("iec_pref_gps_approved", appPreferences.gpsUsageApproved.toString());
     localStorage.setItem("iec_pref_clock_approved", appPreferences.clockUsageApproved.toString());
+    localStorage.setItem("iec_pref_warning_minutes", appPreferences.warningMinutesBeforeEnd.toString());
     if (appPreferences.telegramChatId) {
         localStorage.setItem("iec_pref_tg_chat_id", appPreferences.telegramChatId);
     }
@@ -1833,7 +1842,7 @@ async function connectTelegram() {
                         await fetch("https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/sendMessage", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ chat_id: chatId, text: "האפליקציה חוברה בהצלחה! התראות יישלחו לכאן." })
+                            body: JSON.stringify({ chat_id: chatId, text: "׳”׳׳₪׳׳™׳§׳¦׳™׳” ׳—׳•׳‘׳¨׳” ׳‘׳”׳¦׳׳—׳”! ׳”׳×׳¨׳׳•׳× ׳™׳™׳©׳׳—׳• ׳׳›׳׳." })
                         });
                         break;
                     }
@@ -1850,7 +1859,7 @@ async function connectTelegram() {
     
     if (loader) loader.style.display = "none";
     if (!connected) {
-        alert("תם הזמן להמתנה לחיבור טלגרם. נסה שוב.");
+        alert("׳×׳ ׳”׳–׳׳ ׳׳”׳׳×׳ ׳” ׳׳—׳™׳‘׳•׳¨ ׳˜׳׳’׳¨׳. ׳ ׳¡׳” ׳©׳•׳‘.");
     }
 }
 
@@ -1866,12 +1875,12 @@ function updateTelegramUI() {
 
     if (isConnected) {
         if(statusText) {
-            statusText.innerText = "סטטוס: מחובר פעיל";
+            statusText.innerText = "׳¡׳˜׳˜׳•׳¡: ׳׳—׳•׳‘׳¨ ׳₪׳¢׳™׳";
             statusText.style.color = "var(--success-color)";
         }
     } else {
         if(statusText) {
-            statusText.innerText = "סטטוס: לא מחובר";
+            statusText.innerText = "׳¡׳˜׳˜׳•׳¡: ׳׳ ׳׳—׳•׳‘׳¨";
             statusText.style.color = "var(--text-muted)";
         }
     }
