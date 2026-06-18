@@ -1589,9 +1589,9 @@ async function notifyPipedream(action) {
         return; // Only if Telegram is connected
     }
 
-    const PIPEDREAM_START_URL = "https://script.google.com/macros/s/AKfycbwLTeiLfCjnCGdTB34I1Kb6tpc-btscE6SKwJM6j_2YAtYgFjHAOb9rLAXdWr_wdo4v/exec";
-    const PIPEDREAM_UPDATE_URL = "https://script.google.com/macros/s/AKfycbwLTeiLfCjnCGdTB34I1Kb6tpc-btscE6SKwJM6j_2YAtYgFjHAOb9rLAXdWr_wdo4v/exec";
-    const PIPEDREAM_CANCEL_URL = "https://script.google.com/macros/s/AKfycbwLTeiLfCjnCGdTB34I1Kb6tpc-btscE6SKwJM6j_2YAtYgFjHAOb9rLAXdWr_wdo4v/exec";
+    const PIPEDREAM_START_URL = "https://script.google.com/macros/s/AKfycbzUGEhxo70PLvVzJrXJvFsoX3MXM77QQF67LDwegPRC-yefoS4CdEoofauKPyL67kqB/exec";
+    const PIPEDREAM_UPDATE_URL = "https://script.google.com/macros/s/AKfycbzUGEhxo70PLvVzJrXJvFsoX3MXM77QQF67LDwegPRC-yefoS4CdEoofauKPyL67kqB/exec";
+    const PIPEDREAM_CANCEL_URL = "https://script.google.com/macros/s/AKfycbzUGEhxo70PLvVzJrXJvFsoX3MXM77QQF67LDwegPRC-yefoS4CdEoofauKPyL67kqB/exec";
 
     let url = "";
     let virtualStartTime = shiftData.arrivalDate || new Date().toISOString();
