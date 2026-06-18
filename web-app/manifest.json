@@ -1,6 +1,6 @@
 {
-  "name": "נוכחות חברת החשמל",
-  "short_name": "נוכחות חח״י",
+  "name": "החתמה מרחוק",
+  "short_name": "החתמה מרחוק",
   "description": "אפליקציית דיווח נוכחות מרחוק עם חישוב זמני נסיעה ועקרון Zero Storage",
   "start_url": "index.html",
   "display": "standalone",
